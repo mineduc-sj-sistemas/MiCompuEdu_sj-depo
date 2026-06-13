@@ -5,12 +5,12 @@ import { RegistrarIngreso } from './pages/Operator/RegistrarIngreso'
 import { EntregaNotebook } from './pages/Operator/EntregaNotebook'
 import { PanelTecnico } from './pages/Technician/PanelTecnico'
 import { Dashboard } from './pages/Supervisor/Dashboard'
+import { LogoSanJuan } from './components/Shared/LogoSanJuan'
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<string>('');
 
-  // Cargar sesión del storage
   useEffect(() => {
     const session = localStorage.getItem('micompuedu_session');
     if (session) {
@@ -23,7 +23,6 @@ function App() {
     }
   }, []);
 
-  // Set default page on login
   useEffect(() => {
     if (user) {
       if (user.rol === 'Operador') {
@@ -51,24 +50,16 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#080b11]">
+    <div className="flex min-h-screen bg-white text-[#1D252D]">
       {/* Sidebar Navigation */}
-      <aside className="w-64 bg-[#0e131f] border-r border-slate-900 flex flex-col justify-between p-5">
+      <aside className="w-64 bg-slate-50 border-r border-slate-200 flex flex-col justify-between p-5 shrink-0">
         <div className="space-y-8">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-sm">
-              M
-            </div>
-            <div>
-              <h2 className="font-extrabold text-white text-base tracking-tight leading-none">MiCompuEdu</h2>
-              <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">San Juan</span>
-            </div>
-          </div>
+          {/* Logo Oficial San Juan */}
+          <LogoSanJuan showMinistry={false} className="max-w-[180px]" />
 
           {/* Navigation Links */}
           <nav className="space-y-1">
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2 px-3">Menú Principal</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2 px-3">Menú de Gestión</p>
             
             {/* Operator Actions */}
             {(user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
@@ -77,8 +68,8 @@ function App() {
                   onClick={() => setCurrentPage('ingreso')}
                   className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
                     currentPage === 'ingreso'
-                      ? 'bg-indigo-600/10 text-indigo-400 border-l-2 border-indigo-500'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                      ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
+                      : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
                   }`}
                 >
                   📥 Registrar Ingreso
@@ -87,8 +78,8 @@ function App() {
                   onClick={() => setCurrentPage('entrega')}
                   className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
                     currentPage === 'entrega'
-                      ? 'bg-indigo-600/10 text-indigo-400 border-l-2 border-indigo-500'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                      ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
+                      : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
                   }`}
                 >
                   📤 Entregar Notebook
@@ -102,8 +93,8 @@ function App() {
                 onClick={() => setCurrentPage('diagnostico')}
                 className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
                   currentPage === 'diagnostico'
-                    ? 'bg-indigo-600/10 text-indigo-400 border-l-2 border-indigo-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                    ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
+                    : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
                 }`}
               >
                 🔧 Panel de Diagnóstico
@@ -116,8 +107,8 @@ function App() {
                 onClick={() => setCurrentPage('dashboard')}
                 className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
                   currentPage === 'dashboard'
-                    ? 'bg-indigo-600/10 text-indigo-400 border-l-2 border-indigo-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                    ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
+                    : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
                 }`}
               >
                 📊 Dashboard Estadístico
@@ -127,14 +118,14 @@ function App() {
         </div>
 
         {/* User Profile & Logout */}
-        <div className="border-t border-slate-900 pt-4 space-y-3">
+        <div className="border-t border-slate-200 pt-4 space-y-3">
           <div className="px-3">
-            <p className="text-slate-200 font-bold text-sm truncate">{user.nombreCompleto}</p>
-            <span className="text-[10px] text-indigo-400 font-semibold uppercase tracking-wider">{user.rol}</span>
+            <p className="text-[#1D252D] font-bold text-sm truncate">{user.nombreCompleto}</p>
+            <span className="text-[10px] text-[#FF8200] font-bold uppercase tracking-wider">{user.rol}</span>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full bg-slate-900 hover:bg-red-950/30 text-slate-400 hover:text-red-400 border border-slate-800 hover:border-red-900/50 font-bold py-2 rounded-lg transition-all text-xs"
+            className="w-full bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-[#E03C31] border border-slate-200 hover:border-red-200 font-bold py-2 rounded-lg transition-all text-xs"
           >
             Cerrar Sesión
           </button>

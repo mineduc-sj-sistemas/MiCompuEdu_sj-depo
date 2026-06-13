@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { User } from '../types';
+import { LogoSanJuan } from '../components/Shared/LogoSanJuan';
 
 interface LoginProps {
   onLoginSuccess: (user: User) => void;
@@ -19,8 +20,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setError('');
 
     try {
-      // Intentamos consumir la API real
-      const response = await fetch('http://localhost:5194/api/v1/Auth/login', {
+      const response = await fetch('http://localhost:5110/api/v1/Auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,10 +33,9 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         onLoginSuccess(data);
       } else {
         const errText = await response.text();
-        setError(errText || 'Credenciales inválidas.');
+        setError(errText || 'Usuario o contraseña incorrectos.');
       }
     } catch (err) {
-      // Fallback local instantáneo para desarrollo o si la API no está corriendo
       console.warn('API no disponible. Usando fallback de simulación local.');
       if (password === 'Admin123!') {
         let role: User['rol'] = 'Administrador';
@@ -76,53 +75,54 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 relative">
+      {/* Soft background shape */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-[#FBDD40]/5 rounded-bl-[100px] -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/3 bg-[#FF8200]/5 rounded-tr-[80px] -z-10"></div>
 
-      <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl relative z-10">
-        <div className="text-center mb-8">
-          <div className="inline-flex p-3 bg-indigo-600/10 border border-indigo-500/30 rounded-xl text-indigo-400 mb-3 text-3xl font-extrabold tracking-wider">
-            MEC
-          </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">MiCompuEdu</h1>
-          <p className="text-slate-400 mt-2 text-sm">
-            Gestión de Soporte Técnico Escolar • San Juan
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-xl relative z-10">
+        <div className="flex justify-center mb-8">
+          <LogoSanJuan className="max-w-[340px]" />
+        </div>
+
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-[#1D252D] tracking-tight">Ingreso al Sistema</h1>
+          <p className="text-slate-500 mt-1.5 text-xs">
+            Portal del Ministerio de Educación • Depósito de Notebooks
           </p>
         </div>
 
         {error && (
-          <div className="p-3 mb-6 bg-red-950/50 border border-red-800 text-red-300 rounded-lg text-sm text-center">
+          <div className="p-3 mb-6 bg-[#E03C31]/10 border border-[#E03C31]/30 text-[#E03C31] rounded-lg text-xs font-semibold text-center">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-slate-300 text-sm font-semibold mb-2" htmlFor="username">
-              Usuario de Sistema
+            <label className="block text-[#1D252D] text-xs font-bold uppercase tracking-wider mb-2" htmlFor="username">
+              Usuario
             </label>
             <input
               id="username"
               type="text"
               required
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
-              placeholder="Ej: admin, tecnico, operador"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
+              placeholder="Nombre de usuario"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block text-slate-300 text-sm font-semibold mb-2" htmlFor="password">
+            <label className="block text-[#1D252D] text-xs font-bold uppercase tracking-wider mb-2" htmlFor="password">
               Contraseña
             </label>
             <input
               id="password"
               type="password"
               required
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -132,22 +132,22 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white font-bold py-3 rounded-lg shadow-lg shadow-indigo-600/20 transition-all flex justify-center items-center"
+            className="w-full bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-300 disabled:text-slate-500 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all flex justify-center items-center text-sm"
           >
             {loading ? (
               <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             ) : (
-              'Ingresar al Sistema'
+              'Iniciar Sesión'
             )}
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-slate-850 text-center">
-          <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} Ministerio de Educación de San Juan.
+        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+          <p className="text-[10px] text-slate-400">
+            © {new Date().getFullYear()} Ministerio de Educación. Gobierno de San Juan.
           </p>
-          <p className="text-[10px] text-slate-600 mt-1">
-            Demo: contraseña estándar "Admin123!"
+          <p className="text-[9px] text-[#FF8200] font-bold mt-1 uppercase tracking-wider">
+            Demo pass: Admin123!
           </p>
         </div>
       </div>

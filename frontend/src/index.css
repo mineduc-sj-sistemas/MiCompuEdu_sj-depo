@@ -1,20 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
 
 @import "tailwindcss";
 
 :root {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  color-scheme: dark;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Ubuntu', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+  
+  /* Paleta oficial Gobierno de San Juan */
+  --sj-amarillo: #FBDD40;
+  --sj-naranja: #FF8200;
+  --sj-rojo: #E03C31;
+  --sj-gris: #1D252D;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #0b0f19; /* Sleek dark mode background */
-  color: #f3f4f6;
+  background-color: #FFFFFF; /* Fondo principal blanco */
+  color: #1D252D; /* Gris institucional para textos */
   min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Ubuntu', sans-serif;
+  color: #1D252D;
+}
+
+/* Custom CSS overrides if needed for styling */
+input:focus, select:focus, textarea:focus {
+  border-color: #FF8200 !important;
+  box-shadow: 0 0 0 2px rgba(255, 130, 0, 0.2) !important;
 }

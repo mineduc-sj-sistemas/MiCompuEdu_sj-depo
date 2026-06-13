@@ -45,7 +45,6 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         setMensajeError('DNI no encontrado en el padrón nominal del Ministerio.');
       }
     } catch (error) {
-      // Fallback local en caso de desconexión
       console.warn('API no disponible. Usando fallback de simulación de padrón.');
       if (dniInput.length >= 7 && dniInput.length <= 9) {
         setBeneficiario({
@@ -96,7 +95,6 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
       if (response.ok) {
         const data = await response.json();
         setMensajeExito(`Ingreso de notebook ${beneficiario.equipo.numeroSerie} registrado correctamente en el sistema.`);
-        // Simular descarga de PDF de comprobante
         setTimeout(() => {
           alert(`Descargando Comprobante Digital:\n\nOrden ID: ${data.id}\nBeneficiario: ${beneficiario.nombre} ${beneficiario.apellido}\nEquipo Serie: ${beneficiario.equipo?.numeroSerie}\nFalla: ${fallaReportada}`);
         }, 500);
@@ -110,7 +108,6 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         setMensajeError('Ocurrió un error al guardar el ingreso en el sistema.');
       }
     } catch (error) {
-      // Simulación local exitosa
       setMensajeExito(`[SIMULACIÓN] Ingreso de notebook ${beneficiario.equipo.numeroSerie} guardado de forma local.`);
       setBeneficiario(null);
       setDniInput('');
@@ -128,14 +125,14 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-800 pb-5">
-        <h2 className="text-3xl font-extrabold text-white">Registrar Ingreso de Notebook</h2>
-        <p className="text-slate-400 mt-1">Escanea el DNI físico del tutor para autocompletar el padrón del Ministerio.</p>
+      <div className="border-b border-slate-200 pb-5">
+        <h2 className="text-3xl font-extrabold text-[#1D252D]">Registrar Ingreso de Notebook</h2>
+        <p className="text-slate-500 mt-1 text-sm">Escanea el DNI físico del tutor para autocompletar el padrón del Ministerio.</p>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
+      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-md space-y-6">
         <div>
-          <label className="block text-slate-300 text-sm font-semibold mb-2">
+          <label className="block text-[#1D252D] text-xs font-bold uppercase tracking-wider mb-2">
             Escaneo de DNI (PDF417) / Búsqueda Manual
           </label>
           <div className="flex gap-3">
@@ -143,7 +140,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               <input
                 ref={dniInputRef}
                 type="text"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
                 placeholder="Escanee código de DNI o escriba el número..."
                 value={dniInput}
                 onChange={(e) => setDniInput(e.target.value)}
@@ -153,7 +150,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               {dniInput && (
                 <button 
                   onClick={() => setDniInput('')} 
-                  className="absolute right-3 top-3 text-slate-500 hover:text-slate-300"
+                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
                 >
                   ✕
                 </button>
@@ -162,7 +159,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
             <button
               onClick={buscarBeneficiario}
               disabled={loading || !dniInput}
-              className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white font-semibold px-8 py-3 rounded-lg shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center min-w-[120px]"
+              className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all flex items-center justify-center min-w-[120px] text-sm"
             >
               {loading ? (
                 <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -171,86 +168,86 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               )}
             </button>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
+          <p className="text-xs text-slate-400 mt-2">
             💡 Consejo: Coloque el cursor en la caja de texto y pase el lector de código de barras.
           </p>
         </div>
 
         {mensajeError && (
-          <div className="p-4 bg-red-950/40 border border-red-800 text-red-300 rounded-lg text-sm">
+          <div className="p-4 bg-[#E03C31]/10 border border-[#E03C31]/30 text-[#E03C31] rounded-lg text-sm font-semibold">
             ⚠️ {mensajeError}
           </div>
         )}
 
         {mensajeExito && (
-          <div className="p-4 bg-green-950/40 border border-green-800 text-green-300 rounded-lg text-sm">
+          <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm font-semibold">
             ✅ {mensajeExito}
           </div>
         )}
 
         {beneficiario && (
-          <form onSubmit={handleIngresarNotebook} className="space-y-6 pt-4 border-t border-slate-850 animate-fadeIn">
+          <form onSubmit={handleIngresarNotebook} className="space-y-6 pt-4 border-t border-slate-100 animate-fadeIn">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Tutor Column */}
-              <div className="bg-slate-950 border border-slate-850 rounded-xl p-5 space-y-3">
-                <h3 className="text-lg font-bold text-indigo-400 border-b border-slate-850 pb-2">Datos del Titular/Tutor</h3>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                <h3 className="text-lg font-bold text-[#FF8200] border-b border-slate-200 pb-2">Datos del Titular/Tutor</h3>
                 <div className="grid grid-cols-3 text-sm">
                   <span className="text-slate-500">DNI:</span>
-                  <span className="col-span-2 text-slate-200 font-semibold">{beneficiario.dni}</span>
+                  <span className="col-span-2 text-[#1D252D] font-semibold">{beneficiario.dni}</span>
                 </div>
                 <div className="grid grid-cols-3 text-sm">
                   <span className="text-slate-500">Nombre:</span>
-                  <span className="col-span-2 text-slate-200">{beneficiario.nombre} {beneficiario.apellido}</span>
+                  <span className="col-span-2 text-[#1D252D]">{beneficiario.nombre} {beneficiario.apellido}</span>
                 </div>
                 <div className="grid grid-cols-3 text-sm">
                   <span className="text-slate-500">Teléfono:</span>
-                  <span className="col-span-2 text-slate-200">{beneficiario.telefono}</span>
+                  <span className="col-span-2 text-[#1D252D]">{beneficiario.telefono}</span>
                 </div>
                 <div className="grid grid-cols-3 text-sm">
                   <span className="text-slate-500">Email:</span>
-                  <span className="col-span-2 text-slate-200">{beneficiario.email}</span>
+                  <span className="col-span-2 text-[#1D252D]">{beneficiario.email}</span>
                 </div>
               </div>
 
               {/* Notebook Column */}
-              <div className="bg-slate-950 border border-slate-850 rounded-xl p-5 space-y-3">
-                <h3 className="text-lg font-bold text-indigo-400 border-b border-slate-850 pb-2">Notebook Asignada</h3>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                <h3 className="text-lg font-bold text-[#FF8200] border-b border-slate-200 pb-2">Notebook Asignada</h3>
                 {beneficiario.equipo ? (
                   <>
                     <div className="grid grid-cols-3 text-sm">
                       <span className="text-slate-500">Serie Nro:</span>
-                      <span className="col-span-2 text-indigo-300 font-mono font-semibold">{beneficiario.equipo.numeroSerie}</span>
+                      <span className="col-span-2 text-[#1D252D] font-mono font-bold">{beneficiario.equipo.numeroSerie}</span>
                     </div>
                     <div className="grid grid-cols-3 text-sm">
                       <span className="text-slate-500">Marca:</span>
-                      <span className="col-span-2 text-slate-200">{beneficiario.equipo.marca}</span>
+                      <span className="col-span-2 text-[#1D252D]">{beneficiario.equipo.marca}</span>
                     </div>
                     <div className="grid grid-cols-3 text-sm">
                       <span className="text-slate-500">Modelo:</span>
-                      <span className="col-span-2 text-slate-200">{beneficiario.equipo.modelo}</span>
+                      <span className="col-span-2 text-[#1D252D]">{beneficiario.equipo.modelo}</span>
                     </div>
                     {beneficiario.equipo.credencialesOffice && (
                       <div className="grid grid-cols-3 text-sm">
                         <span className="text-slate-500">Office Creds:</span>
-                        <span className="col-span-2 text-slate-400 font-mono text-xs">{beneficiario.equipo.credencialesOffice}</span>
+                        <span className="col-span-2 text-slate-500 font-mono text-xs">{beneficiario.equipo.credencialesOffice}</span>
                       </div>
                     )}
                   </>
                 ) : (
-                  <p className="text-sm text-yellow-500">Sin notebook registrada en el padrón nominal.</p>
+                  <p className="text-sm text-yellow-650">Sin notebook registrada en el padrón nominal.</p>
                 )}
               </div>
             </div>
 
             {/* Falla Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-white border-b border-slate-850 pb-2">Detalle del Soporte</h3>
+              <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-200 pb-2">Detalle del Soporte</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-1">
-                  <label className="block text-slate-300 text-sm font-semibold mb-2">Falla del Catálogo</label>
+                  <label className="block text-slate-700 text-sm font-semibold mb-2">Falla del Catálogo</label>
                   <select
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200]"
                     value={fallaCatalogoId}
                     onChange={(e) => setFallaCatalogoId(Number(e.target.value))}
                   >
@@ -263,11 +260,11 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                 </div>
                 
                 <div className="md:col-span-2">
-                  <label className="block text-slate-300 text-sm font-semibold mb-2">Falla Reportada (Descripción Libre)</label>
+                  <label className="block text-slate-700 text-sm font-semibold mb-2">Falla Reportada (Descripción Libre)</label>
                   <textarea
                     required
                     rows={3}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200]"
                     placeholder="Escriba los detalles de la falla reportada por el docente/tutor..."
                     value={fallaReportada}
                     onChange={(e) => setFallaReportada(e.target.value)}
@@ -276,10 +273,10 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               </div>
 
               <div>
-                <label className="block text-slate-300 text-sm font-semibold mb-2">Observaciones Estéticas / Accesorios</label>
+                <label className="block text-slate-700 text-sm font-semibold mb-2">Observaciones Estéticas / Accesorios</label>
                 <input
                   type="text"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200]"
                   placeholder="Ej: Trae cargador original. Bisagra izquierda trizada, etc."
                   value={observaciones}
                   onChange={(e) => setObservaciones(e.target.value)}
@@ -291,14 +288,14 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               <button
                 type="button"
                 onClick={() => setBeneficiario(null)}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-lg font-semibold transition-colors"
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-lg font-semibold transition-colors text-sm"
               >
                 Limpiar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white font-bold px-8 py-3 rounded-lg shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center min-w-[200px]"
+                className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold px-8 py-3 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all flex items-center justify-center min-w-[200px] text-sm"
               >
                 {loading ? (
                   <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
