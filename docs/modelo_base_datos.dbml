@@ -1,0 +1,133 @@
+// DBML (Database Markup Language) para el Sistema de Gestión de Notebooks Educativas (MiCompuEdu_sj)
+// Compatible con dbdiagram.io
+
+enum UserRole {
+  Administrador
+  Supervisor
+  Tecnico
+  Operador
+}
+
+enum EstadoEquipo {
+  Ingresado
+  En_Diagnostico
+  En_Reparacion
+  Esperando_Repuestos
+  Reparado
+  Listo_Para_Retirar
+  Entregado
+  No_Reparable
+}
+
+enum TipoNotificacion {
+  WhatsApp
+  Email
+}
+
+enum EstadoNotificacion {
+  Pendiente
+  Enviado
+  Fallido
+}
+
+Table usuarios {
+  id uuid [pk, default: `gen_random_uuid()`]
+  nombre_completo varchar(150) [not null]
+  nombre_usuario varchar(50) [unique, not null]
+  email varchar(100) [unique, not null]
+  password_hash varchar(255) [not null]
+  rol UserRole [not null]
+  activo boolean [not null, default: true]
+  creado_en timestamp [default: `now()`]
+  actualizado_en timestamp
+}
+
+Table beneficiarios {
+  id uuid [pk, default: `gen_random_uuid()`]
+  dni varchar(20) [unique, not null]
+  nombre varchar(100) [not null]
+  apellido varchar(100) [not null]
+  telefono varchar(50) [not null]
+  email varchar(100) [not null]
+  creado_en timestamp [default: `now()`]
+  actualizado_en timestamp
+}
+
+Table equipos {
+  id uuid [pk, default: `gen_random_uuid()`]
+  numero_serie varchar(100) [unique, not null]
+  marca varchar(50) [not null]
+  modelo varchar(50) [not null]
+  credenciales_office varchar(255)
+  beneficiario_id uuid [not null]
+  creado_en timestamp [default: `now()`]
+  actualizado_en timestamp
+}
+
+Table fallas_catalogo {
+  id integer [pk, increment]
+  nombre varchar(100) [unique, not null]
+  descripcion text
+  activo boolean [not null, default: true]
+  creado_en timestamp [default: `now()`]
+}
+
+Table reparaciones {
+  id uuid [pk, default: `gen_random_uuid()`]
+  equipo_id uuid [not null]
+  operador_ingreso_id uuid [not null]
+  tecnico_asignado_id uuid
+  estado EstadoEquipo [not null, default: 'Ingresado']
+  falla_reportada text [not null]
+  falla_catalogo_id integer
+  diagnostico text
+  acciones_realizadas text
+  observaciones text
+  comprobante_url varchar(255)
+  fecha_ingreso timestamp [default: `now()`]
+  fecha_limite timestamp
+  fecha_entrega timestamp
+  creado_en timestamp [default: `now()`]
+  actualizado_en timestamp
+}
+
+Table historial_movimientos {
+  id uuid [pk, default: `gen_random_uuid()`]
+  reparacion_id uuid [not null]
+  estado_anterior EstadoEquipo
+  estado_nuevo EstadoEquipo [not null]
+  usuario_id uuid [not null]
+  observaciones text
+  fecha_movimiento timestamp [default: `now()`]
+}
+
+Table evidencias_reparacion {
+  id uuid [pk, default: `gen_random_uuid()`]
+  reparacion_id uuid [not null]
+  url_archivo varchar(255) [not null]
+  nombre_archivo varchar(150) [not null]
+  creado_en timestamp [default: `now()`]
+}
+
+Table notificaciones {
+  id uuid [pk, default: `gen_random_uuid()`]
+  reparacion_id uuid [not null]
+  tipo TipoNotificacion [not null]
+  destinatario varchar(100) [not null]
+  mensaje text [not null]
+  estado EstadoNotificacion [not null, default: 'Pendiente']
+  fecha_envio timestamp
+  error_mensaje text
+  creado_en timestamp [default: `now()`]
+}
+
+// Relaciones
+Ref: equipos.beneficiario_id > beneficiarios.id [delete: cascade]
+Ref: reparaciones.equipo_id > equipos.id [delete: cascade]
+Ref: reparaciones.operador_ingreso_id > usuarios.id
+Ref: reparaciones.tecnico_asignado_id > usuarios.id
+Ref: reparaciones.falla_catalogo_id > fallas_catalogo.id [delete: set null]
+Ref: historial_movimientos.reparacion_id > reparaciones.id [delete: cascade]
+Ref: historial_movimientos.usuario_id > usuarios.id
+Ref: evidencias_reparacion.reparacion_id > reparaciones.id [delete: cascade]
+Ref: notificaciones.reparacion_id > reparaciones.id [delete: cascade]

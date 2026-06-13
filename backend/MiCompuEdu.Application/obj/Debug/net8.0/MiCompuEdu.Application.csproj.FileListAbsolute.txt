@@ -1,0 +1,15 @@
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\bin\Debug\net8.0\MiCompuEdu.Application.deps.json
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\bin\Debug\net8.0\MiCompuEdu.Application.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\bin\Debug\net8.0\MiCompuEdu.Application.pdb
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\bin\Debug\net8.0\MiCompuEdu.Domain.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\bin\Debug\net8.0\MiCompuEdu.Domain.pdb
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.csproj.AssemblyReference.cache
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.AssemblyInfoInputs.cache
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.AssemblyInfo.cs
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.csproj.CoreCompileInputs.cache
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuE.C486BC03.Up2Date
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\refint\MiCompuEdu.Application.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.pdb
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\ref\MiCompuEdu.Application.dll

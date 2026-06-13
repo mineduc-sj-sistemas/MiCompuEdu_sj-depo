@@ -1,0 +1,17 @@
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\bin\Debug\net8.0\MiCompuEdu.Infrastructure.deps.json
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\bin\Debug\net8.0\MiCompuEdu.Infrastructure.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\bin\Debug\net8.0\MiCompuEdu.Infrastructure.pdb
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\bin\Debug\net8.0\MiCompuEdu.Application.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\bin\Debug\net8.0\MiCompuEdu.Domain.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\bin\Debug\net8.0\MiCompuEdu.Application.pdb
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\bin\Debug\net8.0\MiCompuEdu.Domain.pdb
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.AssemblyInfo.cs
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuE.C46FB473.Up2Date
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\refint\MiCompuEdu.Infrastructure.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.pdb
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\ref\MiCompuEdu.Infrastructure.dll
