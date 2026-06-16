@@ -169,6 +169,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                       r.estado === 'En_Diagnostico' ? 'bg-amber-50 border-amber-200 text-amber-700' :
                       r.estado === 'En_Reparacion' ? 'bg-orange-50 border-orange-200 text-[#FF8200]' :
                       r.estado === 'Esperando_Repuestos' ? 'bg-purple-50 border-purple-200 text-purple-700' :
+                      r.estado === 'Apartado_Para_Garantia' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' :
                       r.estado === 'En_Garantia_Externa' ? 'bg-cyan-50 border-cyan-200 text-cyan-700' :
                       'bg-green-50 border-green-200 text-green-700'
                     }`}>
@@ -251,6 +252,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                       <option value="En_Diagnostico">En Diagnóstico</option>
                       <option value="En_Reparacion">En Reparación / Soporte Local</option>
                       <option value="Esperando_Repuestos">Esperando Repuestos</option>
+                      <option value="Apartado_Para_Garantia">Apartado para Garantía</option>
                       <option value="En_Garantia_Externa">En Garantía Externa</option>
                       <option value="Reparado">Reparado</option>
                       <option value="Listo_Para_Retirar">Listo para retirar (Notificar WhatsApp)</option>

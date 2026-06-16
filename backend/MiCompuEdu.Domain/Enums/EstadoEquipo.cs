@@ -6,6 +6,7 @@ namespace MiCompuEdu.Domain.Enums
         En_Diagnostico,
         En_Reparacion,
         Esperando_Repuestos,
+        Apartado_Para_Garantia,
         En_Garantia_Externa,
         Reparado,
         Listo_Para_Retirar,
