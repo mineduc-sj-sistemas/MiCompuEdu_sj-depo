@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: micompuedu_db
+    environment:
+      POSTGRES_DB: micompuedu_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: micompuedu_backend
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=database;Database=micompuedu_db;Username=postgres;Password=postgres
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5110:8080"
+    depends_on:
+      - database
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: micompuedu_frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  postgres_data:

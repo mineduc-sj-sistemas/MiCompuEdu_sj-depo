@@ -69,17 +69,21 @@ MiCompuEdu_sj-depo/
 │   ├── MiCompuEdu.Domain/           # Entidades, Enums y Lógica pura
 │   ├── MiCompuEdu.Application/      # DTOs, Interfaces, CQRS (Commands/Queries)
 │   ├── MiCompuEdu.Infrastructure/   # DB Context, Servicios (WhatsApp, PDF)
-│   └── MiCompuEdu.WebApi/           # API Controllers, Middlewares, Program.cs
+│   ├── MiCompuEdu.WebApi/           # API Controllers, Middlewares, Program.cs
+│   └── Dockerfile                   # Configuración de compilación y empaquetado .NET
 ├── frontend/
 │   ├── public/                      # Recursos estáticos públicos
-│   └── src/
-│       ├── assets/                  # Logos e imágenes
-│       ├── components/              # Componentes de UI compartidos
-│       ├── pages/                   # Login, Operator, Supervisor, Technician
-│       ├── types.ts                 # Definiciones de tipos TS
-│       ├── App.tsx                  # Componente principal con enrutamiento de roles
-│       └── main.tsx                 # Punto de entrada de React
+│   ├── src/
+│   │   ├── assets/                  # Logos e imágenes
+│   │   ├── components/              # Componentes de UI compartidos
+│   │   ├── pages/                   # Login, Operator, Supervisor, Technician
+│   │   ├── types.ts                 # Definiciones de tipos TS
+│   │   ├── App.tsx                  # Componente principal con enrutamiento de roles
+│   │   └── main.tsx                 # Punto de entrada de React
+│   ├── Dockerfile                   # Configuración de empaquetado de producción
+│   └── nginx.conf                   # Servidor web para SPA routing
 ├── docs/                            # Planos de arquitectura, SQL, y documentación
+├── docker-compose.yml               # Orquestación de Postgres, Backend y Frontend
 └── context.md                       # Este archivo de contexto
 ```
 
