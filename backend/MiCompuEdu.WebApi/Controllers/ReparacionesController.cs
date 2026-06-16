@@ -57,7 +57,7 @@ namespace MiCompuEdu.WebApi.Controllers
         }
 
         [HttpPut("{id}/estado")]
-        [Authorize(Roles = "Tecnico,Supervisor,Administrador")]
+        [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
         public async Task<ActionResult<bool>> ActualizarEstado(Guid id, [FromBody] UpdateEstadoRequest request)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

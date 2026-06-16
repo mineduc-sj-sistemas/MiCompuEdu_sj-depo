@@ -54,3 +54,12 @@ export interface DashboardStats {
   fallasMasFrecuentes: FallaFrecuente[];
   equiposPorEstado: Record<string, number>;
 }
+
+export interface ManagedUser {
+  id: string;
+  nombreCompleto: string;
+  nombreUsuario: string;
+  rol: 'Administrador' | 'Supervisor' | 'Tecnico' | 'Operador';
+  email: string;
+  activo: boolean;
+}

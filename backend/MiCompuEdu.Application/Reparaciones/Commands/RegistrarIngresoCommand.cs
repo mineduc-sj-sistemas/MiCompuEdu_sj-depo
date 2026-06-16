@@ -22,10 +22,12 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
     public class RegistrarIngresoCommandHandler : IRequestHandler<RegistrarIngresoCommand, ReparacionDto>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IPdfGeneratorService _pdfGeneratorService;
 
-        public RegistrarIngresoCommandHandler(IApplicationDbContext context)
+        public RegistrarIngresoCommandHandler(IApplicationDbContext context, IPdfGeneratorService pdfGeneratorService)
         {
             _context = context;
+            _pdfGeneratorService = pdfGeneratorService;
         }
 
         public async Task<ReparacionDto> Handle(RegistrarIngresoCommand request, CancellationToken cancellationToken)
@@ -51,6 +53,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 FechaIngreso = DateTime.UtcNow
             };
 
+            reparacion.Equipo = equipo;
+
             // Registro en Historial
             var movimiento = new HistorialMovimiento
             {
@@ -68,8 +72,16 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Generar la URL de comprobante simulado
-            reparacion.ComprobanteUrl = $"/comprobantes/{reparacion.Id}.pdf";
+            // Generar el PDF real y guardar su ruta
+            try
+            {
+                var pdfUrl = await _pdfGeneratorService.GenerateReceiptPdfAsync(reparacion);
+                reparacion.ComprobanteUrl = pdfUrl;
+            }
+            catch
+            {
+                reparacion.ComprobanteUrl = $"/comprobantes/{reparacion.Id}.pdf";
+            }
             await _context.SaveChangesAsync(cancellationToken);
 
             return new ReparacionDto

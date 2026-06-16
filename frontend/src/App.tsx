@@ -6,6 +6,7 @@ import { EntregaNotebook } from './pages/Operator/EntregaNotebook'
 import { PanelTecnico } from './pages/Technician/PanelTecnico'
 import { Dashboard } from './pages/Supervisor/Dashboard'
 import { LogoSanJuan } from './components/Shared/LogoSanJuan'
+import { GestionUsuarios } from './pages/Supervisor/GestionUsuarios'
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -114,6 +115,20 @@ function App() {
                 📊 Dashboard Estadístico
               </button>
             )}
+
+            {/* Admin Actions */}
+            {user.rol === 'Administrador' && (
+              <button
+                onClick={() => setCurrentPage('usuarios')}
+                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
+                  currentPage === 'usuarios'
+                    ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
+                    : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
+                }`}
+              >
+                👥 Gestión de Personal
+              </button>
+            )}
           </nav>
         </div>
 
@@ -138,6 +153,7 @@ function App() {
         {currentPage === 'entrega' && <EntregaNotebook token={user.token} />}
         {currentPage === 'diagnostico' && <PanelTecnico token={user.token} nombreTecnico={user.nombreCompleto} />}
         {currentPage === 'dashboard' && <Dashboard token={user.token} />}
+        {currentPage === 'usuarios' && <GestionUsuarios token={user.token} />}
       </main>
     </div>
   )
