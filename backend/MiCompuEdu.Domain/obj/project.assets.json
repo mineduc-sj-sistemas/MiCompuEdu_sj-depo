@@ -8,19 +8,19 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Docente\\.nuget\\packages\\": {}
+    "C:\\Users\\leone\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj",
+      "projectUniqueName": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj",
       "projectName": "MiCompuEdu.Domain",
-      "projectPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj",
-      "packagesPath": "C:\\Users\\Docente\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\obj\\",
+      "projectPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj",
+      "packagesPath": "C:\\Users\\leone\\.nuget\\packages\\",
+      "outputPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Docente\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\leone\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -64,7 +64,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

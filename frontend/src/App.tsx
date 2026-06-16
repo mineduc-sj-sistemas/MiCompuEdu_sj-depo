@@ -88,7 +88,7 @@ function App() {
             )}
 
             {/* Technician Actions */}
-            {(user.rol === 'Tecnico' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
+            {(user.rol === 'Tecnico' || user.rol === 'Supervisor' || user.rol === 'Administrador' || user.rol === 'Operador') && (
               <button
                 onClick={() => setCurrentPage('diagnostico')}
                 className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
@@ -97,7 +97,7 @@ function App() {
                     : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
                 }`}
               >
-                🔧 Panel de Diagnóstico
+                🔧 Soporte y Garantía
               </button>
             )}
 

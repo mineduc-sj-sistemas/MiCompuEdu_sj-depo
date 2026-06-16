@@ -3122,19 +3122,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Docente\\.nuget\\packages\\": {}
+    "C:\\Users\\leone\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\MiCompuEdu.WebApi.csproj",
+      "projectUniqueName": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\MiCompuEdu.WebApi.csproj",
       "projectName": "MiCompuEdu.WebApi",
-      "projectPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\MiCompuEdu.WebApi.csproj",
-      "packagesPath": "C:\\Users\\Docente\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\obj\\",
+      "projectPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\MiCompuEdu.WebApi.csproj",
+      "packagesPath": "C:\\Users\\leone\\.nuget\\packages\\",
+      "outputPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Docente\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\leone\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -3146,8 +3146,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Infrastructure\\MiCompuEdu.Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Infrastructure\\MiCompuEdu.Infrastructure.csproj"
+            "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Infrastructure\\MiCompuEdu.Infrastructure.csproj": {
+              "projectPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Infrastructure\\MiCompuEdu.Infrastructure.csproj"
             }
           }
         }
@@ -3205,7 +3205,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

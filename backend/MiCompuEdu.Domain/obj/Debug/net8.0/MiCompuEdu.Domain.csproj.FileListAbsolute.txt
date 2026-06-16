@@ -9,3 +9,15 @@ C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\refint\MiCompuEdu.Domain.dll
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.pdb
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\ref\MiCompuEdu.Domain.dll
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\bin\Debug\net8.0\MiCompuEdu.Domain.deps.json
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\bin\Debug\net8.0\MiCompuEdu.Domain.dll
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\bin\Debug\net8.0\MiCompuEdu.Domain.pdb
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.AssemblyInfoInputs.cache
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.AssemblyInfo.cs
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.csproj.CoreCompileInputs.cache
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.sourcelink.json
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.dll
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\refint\MiCompuEdu.Domain.dll
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\MiCompuEdu.Domain.pdb
+c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Domain\obj\Debug\net8.0\ref\MiCompuEdu.Domain.dll

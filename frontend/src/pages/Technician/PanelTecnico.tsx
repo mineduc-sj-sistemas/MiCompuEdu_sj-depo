@@ -129,8 +129,8 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
     <div className="space-y-6">
       <div className="border-b border-slate-200 pb-5 flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-extrabold text-[#1D252D]">Panel de Trabajo del Técnico</h2>
-          <p className="text-slate-500 mt-1 text-sm">Hola {nombreTecnico}, gestione sus diagnósticos y reparaciones asignadas.</p>
+          <h2 className="text-3xl font-extrabold text-[#1D252D]">Soporte Técnico y Garantía</h2>
+          <p className="text-slate-500 mt-1 text-sm">Hola {nombreTecnico}, gestione los diagnósticos, desbloqueos y derivaciones a garantía.</p>
         </div>
         <button
           onClick={fetchRepairs}
@@ -169,6 +169,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                       r.estado === 'En_Diagnostico' ? 'bg-amber-50 border-amber-200 text-amber-700' :
                       r.estado === 'En_Reparacion' ? 'bg-orange-50 border-orange-200 text-[#FF8200]' :
                       r.estado === 'Esperando_Repuestos' ? 'bg-purple-50 border-purple-200 text-purple-700' :
+                      r.estado === 'En_Garantia_Externa' ? 'bg-cyan-50 border-cyan-200 text-cyan-700' :
                       'bg-green-50 border-green-200 text-green-700'
                     }`}>
                       {r.estado.replace(/_/g, ' ')}
@@ -248,8 +249,9 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                       onChange={(e) => setNuevoEstado(e.target.value)}
                     >
                       <option value="En_Diagnostico">En Diagnóstico</option>
-                      <option value="En_Reparacion">En Reparación</option>
+                      <option value="En_Reparacion">En Reparación / Soporte Local</option>
                       <option value="Esperando_Repuestos">Esperando Repuestos</option>
+                      <option value="En_Garantia_Externa">En Garantía Externa</option>
                       <option value="Reparado">Reparado</option>
                       <option value="Listo_Para_Retirar">Listo para retirar (Notificar WhatsApp)</option>
                       <option value="No_Reparable">No Reparable (Notificar WhatsApp)</option>
