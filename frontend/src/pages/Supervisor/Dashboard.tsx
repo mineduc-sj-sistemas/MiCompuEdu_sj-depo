@@ -41,6 +41,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
           En_Diagnostico: 8,
           En_Reparacion: 10,
           Esperando_Repuestos: 5,
+          Apartado_Para_Garantia: 3,
           En_Garantia_Externa: 2,
           Reparado: 3,
           Listo_Para_Retirar: 0,
@@ -175,6 +176,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
                     estado === 'En_Diagnostico' ? 'bg-[#FBDD40]' :
                     estado === 'En_Reparacion' ? 'bg-[#FF8200]' :
                     estado === 'Esperando_Repuestos' ? 'bg-purple-500' :
+                    estado === 'Apartado_Para_Garantia' ? 'bg-indigo-500' :
                     estado === 'En_Garantia_Externa' ? 'bg-cyan-500' :
                     'bg-green-500'
                   }`}></div>

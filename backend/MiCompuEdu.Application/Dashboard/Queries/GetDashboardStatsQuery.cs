@@ -90,6 +90,7 @@ namespace MiCompuEdu.Application.Dashboard.Queries
                 dictEstados[EstadoEquipo.Ingresado.ToString()] = 5;
                 dictEstados[EstadoEquipo.En_Diagnostico.ToString()] = 3;
                 dictEstados[EstadoEquipo.En_Reparacion.ToString()] = 4;
+                dictEstados[EstadoEquipo.Apartado_Para_Garantia.ToString()] = 2;
                 dictEstados[EstadoEquipo.En_Garantia_Externa.ToString()] = 1;
                 dictEstados[EstadoEquipo.Reparado.ToString()] = 2;
                 dictEstados[EstadoEquipo.Listo_Para_Retirar.ToString()] = 3;
