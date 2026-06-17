@@ -39,7 +39,11 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.FallaReportada,
                 request.FallaCatalogoId,
                 request.Observaciones,
-                operadorId
+                operadorId,
+                request.EscuelaId,
+                request.ProgramaEducativoId,
+                request.UbicacionDepositoId,
+                request.FirmaIngresoBase64
             );
 
             var resultado = await _mediator.Send(command);
@@ -49,9 +53,26 @@ namespace MiCompuEdu.WebApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<List<ReparacionDto>>> ObtenerTodos([FromQuery] string? estado, [FromQuery] string? busqueda)
+        public async Task<ActionResult<List<ReparacionDto>>> ObtenerTodos(
+            [FromQuery] string? estado, 
+            [FromQuery] string? busqueda,
+            [FromQuery] Guid? escuelaId,
+            [FromQuery] Guid? programaEducativoId,
+            [FromQuery] Guid? tecnicoAsignadoId,
+            [FromQuery] int? fallaCatalogoId,
+            [FromQuery] DateTime? fechaInicio,
+            [FromQuery] DateTime? fechaFin)
         {
-            var query = new GetReparacionesQuery(estado, busqueda);
+            var query = new GetReparacionesQuery(
+                estado, 
+                busqueda, 
+                escuelaId, 
+                programaEducativoId, 
+                tecnicoAsignadoId, 
+                fallaCatalogoId, 
+                fechaInicio, 
+                fechaFin
+            );
             var resultado = await _mediator.Send(query);
             return Ok(resultado);
         }
@@ -77,11 +98,69 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.Diagnostico,
                 request.AccionesRealizadas,
                 request.Observaciones,
-                usuarioId
+                usuarioId,
+                request.ProveedorGarantia,
+                request.RemitoGarantia,
+                request.FechaEsperadaGarantia,
+                request.FirmaEntregaBase64
             );
 
             var resultado = await _mediator.Send(command);
             return Ok(resultado);
+        }
+
+        [HttpGet("{id}/notificaciones")]
+        [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
+        public async Task<ActionResult<List<NotificacionDto>>> ObtenerNotificaciones(Guid id)
+        {
+            var query = new GetNotificacionesByReparacionQuery(id);
+            var resultado = await _mediator.Send(query);
+            return Ok(resultado);
+        }
+
+        [HttpPost("{id}/evidencias")]
+        [Authorize(Roles = "Tecnico,Supervisor,Administrador")]
+        public async Task<ActionResult<EvidenciaDto>> SubirEvidencia(Guid id, [FromForm] Microsoft.AspNetCore.Http.IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No se proporcionó ningún archivo válido.");
+            }
+
+            try
+            {
+                var extension = System.IO.Path.GetExtension(file.FileName).ToLower();
+                var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
+                if (!System.Linq.Enumerable.Contains(extensionesPermitidas, extension))
+                {
+                    return BadRequest("Tipo de archivo no permitido. Solo se permiten imágenes (jpg, jpeg, png) y PDFs.");
+                }
+
+                // Asegurar directorio uploads/evidencias en wwwroot
+                var uploadsFolder = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "evidencias");
+                if (!System.IO.Directory.Exists(uploadsFolder))
+                {
+                    System.IO.Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var fileName = $"{Guid.NewGuid()}{extension}";
+                var filePath = System.IO.Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var urlArchivo = $"/uploads/evidencias/{fileName}";
+                var command = new AgregarEvidenciaCommand(id, urlArchivo, file.FileName);
+
+                var resultado = await _mediator.Send(command);
+                return CreatedAtAction(nameof(SubirEvidencia), new { id = resultado.Id }, resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al guardar la evidencia física: {ex.Message}");
+            }
         }
     }
 
@@ -89,13 +168,21 @@ namespace MiCompuEdu.WebApi.Controllers
         Guid EquipoId,
         string FallaReportada,
         int? FallaCatalogoId,
-        string? Observaciones
+        string? Observaciones,
+        Guid? EscuelaId = null,
+        Guid? ProgramaEducativoId = null,
+        Guid? UbicacionDepositoId = null,
+        string? FirmaIngresoBase64 = null
     );
 
     public record UpdateEstadoRequest(
         string NuevoEstado,
         string? Diagnostico,
         string? AccionesRealizadas,
-        string? Observaciones
+        string? Observaciones,
+        string? ProveedorGarantia = null,
+        string? RemitoGarantia = null,
+        DateTime? FechaEsperadaGarantia = null,
+        string? FirmaEntregaBase64 = null
     );
 }

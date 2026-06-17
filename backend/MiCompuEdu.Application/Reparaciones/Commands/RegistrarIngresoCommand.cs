@@ -16,7 +16,11 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string FallaReportada,
         int? FallaCatalogoId,
         string? Observaciones,
-        Guid OperadorId
+        Guid OperadorId,
+        Guid? EscuelaId = null,
+        Guid? ProgramaEducativoId = null,
+        Guid? UbicacionDepositoId = null,
+        string? FirmaIngresoBase64 = null
     ) : IRequest<ReparacionDto>;
 
     public class RegistrarIngresoCommandHandler : IRequestHandler<RegistrarIngresoCommand, ReparacionDto>
@@ -41,6 +45,18 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 throw new KeyNotFoundException($"El equipo con ID {request.EquipoId} no existe.");
             }
 
+            // Actualizar Escuela del Beneficiario en caliente si viene en la request y no estaba cargada
+            if (request.EscuelaId.HasValue && equipo.Beneficiario.EscuelaId != request.EscuelaId.Value)
+            {
+                equipo.Beneficiario.EscuelaId = request.EscuelaId.Value;
+            }
+
+            // Actualizar Programa del Equipo en caliente si viene en la request y no estaba cargado
+            if (request.ProgramaEducativoId.HasValue && equipo.ProgramaEducativoId != request.ProgramaEducativoId.Value)
+            {
+                equipo.ProgramaEducativoId = request.ProgramaEducativoId.Value;
+            }
+
             var reparacion = new Reparacion
             {
                 Id = Guid.NewGuid(),
@@ -50,6 +66,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 FallaReportada = request.FallaReportada,
                 FallaCatalogoId = request.FallaCatalogoId,
                 Observaciones = request.Observaciones,
+                UbicacionDepositoId = request.UbicacionDepositoId,
+                FirmaIngresoBase64 = request.FirmaIngresoBase64,
                 FechaIngreso = DateTime.UtcNow
             };
 
@@ -72,7 +90,6 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Generar el PDF real y guardar su ruta
             try
             {
                 var pdfUrl = await _pdfGeneratorService.GenerateReceiptPdfAsync(reparacion);
@@ -83,6 +100,12 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 reparacion.ComprobanteUrl = $"/comprobantes/{reparacion.Id}.pdf";
             }
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (reparacion.UbicacionDepositoId.HasValue)
+            {
+                reparacion.UbicacionDeposito = await _context.UbicacionesDeposito
+                    .FirstOrDefaultAsync(u => u.Id == reparacion.UbicacionDepositoId.Value, cancellationToken);
+            }
 
             return new ReparacionDto
             {
@@ -99,7 +122,11 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 Observaciones = reparacion.Observaciones,
                 ComprobanteUrl = reparacion.ComprobanteUrl,
                 FechaIngreso = reparacion.FechaIngreso,
-                FechaEntrega = reparacion.FechaEntrega
+                FechaEntrega = reparacion.FechaEntrega,
+                UbicacionDepositoId = reparacion.UbicacionDepositoId,
+                UbicacionDepositoCodigo = reparacion.UbicacionDeposito?.Codigo,
+                FirmaIngresoBase64 = reparacion.FirmaIngresoBase64,
+                FirmaEntregaBase64 = reparacion.FirmaEntregaBase64
             };
         }
     }

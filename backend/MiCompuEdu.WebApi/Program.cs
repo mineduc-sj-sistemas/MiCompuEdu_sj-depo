@@ -21,6 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -61,6 +63,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Regis
 
 builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
 builder.Services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
+builder.Services.AddHostedService<NotificationWorkerService>();
 
 builder.Services.AddCors(options =>
 {
@@ -113,77 +116,158 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Seeding DB on startup
+// Seeding DB on startup with retry logic (robust Docker initialization)
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.EnsureCreated();
+    var maxRetryAttempts = 10;
+    var delayBetweenRetriesSeconds = 3;
 
-        if (!context.Usuarios.Any())
-        {
-            context.Usuarios.AddRange(
-                new Usuario
-                {
-                    Id = Guid.NewGuid(),
-                    NombreCompleto = "Administrador del Sistema",
-                    NombreUsuario = "admin",
-                    Email = "admin.micompuedu@sanjuan.edu.ar",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-                    Rol = UserRole.Administrador,
-                    Activo = true
-                },
-                new Usuario
-                {
-                    Id = Guid.NewGuid(),
-                    NombreCompleto = "Supervisor de Depósito",
-                    NombreUsuario = "supervisor",
-                    Email = "supervisor.micompuedu@sanjuan.edu.ar",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-                    Rol = UserRole.Supervisor,
-                    Activo = true
-                },
-                new Usuario
-                {
-                    Id = Guid.NewGuid(),
-                    NombreCompleto = "Técnico Reparador Alfa",
-                    NombreUsuario = "tecnico",
-                    Email = "tecnico1.micompuedu@sanjuan.edu.ar",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-                    Rol = UserRole.Tecnico,
-                    Activo = true
-                },
-                new Usuario
-                {
-                    Id = Guid.NewGuid(),
-                    NombreCompleto = "Operador de Recepción Uno",
-                    NombreUsuario = "operador",
-                    Email = "operador1.micompuedu@sanjuan.edu.ar",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-                    Rol = UserRole.Operador,
-                    Activo = true
-                }
-            );
-            context.SaveChanges();
-        }
-
-        if (!context.FallasCatalogo.Any())
-        {
-            context.FallasCatalogo.AddRange(
-                new FallaCatalogo { Nombre = "No Enciende", Descripcion = "El equipo no responde al botón de encendido." },
-                new FallaCatalogo { Nombre = "Pantalla Rota / Sin Imagen", Descripcion = "La pantalla LCD tiene fisuras físicas." },
-                new FallaCatalogo { Nombre = "Bloqueo de Seguridad Juana Manso", Descripcion = "Pantalla de bloqueo roja/azul de seguridad." },
-                new FallaCatalogo { Nombre = "Falla de Teclado", Descripcion = "Faltan teclas, están trabadas o varios caracteres no se digitan." },
-                new FallaCatalogo { Nombre = "Problemas de Sistema Operativo", Descripcion = "El sistema operativo no inicia." }
-            );
-            context.SaveChanges();
-        }
-    }
-    catch (Exception ex)
+    for (int attempt = 1; attempt <= maxRetryAttempts; attempt++)
     {
-        Console.WriteLine($"Error al sembrar base de datos: {ex.Message}");
+        try
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            context.Database.Migrate();
+
+            if (!context.Usuarios.Any())
+            {
+                context.Usuarios.AddRange(
+                    new Usuario
+                    {
+                        Id = Guid.NewGuid(),
+                        NombreCompleto = "Administrador del Sistema",
+                        NombreUsuario = "admin",
+                        Email = "admin.micompuedu@sanjuan.edu.ar",
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                        Rol = UserRole.Administrador,
+                        Activo = true
+                    },
+                    new Usuario
+                    {
+                        Id = Guid.NewGuid(),
+                        NombreCompleto = "Supervisor de Depósito",
+                        NombreUsuario = "supervisor",
+                        Email = "supervisor.micompuedu@sanjuan.edu.ar",
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                        Rol = UserRole.Supervisor,
+                        Activo = true
+                    },
+                    new Usuario
+                    {
+                        Id = Guid.NewGuid(),
+                        NombreCompleto = "Técnico Reparador Alfa",
+                        NombreUsuario = "tecnico",
+                        Email = "tecnico1.micompuedu@sanjuan.edu.ar",
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                        Rol = UserRole.Tecnico,
+                        Activo = true
+                    },
+                    new Usuario
+                    {
+                        Id = Guid.NewGuid(),
+                        NombreCompleto = "Operador de Recepción Uno",
+                        NombreUsuario = "operador",
+                        Email = "operador1.micompuedu@sanjuan.edu.ar",
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                        Rol = UserRole.Operador,
+                        Activo = true
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            if (!context.FallasCatalogo.Any())
+            {
+                context.FallasCatalogo.AddRange(
+                    new FallaCatalogo { Nombre = "No Enciende", Descripcion = "El equipo no responde al botón de encendido." },
+                    new FallaCatalogo { Nombre = "Pantalla Rota / Sin Imagen", Descripcion = "La pantalla LCD tiene fisuras físicas." },
+                    new FallaCatalogo { Nombre = "Bloqueo de Seguridad Juana Manso", Descripcion = "Pantalla de bloqueo roja/azul de seguridad." },
+                    new FallaCatalogo { Nombre = "Falla de Teclado", Descripcion = "Faltan teclas, están trabadas o varios caracteres no se digitan." },
+                    new FallaCatalogo { Nombre = "Problemas de Sistema Operativo", Descripcion = "El sistema operativo no inicia." }
+                );
+                context.SaveChanges();
+            }
+
+            if (!context.Escuelas.Any())
+            {
+                context.Escuelas.AddRange(
+                    new Escuela { Id = Guid.NewGuid(), Cue = "700123401", Nombre = "Escuela Normal Superior Sarmiento", Localidad = "Capital", Departamento = "Capital", Activo = true },
+                    new Escuela { Id = Guid.NewGuid(), Cue = "700567802", Nombre = "Escuela EPET N° 1 Rogelio Boero", Localidad = "Capital", Departamento = "Capital", Activo = true },
+                    new Escuela { Id = Guid.NewGuid(), Cue = "700987603", Nombre = "Colegio Provincial de Concepción", Localidad = "Concepción", Departamento = "Capital", Activo = true },
+                    new Escuela { Id = Guid.NewGuid(), Cue = "700432104", Nombre = "Colegio Nacional Monseñor Pablo Cabrera", Localidad = "Capital", Departamento = "Capital", Activo = true }
+                );
+                context.SaveChanges();
+            }
+
+            if (!context.UbicacionesDeposito.Any())
+            {
+                context.UbicacionesDeposito.AddRange(
+                    new UbicacionDeposito { Id = Guid.NewGuid(), Estanteria = "Estantería A", Fila = 1, Posicion = 1, Codigo = "EST-A-F1-P1", Activo = true },
+                    new UbicacionDeposito { Id = Guid.NewGuid(), Estanteria = "Estantería A", Fila = 1, Posicion = 2, Codigo = "EST-A-F1-P2", Activo = true },
+                    new UbicacionDeposito { Id = Guid.NewGuid(), Estanteria = "Estantería A", Fila = 2, Posicion = 1, Codigo = "EST-A-F2-P1", Activo = true },
+                    new UbicacionDeposito { Id = Guid.NewGuid(), Estanteria = "Estantería B", Fila = 1, Posicion = 1, Codigo = "EST-B-F1-P1", Activo = true },
+                    new UbicacionDeposito { Id = Guid.NewGuid(), Estanteria = "Estantería B", Fila = 2, Posicion = 3, Codigo = "EST-B-F2-P3", Activo = true }
+                );
+                context.SaveChanges();
+            }
+
+            if (!context.ProgramasEducativos.Any())
+            {
+                context.ProgramasEducativos.AddRange(
+                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Conectar Igualdad", Descripcion = "Programa nacional de distribución de netbooks para educación secundaria.", Activo = true },
+                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Juana Manso", Descripcion = "Plan federal Juana Manso de conectividad y equipamiento escolar.", Activo = true },
+                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "San Juan Tec", Descripcion = "Iniciativa provincial para el fortalecimiento de habilidades tecnológicas.", Activo = true }
+                );
+                context.SaveChanges();
+            }
+
+            if (!context.Beneficiarios.Any())
+            {
+                var escuela = context.Escuelas.FirstOrDefault(e => e.Cue == "700123401");
+                var programa = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "Juana Manso");
+
+                var beneficiarioId = Guid.NewGuid();
+                var beneficiario = new Beneficiario
+                {
+                    Id = beneficiarioId,
+                    Dni = "42345678",
+                    Nombre = "Juan",
+                    Apellido = "Pérez",
+                    Telefono = "+542644123456",
+                    Email = "juanperez@gmail.com",
+                    EscuelaId = escuela?.Id
+                };
+
+                var equipo = new Equipo
+                {
+                    Id = Guid.NewGuid(),
+                    NumeroSerie = "SERIE12345678X",
+                    Marca = "Exo",
+                    Modelo = "Juana Manso v2",
+                    CredencialesOffice = "juan.perez.sj / passOffice2026",
+                    BeneficiarioId = beneficiarioId,
+                    ProgramaEducativoId = programa?.Id
+                };
+
+                context.Beneficiarios.Add(beneficiario);
+                context.Equipos.Add(equipo);
+                context.SaveChanges();
+            }
+
+            Console.WriteLine("Base de datos conectada e inicializada con éxito.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Intento {attempt}/{maxRetryAttempts} de inicialización de BD falló: {ex.Message}");
+            if (attempt == maxRetryAttempts)
+            {
+                Console.WriteLine("Se alcanzó el número máximo de intentos de conexión. Terminando.");
+                throw;
+            }
+            System.Threading.Thread.Sleep(delayBetweenRetriesSeconds * 1000);
+        }
     }
 }
 

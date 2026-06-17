@@ -2,6 +2,19 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "BCrypt.Net-Next/4.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "FluentValidation/11.12.0": {
         "type": "package",
         "compile": {
@@ -272,6 +285,37 @@
     }
   },
   "libraries": {
+    "BCrypt.Net-Next/4.0.3": {
+      "sha512": "W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
+      "type": "package",
+      "path": "bcrypt.net-next/4.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bcrypt.net-next.4.0.3.nupkg.sha512",
+        "bcrypt.net-next.nuspec",
+        "ico.png",
+        "lib/net20/BCrypt.Net-Next.dll",
+        "lib/net20/BCrypt.Net-Next.xml",
+        "lib/net35/BCrypt.Net-Next.dll",
+        "lib/net35/BCrypt.Net-Next.xml",
+        "lib/net462/BCrypt.Net-Next.dll",
+        "lib/net462/BCrypt.Net-Next.xml",
+        "lib/net472/BCrypt.Net-Next.dll",
+        "lib/net472/BCrypt.Net-Next.xml",
+        "lib/net48/BCrypt.Net-Next.dll",
+        "lib/net48/BCrypt.Net-Next.xml",
+        "lib/net5.0/BCrypt.Net-Next.dll",
+        "lib/net5.0/BCrypt.Net-Next.xml",
+        "lib/net6.0/BCrypt.Net-Next.dll",
+        "lib/net6.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.0/BCrypt.Net-Next.dll",
+        "lib/netstandard2.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.1/BCrypt.Net-Next.dll",
+        "lib/netstandard2.1/BCrypt.Net-Next.xml",
+        "readme.md"
+      ]
+    },
     "FluentValidation/11.12.0": {
       "sha512": "Wim3rI1nGZKO5S/lgJ0ZpD3W/uu1CECoJ8pETzC8av34ejr+jCDr4paKhSJRG0Ltcv8UjdxtYCynG+RUEfEUDA==",
       "type": "package",
@@ -705,6 +749,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "BCrypt.Net-Next >= 4.0.3",
       "FluentValidation.DependencyInjectionExtensions >= 11.*",
       "MediatR >= 12.*",
       "MiCompuEdu.Domain >= 1.0.0",
@@ -712,19 +757,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\leone\\.nuget\\packages\\": {}
+    "C:\\Users\\Docente\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Application\\MiCompuEdu.Application.csproj",
+      "projectUniqueName": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Application\\MiCompuEdu.Application.csproj",
       "projectName": "MiCompuEdu.Application",
-      "projectPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Application\\MiCompuEdu.Application.csproj",
-      "packagesPath": "C:\\Users\\leone\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Application\\obj\\",
+      "projectPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Application\\MiCompuEdu.Application.csproj",
+      "packagesPath": "C:\\Users\\Docente\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\leone\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Docente\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -736,8 +781,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj": {
-              "projectPath": "c:\\Users\\leone\\OneDrive\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj"
+            "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj": {
+              "projectPath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.Domain\\MiCompuEdu.Domain.csproj"
             }
           }
         }
@@ -757,6 +802,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "BCrypt.Net-Next": {
+            "target": "Package",
+            "version": "[4.0.3, )"
+          },
           "FluentValidation.DependencyInjectionExtensions": {
             "target": "Package",
             "version": "[11.*, )"
@@ -786,7 +835,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

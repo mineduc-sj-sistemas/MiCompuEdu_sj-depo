@@ -18,5 +18,28 @@ namespace MiCompuEdu.Application.DTOs
         public string? ComprobanteUrl { get; set; }
         public DateTime FechaIngreso { get; set; }
         public DateTime? FechaEntrega { get; set; }
+        public Guid? EscuelaId { get; set; }
+        public string? EscuelaNombre { get; set; }
+        public Guid? ProgramaEducativoId { get; set; }
+        public string? ProgramaEducativoNombre { get; set; }
+        public Guid? TecnicoAsignadoId { get; set; }
+        public string? TecnicoAsignadoNombre { get; set; }
+        public int? FallaCatalogoId { get; set; }
+        public string? FallaCatalogoNombre { get; set; }
+        public Guid? UbicacionDepositoId { get; set; }
+        public string? UbicacionDepositoCodigo { get; set; }
+        public string? ProveedorGarantia { get; set; }
+        public string? RemitoGarantia { get; set; }
+        public DateTime? FechaEsperadaGarantia { get; set; }
+        public string? FirmaIngresoBase64 { get; set; }
+        public string? FirmaEntregaBase64 { get; set; }
+        public System.Collections.Generic.List<EvidenciaDto> Evidencias { get; set; } = new();
+    }
+
+    public class EvidenciaDto
+    {
+        public Guid Id { get; set; }
+        public string UrlArchivo { get; set; } = string.Empty;
+        public string NombreArchivo { get; set; } = string.Empty;
     }
 }

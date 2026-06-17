@@ -9,5 +9,8 @@ namespace MiCompuEdu.Application.DTOs
         public string Marca { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
         public string? CredencialesOffice { get; set; }
+        
+        public Guid? ProgramaEducativoId { get; set; }
+        public string? ProgramaEducativoNombre { get; set; }
     }
 }

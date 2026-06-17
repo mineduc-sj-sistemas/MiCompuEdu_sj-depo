@@ -5,11 +5,9 @@ services:
     image: postgres:15-alpine
     container_name: micompuedu_db
     environment:
-      POSTGRES_DB: micompuedu_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
@@ -20,10 +18,14 @@ services:
       dockerfile: Dockerfile
     container_name: micompuedu_backend
     environment:
-      - ConnectionStrings__DefaultConnection=Host=database;Database=micompuedu_db;Username=postgres;Password=postgres
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "5110:8080"
+      - ConnectionStrings__DefaultConnection=Host=database;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+    volumes:
+      - comprobantes_data:/app/wwwroot/comprobantes
+      - evidencias_data:/app/wwwroot/uploads/evidencias
     depends_on:
       - database
     restart: always
@@ -33,11 +35,24 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: micompuedu_frontend
-    ports:
-      - "5173:80"
     depends_on:
+      - backend
+    restart: always
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: micompuedu_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
       - backend
     restart: always
 
 volumes:
   postgres_data:
+  comprobantes_data:
+  evidencias_data:

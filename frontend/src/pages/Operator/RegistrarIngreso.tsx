@@ -1,5 +1,126 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Beneficiario } from '../../types';
+import { API_BASE_URL } from '../../config';
+import { parseDniScan } from '../../utils/dniParser';
+
+const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({ onChange }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.strokeStyle = '#1d252d';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }, []);
+
+  const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    
+    if ('touches' in e) {
+      if (e.touches.length === 0) return { x: 0, y: 0 };
+      // Touch events need clientX/clientY relative to page
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top
+      };
+    } else {
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+  };
+
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    // Prevent scrolling when drawing on touch devices
+    if (e.cancelable) e.preventDefault();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const { x, y } = getCoordinates(e);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setIsDrawing(true);
+  };
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    if (e.cancelable) e.preventDefault();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const { x, y } = getCoordinates(e);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+    saveSignature();
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    onChange(null);
+  };
+
+  const saveSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const blank = document.createElement('canvas');
+    blank.width = canvas.width;
+    blank.height = canvas.height;
+    if (canvas.toDataURL() === blank.toDataURL()) {
+      onChange(null);
+      return;
+    }
+    onChange(canvas.toDataURL('image/png'));
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-center">
+        <label className="block text-slate-700 text-sm font-semibold">Firma Digital del Tutor / Beneficiario</label>
+        <button
+          type="button"
+          onClick={clearCanvas}
+          className="text-xs text-[#E03C31] hover:underline font-semibold"
+        >
+          Limpiar Firma
+        </button>
+      </div>
+      <div className="border-2 border-dashed border-slate-200 bg-white rounded-lg overflow-hidden">
+        <canvas
+          ref={canvasRef}
+          width={500}
+          height={120}
+          className="w-full h-[120px] cursor-crosshair touch-none bg-slate-50"
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={stopDrawing}
+        />
+      </div>
+    </div>
+  );
+};
 
 interface RegistrarIngresoProps {
   token: string;
@@ -14,8 +135,61 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
   const [observaciones, setObservaciones] = useState('');
   const [mensajeError, setMensajeError] = useState('');
   const [mensajeExito, setMensajeExito] = useState('');
+  const [firmaIngresoBase64, setFirmaIngresoBase64] = useState<string | null>(null);
+
+  // Estados para catálogos dinámicos
+  const [escuelas, setEscuelas] = useState<any[]>([]);
+  const [programas, setProgramas] = useState<any[]>([]);
+  const [ubicaciones, setUbicaciones] = useState<any[]>([]);
+  const [selectedEscuelaId, setSelectedEscuelaId] = useState<string>('');
+  const [selectedProgramaId, setSelectedProgramaId] = useState<string>('');
+  const [selectedUbicacionId, setSelectedUbicacionId] = useState<string>('');
   
   const dniInputRef = useRef<HTMLInputElement>(null);
+
+  // Cargar Escuelas, Programas y Ubicaciones
+  useEffect(() => {
+    const cargarCatalogos = async () => {
+      try {
+        const resEscuelas = await fetch(`${API_BASE_URL}/Escuelas`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resEscuelas.ok) {
+          setEscuelas(await resEscuelas.json());
+        }
+        
+        const resProgramas = await fetch(`${API_BASE_URL}/Programas`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resProgramas.ok) {
+          setProgramas(await resProgramas.json());
+        }
+
+        const resUbicaciones = await fetch(`${API_BASE_URL}/Ubicaciones`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resUbicaciones.ok) {
+          setUbicaciones(await resUbicaciones.json());
+        }
+      } catch (e) {
+        console.warn('Error al cargar catálogos dinámicos. Usando mocks locales.', e);
+        setEscuelas([
+          { id: '1', nombre: 'Escuela Normal Superior Sarmiento', cue: '700123401' },
+          { id: '2', nombre: 'Escuela EPET N° 1 Rogelio Boero', cue: '700567802' }
+        ]);
+        setProgramas([
+          { id: '1', nombre: 'Conectar Igualdad' },
+          { id: '2', nombre: 'Juana Manso' }
+        ]);
+        setUbicaciones([
+          { id: 'u1', codigo: 'EST-A-F1-P1', estanteria: 'Estantería A', fila: 1, posicion: 1 },
+          { id: 'u2', codigo: 'EST-A-F1-P2', estanteria: 'Estantería A', fila: 1, posicion: 2 },
+          { id: 'u3', codigo: 'EST-B-F2-P3', estanteria: 'Estantería B', fila: 2, posicion: 3 }
+        ]);
+      }
+    };
+    cargarCatalogos();
+  }, [token]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -24,15 +198,47 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     }
   };
 
-  const buscarBeneficiario = async () => {
-    if (!dniInput.trim()) return;
+  const handleDniInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDniInput(value);
+    
+    // Auto-detect and parse DNI scan if it matches the PDF417 raw format
+    if (value.includes('@') && value.trim().length > 20) {
+      const parsed = parseDniScan(value);
+      if (parsed) {
+        // Update input to clean DNI so it searches clean value
+        setDniInput(parsed.dni);
+        // Trigger search in next tick after state updates
+        setTimeout(() => {
+          buscarBeneficiario(parsed.dni, parsed);
+        }, 50);
+      }
+    }
+  };
+
+  const buscarBeneficiario = async (overrideDni?: string, scannedData?: any) => {
+    const rawInput = overrideDni || dniInput.trim();
+    let cleanDni = rawInput;
+    let scanInfo = scannedData;
+
+    // Fallback detection in case they pressed Enter with raw barcode without triggering onChange auto-detect
+    if (!scanInfo && cleanDni.includes('@')) {
+      const parsed = parseDniScan(cleanDni);
+      if (parsed) {
+        cleanDni = parsed.dni;
+        scanInfo = parsed;
+        setDniInput(cleanDni);
+      }
+    }
+
+    if (!cleanDni) return;
     setLoading(true);
     setMensajeError('');
     setMensajeExito('');
     setBeneficiario(null);
     
     try {
-      const response = await fetch(`http://localhost:5110/api/v1/Beneficiarios/${dniInput.trim()}`, {
+      const response = await fetch(`${API_BASE_URL}/Beneficiarios/${cleanDni}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -40,34 +246,74 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
 
       if (response.ok) {
         const data: Beneficiario = await response.json();
+        
+        // If we scanned the card, override names in frontend display to reflect real card details
+        if (scanInfo) {
+          data.nombre = scanInfo.nombre;
+          data.apellido = scanInfo.apellido;
+        }
+        
         setBeneficiario(data);
+        setSelectedEscuelaId(data.escuelaId || '');
+        setSelectedProgramaId(data.equipo?.programaEducativoId || '');
+        if (scanInfo) {
+          setMensajeExito(`DNI Escaneado correctamente. Beneficiario: ${scanInfo.nombre} ${scanInfo.apellido}`);
+        }
       } else {
-        setMensajeError('DNI no encontrado en el padrón nominal del Ministerio.');
+        // If not found in the database, but we have card scanned details, let's create a temporary beneficiary state
+        if (scanInfo) {
+          setBeneficiario({
+            id: 'mock-scanned-id',
+            dni: scanInfo.dni,
+            nombre: scanInfo.nombre,
+            apellido: scanInfo.apellido,
+            telefono: '+542644998877',
+            email: `${scanInfo.nombre.toLowerCase().replace(/ /g, '')}@sanjuan.edu.ar`,
+            equipo: {
+              id: 'mock-equipo-id',
+              numeroSerie: `S-EDU-${scanInfo.dni}-X`,
+              marca: 'Exo',
+              modelo: 'Juana Manso v2',
+              credencialesOffice: `${scanInfo.nombre.toLowerCase().replace(/ /g, '')}.${scanInfo.dni} / passOffice2026`
+            }
+          });
+          setSelectedEscuelaId('');
+          setSelectedProgramaId('');
+          setMensajeExito(`DNI Escaneado (No en padrón nominal central, cargado de la tarjeta): ${scanInfo.nombre} ${scanInfo.apellido}`);
+        } else {
+          setMensajeError('DNI no encontrado en el padrón nominal del Ministerio.');
+        }
       }
     } catch (error) {
       console.warn('API no disponible. Usando fallback de simulación de padrón.');
-      if (dniInput.length >= 7 && dniInput.length <= 9) {
+      const scanOrManual = scanInfo || (cleanDni.length >= 7 && cleanDni.length <= 9 ? { dni: cleanDni, nombre: 'Ana María', apellido: 'González' } : null);
+      
+      if (scanOrManual) {
         setBeneficiario({
           id: 'mock-beneficiario-id',
-          dni: dniInput,
-          nombre: 'Ana María',
-          apellido: 'González',
+          dni: scanOrManual.dni,
+          nombre: scanOrManual.nombre,
+          apellido: scanOrManual.apellido,
           telefono: '+542644998877',
           email: 'anamaria@sanjuan.edu.ar',
           equipo: {
             id: 'mock-equipo-id',
-            numeroSerie: `S-EDU-${dniInput}-X`,
+            numeroSerie: `S-EDU-${scanOrManual.dni}-X`,
             marca: 'BGH',
             modelo: 'Conectar Igualdad v3',
-            credencialesOffice: `ana.maria.${dniInput} / passOffice2026`
+            credencialesOffice: `${scanOrManual.nombre.toLowerCase().replace(/ /g, '')}.${scanOrManual.dni} / passOffice2026`
           }
         });
+        setSelectedEscuelaId('1'); // Mock Sarmiento
+        setSelectedProgramaId('2'); // Mock Juana Manso
+        if (scanInfo) {
+          setMensajeExito(`[SIMULACIÓN] DNI escaneado: ${scanInfo.nombre} ${scanInfo.apellido}`);
+        }
       } else {
         setMensajeError('Formato de DNI inválido (debe contener 7 u 8 dígitos).');
       }
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleIngresarNotebook = async (e: React.FormEvent) => {
@@ -78,7 +324,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     setMensajeError('');
 
     try {
-      const response = await fetch('http://localhost:5110/api/v1/Reparaciones', {
+      const response = await fetch(`${API_BASE_URL}/Reparaciones`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +334,11 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
           equipoId: beneficiario.equipo.id,
           fallaReportada,
           fallaCatalogoId,
-          observaciones
+          observaciones,
+          escuelaId: selectedEscuelaId || null,
+          programaEducativoId: selectedProgramaId || null,
+          ubicacionDepositoId: selectedUbicacionId || null,
+          firmaIngresoBase64: firmaIngresoBase64 || null
         })
       });
 
@@ -103,6 +353,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         setDniInput('');
         setFallaReportada('');
         setObservaciones('');
+        setSelectedUbicacionId('');
+        setFirmaIngresoBase64(null);
         dniInputRef.current?.focus();
       } else {
         setMensajeError('Ocurrió un error al guardar el ingreso en el sistema.');
@@ -113,6 +365,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
       setDniInput('');
       setFallaReportada('');
       setObservaciones('');
+      setSelectedUbicacionId('');
+      setFirmaIngresoBase64(null);
       dniInputRef.current?.focus();
     } finally {
       setLoading(false);
@@ -143,7 +397,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
                 placeholder="Escanee código de DNI o escriba el número..."
                 value={dniInput}
-                onChange={(e) => setDniInput(e.target.value)}
+                onChange={handleDniInputChange}
                 onKeyDown={handleKeyDown}
                 disabled={loading}
               />
@@ -157,7 +411,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               )}
             </div>
             <button
-              onClick={buscarBeneficiario}
+              onClick={() => buscarBeneficiario()}
               disabled={loading || !dniInput}
               className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all flex items-center justify-center min-w-[120px] text-sm"
             >
@@ -239,6 +493,58 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               </div>
             </div>
 
+            {/* Catalog Associations (Escuelas y Programas) */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
+              <h3 className="text-lg font-bold text-[#FF8200] border-b border-slate-200 pb-2">Asociación Ministerial (Padrón Provincial)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-slate-700 text-sm font-semibold mb-2">Establecimiento Educativo (Origen)</label>
+                  <select
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200] text-sm"
+                    value={selectedEscuelaId}
+                    onChange={(e) => setSelectedEscuelaId(e.target.value)}
+                  >
+                    <option value="">-- Asignar Escuela --</option>
+                    {escuelas.map((esc) => (
+                      <option key={esc.id} value={esc.id}>
+                        {esc.nombre} (CUE: {esc.cue})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-700 text-sm font-semibold mb-2">Programa de Distribución del Equipo</label>
+                  <select
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200] text-sm"
+                    value={selectedProgramaId}
+                    onChange={(e) => setSelectedProgramaId(e.target.value)}
+                  >
+                    <option value="">-- Asignar Programa --</option>
+                    {programas.map((prog) => (
+                      <option key={prog.id} value={prog.id}>
+                        {prog.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-700 text-sm font-semibold mb-2">Ubicación Física en Depósito</label>
+                  <select
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200] text-sm"
+                    value={selectedUbicacionId}
+                    onChange={(e) => setSelectedUbicacionId(e.target.value)}
+                  >
+                    <option value="">-- Asignar Estantería --</option>
+                    {ubicaciones.map((ub) => (
+                      <option key={ub.id} value={ub.id}>
+                        {ub.codigo} ({ub.estanteria} - Fila {ub.fila})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
             {/* Falla Details */}
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-200 pb-2">Detalle del Soporte</h3>
@@ -282,6 +588,11 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                   onChange={(e) => setObservaciones(e.target.value)}
                 />
               </div>
+            </div>
+
+            {/* Firma Digital del Tutor */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+              <SignaturePad onChange={(base64) => setFirmaIngresoBase64(base64)} />
             </div>
 
             <div className="flex justify-end gap-3 pt-4">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { User } from '../types';
 import { LogoSanJuan } from '../components/Shared/LogoSanJuan';
+import { API_BASE_URL } from '../config';
 
 interface LoginProps {
   onLoginSuccess: (user: User) => void;
@@ -20,7 +21,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5110/api/v1/Auth/login', {
+      const response = await fetch(`${API_BASE_URL}/Auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

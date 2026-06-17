@@ -22,10 +22,20 @@ namespace MiCompuEdu.Domain.Entities
         public int? FallaCatalogoId { get; set; }
         public FallaCatalogo? FallaCatalogo { get; set; }
 
+        public Guid? UbicacionDepositoId { get; set; }
+        public UbicacionDeposito? UbicacionDeposito { get; set; }
+
         public string? Diagnostico { get; set; }
         public string? AccionesRealizadas { get; set; }
         public string? Observaciones { get; set; }
         public string? ComprobanteUrl { get; set; }
+
+        public string? ProveedorGarantia { get; set; }
+        public string? RemitoGarantia { get; set; }
+        public DateTime? FechaEsperadaGarantia { get; set; }
+
+        public string? FirmaIngresoBase64 { get; set; }
+        public string? FirmaEntregaBase64 { get; set; }
 
         public DateTime FechaIngreso { get; set; } = DateTime.UtcNow;
         public DateTime? FechaLimite { get; set; }

@@ -16,6 +16,11 @@ namespace MiCompuEdu.Application.Common.Interfaces
         DbSet<EvidenciaReparacion> EvidenciasReparacion { get; }
         DbSet<Notificacion> Notificaciones { get; }
 
+        DbSet<Escuela> Escuelas { get; }
+        DbSet<ProgramaEducativo> ProgramasEducativos { get; }
+        DbSet<AuditLog> AuditLogs { get; }
+        DbSet<UbicacionDeposito> UbicacionesDeposito { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

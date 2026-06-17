@@ -11,7 +11,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MiCompuEdu.Application.Reparaciones.Queries
 {
-    public record GetReparacionesQuery(string? Estado, string? TerminoBusqueda) : IRequest<List<ReparacionDto>>;
+    public record GetReparacionesQuery(
+        string? Estado, 
+        string? TerminoBusqueda,
+        Guid? EscuelaId = null,
+        Guid? ProgramaEducativoId = null,
+        Guid? TecnicoAsignadoId = null,
+        int? FallaCatalogoId = null,
+        DateTime? FechaInicio = null,
+        DateTime? FechaFin = null
+    ) : IRequest<List<ReparacionDto>>;
 
     public class GetReparacionesQueryHandler : IRequestHandler<GetReparacionesQuery, List<ReparacionDto>>
     {
@@ -26,7 +35,14 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
         {
             var query = _context.Reparaciones
                 .Include(r => r.Equipo)
-                .ThenInclude(e => e.Beneficiario)
+                    .ThenInclude(e => e.Beneficiario)
+                        .ThenInclude(b => b.Escuela)
+                .Include(r => r.Equipo)
+                    .ThenInclude(e => e.ProgramaEducativo)
+                .Include(r => r.TecnicoAsignado)
+                .Include(r => r.FallaCatalogo)
+                .Include(r => r.UbicacionDeposito)
+                .Include(r => r.EvidenciasReparacion)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Estado) && Enum.TryParse<EstadoEquipo>(request.Estado, out var parsedEstado))
@@ -43,6 +59,36 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
                     r.Equipo.Beneficiario.Nombre.ToLower().Contains(term) ||
                     r.Equipo.Beneficiario.Apellido.ToLower().Contains(term)
                 );
+            }
+
+            if (request.EscuelaId.HasValue)
+            {
+                query = query.Where(r => r.Equipo.Beneficiario.EscuelaId == request.EscuelaId.Value);
+            }
+
+            if (request.ProgramaEducativoId.HasValue)
+            {
+                query = query.Where(r => r.Equipo.ProgramaEducativoId == request.ProgramaEducativoId.Value);
+            }
+
+            if (request.TecnicoAsignadoId.HasValue)
+            {
+                query = query.Where(r => r.TecnicoAsignadoId == request.TecnicoAsignadoId.Value);
+            }
+
+            if (request.FallaCatalogoId.HasValue)
+            {
+                query = query.Where(r => r.FallaCatalogoId == request.FallaCatalogoId.Value);
+            }
+
+            if (request.FechaInicio.HasValue)
+            {
+                query = query.Where(r => r.FechaIngreso >= request.FechaInicio.Value);
+            }
+
+            if (request.FechaFin.HasValue)
+            {
+                query = query.Where(r => r.FechaIngreso <= request.FechaFin.Value);
             }
 
             var list = await query
@@ -64,7 +110,28 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
                 Observaciones = r.Observaciones,
                 ComprobanteUrl = r.ComprobanteUrl,
                 FechaIngreso = r.FechaIngreso,
-                FechaEntrega = r.FechaEntrega
+                FechaEntrega = r.FechaEntrega,
+                EscuelaId = r.Equipo.Beneficiario.EscuelaId,
+                EscuelaNombre = r.Equipo.Beneficiario.Escuela?.Nombre,
+                ProgramaEducativoId = r.Equipo.ProgramaEducativoId,
+                ProgramaEducativoNombre = r.Equipo.ProgramaEducativo?.Nombre,
+                TecnicoAsignadoId = r.TecnicoAsignadoId,
+                TecnicoAsignadoNombre = r.TecnicoAsignado?.NombreCompleto,
+                FallaCatalogoId = r.FallaCatalogoId,
+                FallaCatalogoNombre = r.FallaCatalogo?.Nombre,
+                UbicacionDepositoId = r.UbicacionDepositoId,
+                UbicacionDepositoCodigo = r.UbicacionDeposito?.Codigo,
+                ProveedorGarantia = r.ProveedorGarantia,
+                RemitoGarantia = r.RemitoGarantia,
+                FechaEsperadaGarantia = r.FechaEsperadaGarantia,
+                FirmaIngresoBase64 = r.FirmaIngresoBase64,
+                FirmaEntregaBase64 = r.FirmaEntregaBase64,
+                Evidencias = r.EvidenciasReparacion.Select(ev => new EvidenciaDto
+                {
+                    Id = ev.Id,
+                    UrlArchivo = ev.UrlArchivo,
+                    NombreArchivo = ev.NombreArchivo
+                }).ToList()
             }).ToList();
         }
     }

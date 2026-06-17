@@ -12,6 +12,8 @@ export interface Equipo {
   marca: string;
   modelo: string;
   credencialesOffice?: string;
+  programaEducativoId?: string;
+  programaEducativoNombre?: string;
 }
 
 export interface Beneficiario {
@@ -21,6 +23,9 @@ export interface Beneficiario {
   apellido: string;
   telefono: string;
   email: string;
+  escuelaId?: string;
+  escuelaNombre?: string;
+  escuelaCue?: string;
   equipo?: Equipo;
 }
 
@@ -38,11 +43,35 @@ export interface Reparacion {
   observaciones?: string;
   comprobanteUrl?: string;
   fechaIngreso: string;
+  evidencias?: any[];
   fechaEntrega?: string;
+  ubicacionDepositoId?: string;
+  ubicacionDepositoCodigo?: string;
+  proveedorGarantia?: string;
+  remitoGarantia?: string;
+  fechaEsperadaGarantia?: string;
+  firmaIngresoBase64?: string;
+  firmaEntregaBase64?: string;
 }
 
 export interface FallaFrecuente {
   falla: string;
+  cantidad: number;
+}
+
+export interface ReparacionEscuela {
+  escuela: string;
+  cantidad: number;
+}
+
+export interface EfectividadTecnico {
+  tecnico: string;
+  reparados: number;
+  tiempoPromedioDias: number;
+}
+
+export interface ReparacionesMensuales {
+  mes: string;
   cantidad: number;
 }
 
@@ -53,6 +82,9 @@ export interface DashboardStats {
   tiempoPromedioReparacionDias: number;
   fallasMasFrecuentes: FallaFrecuente[];
   equiposPorEstado: Record<string, number>;
+  reparacionesPorEscuela: ReparacionEscuela[];
+  efectividadTecnicos: EfectividadTecnico[];
+  reparacionesPorMes: ReparacionesMensuales[];
 }
 
 export interface ManagedUser {

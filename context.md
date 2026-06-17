@@ -46,18 +46,24 @@ El sistema se compone de dos componentes principales (Backend y Frontend):
 
 ---
 
-## 3. Modelo de Datos (DER)
+## 3. Modelo de Datos y Esquema PostgreSQL
 
-Las entidades clave definidas en `MiCompuEdu.Domain/Entities` y mapeadas en `ApplicationDbContext` son:
+El esquema de base de datos está diseñado bajo PostgreSQL, utilizando **EF Core Migrations** para versionamiento de esquema. Se cuenta con **12 índices de rendimiento estratégicos** (incluyendo índices parciales para colas de trabajo activas y cola de envío de notificaciones pendientes) y **constraints de integridad referencial** a nivel físico (`CHECK`, `ON DELETE RESTRICT/CASCADE`).
 
-- **Usuario**: Representa al personal del depósito. Roles: `Administrador`, `Supervisor`, `Tecnico`, `Operador`.
-- **Beneficiario**: Tutor o estudiante titular del dispositivo (contiene DNI único, nombre, teléfono, email).
-- **Equipo**: Dispositivo asignado al beneficiario (número de serie único, marca, modelo, credenciales).
-- **Reparacion**: Registro de la orden de soporte. Almacena estado actual, falla reportada, diagnóstico, acciones realizadas e historial.
-- **FallaCatalogo**: Estandarización de fallas comunes para tipificar los diagnósticos.
-- **HistorialMovimiento**: Registro inmutable de cada cambio de estado, fecha y usuario responsable de la acción.
-- **EvidenciaReparacion**: Imágenes adjuntas por el técnico para justificar componentes dañados o reparaciones realizadas.
-- **Notificacion**: Registro de los mensajes automáticos (WhatsApp) encolados y enviados.
+### Tablas Principales:
+- **usuarios**: Cuentas del personal. Contiene índices únicos en `nombre_usuario` y `email`. Validación por `CHECK` en el rol.
+- **beneficiarios**: Tutores/alumnos. Contiene índice único en `dni` e índice compuesto en `(apellido, nombre)`. FK opcional a `escuelas`.
+- **equipos**: Netbooks/computadoras. Índice único en `numero_serie`. FK restrict a `beneficiarios`. FK opcional a `programas_educativos`.
+- **fallas_catalogo**: Catálogo estandarizado de fallas (PK autoincremental `SERIAL`). Índice único en `nombre`.
+- **reparaciones**: Órdenes de servicio. Índice parcial `ix_reparaciones_estado_activo` (`WHERE estado != 'Entregado'`) para optimizar listados operativos.
+- **historial_movimientos**: Trazabilidad cronológica. Índice compuesto descendente en `(reparacion_id, fecha_movimiento DESC)`. FK cascaded a `reparaciones`.
+- **evidencias_reparacion**: Adjuntos y fotos técnicas cargadas. FK cascaded a `reparaciones`.
+- **notificaciones**: Historial y cola de envío. Índice parcial `ix_notificaciones_pendientes` (`WHERE estado = 'Pendiente'`) para el despachador.
+
+### Tablas de Escalabilidad Futura (Creadas y soportadas en el modelo):
+- **escuelas**: Catálogo provincial de establecimientos (CUE único, nombre, localidad, departamento). Vincula beneficiarios a su colegio.
+- **programas_educativos**: Programas de entrega (Conectar Igualdad, Juana Manso, etc.). Vincula equipos con su lote u origen del programa.
+- **audit_log**: Log global inmutable de auditoría a nivel de fila. Utiliza tipos `JSONB` de PostgreSQL para registrar `datos_anteriores` y `datos_nuevos` en cualquier acción (INSERT, UPDATE, DELETE).
 
 ---
 
@@ -68,7 +74,7 @@ MiCompuEdu_sj-depo/
 ├── backend/
 │   ├── MiCompuEdu.Domain/           # Entidades, Enums y Lógica pura
 │   ├── MiCompuEdu.Application/      # DTOs, Interfaces, CQRS (Commands/Queries)
-│   ├── MiCompuEdu.Infrastructure/   # DB Context, Servicios (WhatsApp, PDF)
+│   ├── MiCompuEdu.Infrastructure/   # DB Context, Servicios (WhatsApp, PDF), Migrations
 │   ├── MiCompuEdu.WebApi/           # API Controllers, Middlewares, Program.cs
 │   └── Dockerfile                   # Configuración de compilación y empaquetado .NET
 ├── frontend/
@@ -82,7 +88,7 @@ MiCompuEdu_sj-depo/
 │   │   └── main.tsx                 # Punto de entrada de React
 │   ├── Dockerfile                   # Configuración de empaquetado de producción
 │   └── nginx.conf                   # Servidor web para SPA routing
-├── docs/                            # Planos de arquitectura, SQL, y documentación
+├── docs/                            # Planos de arquitectura, init-database.sql DDL, y documentación
 ├── docker-compose.yml               # Orquestación de Postgres, Backend y Frontend
 └── context.md                       # Este archivo de contexto
 ```
@@ -97,7 +103,7 @@ En el inicio de la API (`Program.cs`), si la base de datos está vacía, se siem
 |---|---|---|---|
 | Administrador del Sistema | `admin` | Administrador | Configuración global y gestión de usuarios. |
 | Supervisor de Depósito | `supervisor` | Supervisor | Asignación de tareas y dashboard de control. |
-| Técnico Reparador Alfa | `tecnico` | Tecnico | Diagnóstico, reparación y carga de evidencias. |
+| Técnico Reparador Alfa | `tecnico` | Técnico | Diagnóstico, reparación y carga de evidencias. |
 | Operador de Recepción Uno | `operador` | Operador | Registro de ingresos y entregas físicas. |
 
 Fallas sembradas en el catálogo inicial:
@@ -134,8 +140,11 @@ Las rutas de la API están prefijadas con `/api/v1`.
 
 ## 7. Registro de Cambios Recientes
 
+- **2026-06-17**: Implementación del **Módulo de Gestión de Garantías Externas y Derivación (Paso 6)**: adición de las columnas `ProveedorGarantia`, `RemitoGarantia` y `FechaEsperadaGarantia` a la tabla `reparaciones` con su correspondiente migración EF Core. Actualización de controladores y comandos MediatR. Creación del conmutador de **Modo Masivo** en el [PanelTecnico.tsx](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/frontend/src/pages/Technician/PanelTecnico.tsx) para derivación en lote y generación de remito oficial imprimible. Validación exitosa en el pipeline de tests automatizados (`test-endpoints.js`).
+- **2026-06-17**: Rediseño integral de la base de datos PostgreSQL. Migración de `EnsureCreated()` a **EF Core Migrations** versionadas. Configuración del esquema robusto con 12 índices de rendimiento (parciales y compuestos) y constraints de integridad a nivel físico. Creación de nuevas entidades de dominio y tablas de escalabilidad (`escuelas`, `programas_educativos`) preparadas para crecimiento futuro. Creación del script DDL maestro en [init-database.sql](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/docs/init-database.sql). Validación exitosa mediante pruebas de integración automatizadas.
 - **2026-06-16**: Implementación del módulo de **Gestión de Usuarios (CRUD)**: creación de endpoints en [UsuariosController.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.WebApi/Controllers/UsuariosController.cs), comandos de aplicación, y la vista frontend [GestionUsuarios.tsx](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/frontend/src/pages/Supervisor/GestionUsuarios.tsx) para Administradores.
 - **2026-06-16**: Integración de la llamada real HTTP a la API de WhatsApp Business (Meta Graph API) en [WhatsAppService.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.Infrastructure/Services/WhatsAppService.cs).
 - **2026-06-16**: Implementación de la generación real de comprobantes PDF con códigos QR empleando `QuestPDF` y `QRCoder` en [PdfGeneratorService.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.Infrastructure/Services/PdfGeneratorService.cs) y consumo en [RegistrarIngresoCommand.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.Application/Reparaciones/Commands/RegistrarIngresoCommand.cs).
 - **2026-06-16**: Modificación del backend ([ReparacionesController.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.WebApi/Controllers/ReparacionesController.cs)) para autorizar al rol `Operador` a cambiar los estados de reparación y registrar diagnósticos técnicos. Esto consolida el flujo simplificado de 2 roles (Operador y Administrador).
 - **2026-06-16**: Clonación inicial del repositorio y creación de este documento de contexto (`context.md`).
+

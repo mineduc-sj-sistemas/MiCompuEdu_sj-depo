@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { ManagedUser } from '../../types';
+import { API_BASE_URL } from '../../config';
 
 interface GestionUsuariosProps {
   token: string;
@@ -31,7 +32,7 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5110/api/v1/usuarios', {
+      const response = await fetch(`${API_BASE_URL}/usuarios`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -96,8 +97,8 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
 
     try {
       const url = editingUser 
-        ? `http://localhost:5110/api/v1/usuarios/${editingUser.id}` 
-        : 'http://localhost:5110/api/v1/usuarios';
+        ? `${API_BASE_URL}/usuarios/${editingUser.id}` 
+        : `${API_BASE_URL}/usuarios`;
       const method = editingUser ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -172,7 +173,7 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
     setError('');
     setSuccess('');
     try {
-      const response = await fetch(`http://localhost:5110/api/v1/usuarios/${user.id}/toggle-active`, {
+      const response = await fetch(`${API_BASE_URL}/usuarios/${user.id}/toggle-active`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`

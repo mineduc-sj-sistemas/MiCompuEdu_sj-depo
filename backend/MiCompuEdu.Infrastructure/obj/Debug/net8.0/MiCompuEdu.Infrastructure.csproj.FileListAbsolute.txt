@@ -33,3 +33,4 @@ c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastruc
 c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\refint\MiCompuEdu.Infrastructure.dll
 c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.pdb
 c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\ref\MiCompuEdu.Infrastructure.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Infrastructure\obj\Debug\net8.0\MiCompuEdu.Infrastructure.sourcelink.json

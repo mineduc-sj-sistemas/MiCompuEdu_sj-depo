@@ -1,5 +1,123 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Reparacion } from '../../types';
+import { API_BASE_URL } from '../../config';
+
+const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({ onChange }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.strokeStyle = '#1d252d';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }, []);
+
+  const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    
+    if ('touches' in e) {
+      if (e.touches.length === 0) return { x: 0, y: 0 };
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top
+      };
+    } else {
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+  };
+
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.cancelable) e.preventDefault();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const { x, y } = getCoordinates(e);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setIsDrawing(true);
+  };
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    if (e.cancelable) e.preventDefault();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const { x, y } = getCoordinates(e);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+    saveSignature();
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    onChange(null);
+  };
+
+  const saveSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const blank = document.createElement('canvas');
+    blank.width = canvas.width;
+    blank.height = canvas.height;
+    if (canvas.toDataURL() === blank.toDataURL()) {
+      onChange(null);
+      return;
+    }
+    onChange(canvas.toDataURL('image/png'));
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-center">
+        <label className="block text-slate-700 text-sm font-semibold">Firma del Tutor (Retiro de Equipo)</label>
+        <button
+          type="button"
+          onClick={clearCanvas}
+          className="text-xs text-[#E03C31] hover:underline font-semibold"
+        >
+          Limpiar
+        </button>
+      </div>
+      <div className="border-2 border-dashed border-slate-200 bg-white rounded-lg overflow-hidden">
+        <canvas
+          ref={canvasRef}
+          width={450}
+          height={120}
+          className="w-full h-[120px] cursor-crosshair touch-none bg-slate-50"
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={stopDrawing}
+        />
+      </div>
+    </div>
+  );
+};
 
 interface EntregaNotebookProps {
   token: string;
@@ -10,12 +128,14 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
+  const [selectedRepair, setSelectedRepair] = useState<Reparacion | null>(null);
+  const [firmaEntregaBase64, setFirmaEntregaBase64] = useState<string | null>(null);
   
   const fetchRepairsToDeliver = async () => {
     setLoading(true);
     setMensaje({ tipo: '', texto: '' });
     try {
-      const response = await fetch('http://localhost:5110/api/v1/Reparaciones', {
+      const response = await fetch(`${API_BASE_URL}/Reparaciones`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -61,11 +181,14 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
   };
 
   const handleEntregar = async (reparacionId: string, numeroSerie: string) => {
-    if (!window.confirm(`¿Confirmar la entrega física del dispositivo con Serie ${numeroSerie}?`)) return;
+    if (!firmaEntregaBase64) {
+      alert("Por favor, el tutor debe firmar antes de realizar la entrega.");
+      return;
+    }
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5110/api/v1/Reparaciones/${reparacionId}/estado`, {
+      const response = await fetch(`${API_BASE_URL}/Reparaciones/${reparacionId}/estado`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -73,18 +196,21 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
         },
         body: JSON.stringify({
           nuevoEstado: 'Entregado',
-          observaciones: 'Entregado físicamente al tutor validando DNI original.'
+          observaciones: 'Entregado físicamente al tutor validando DNI original.',
+          firmaEntregaBase64: firmaEntregaBase64
         })
       });
 
       if (response.ok) {
         setMensaje({ tipo: 'exito', texto: `El equipo con Serie ${numeroSerie} ha sido entregado e inactivado correctamente.` });
+        setSelectedRepair(null);
         fetchRepairsToDeliver();
       } else {
         setMensaje({ tipo: 'error', texto: 'No se pudo registrar la entrega en la base de datos.' });
       }
     } catch (error) {
       setRepairs(prev => prev.filter(r => r.id !== reparacionId));
+      setSelectedRepair(null);
       setMensaje({ tipo: 'exito', texto: `[SIMULACIÓN] Entrega física de equipo ${numeroSerie} procesada correctamente.` });
     } finally {
       setLoading(false);
@@ -161,13 +287,17 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
                     <p className="text-[#1D252D]"><span className="text-slate-500">Tutor:</span> {repair.nombreTutor}</p>
                     <p className="text-[#1D252D]"><span className="text-slate-500">Modelo:</span> {repair.marcaModelo}</p>
                     <p className="text-[#1D252D]"><span className="text-slate-500">Falla:</span> {repair.fallaReportada}</p>
+                    <p className="text-[#1D252D]"><span className="text-slate-500">Ubicación Depósito:</span> <span className="font-bold text-[#FF8200]">{repair.ubicacionDepositoCodigo || 'No asignada'}</span></p>
                     <p className="text-[#1D252D]"><span className="text-slate-500">Acción técnica:</span> {repair.accionesRealizadas || 'Sin detalles'}</p>
                   </div>
                 </div>
 
                 <div className="flex md:flex-col gap-2 w-full md:w-auto">
                   <button
-                    onClick={() => handleEntregar(repair.id, repair.numeroSerie)}
+                    onClick={() => {
+                      setSelectedRepair(repair);
+                      setFirmaEntregaBase64(null);
+                    }}
                     className="flex-1 md:flex-none bg-[#FF8200] hover:bg-[#e07200] text-white font-bold px-6 py-3 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all text-sm"
                   >
                     Confirmar Entrega
@@ -178,6 +308,59 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
           </div>
         )}
       </div>
+
+      {selectedRepair && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
+            <div className="flex justify-between items-start border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-xl font-extrabold text-[#1D252D]">Confirmar Entrega de Equipo</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Serie: {selectedRepair.numeroSerie}</p>
+              </div>
+              <button 
+                onClick={() => setSelectedRepair(null)}
+                className="text-slate-400 hover:text-slate-650 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-sm text-[#1D252D]">
+              <p><span className="text-slate-500 font-medium">Tutor / Beneficiario:</span> <span className="font-semibold">{selectedRepair.nombreTutor}</span></p>
+              <p><span className="text-slate-500 font-medium">Dispositivo:</span> {selectedRepair.marcaModelo}</p>
+              <p><span className="text-slate-500 font-medium">Ubicación Depósito:</span> <span className="font-bold text-[#FF8200]">{selectedRepair.ubicacionDepositoCodigo || 'No asignada'}</span></p>
+              <p><span className="text-slate-500 font-medium">Falla Reportada:</span> {selectedRepair.fallaReportada}</p>
+              <p><span className="text-slate-500 font-medium">Diagnóstico Técnico:</span> {selectedRepair.diagnostico || 'Sin diagnóstico'}</p>
+            </div>
+
+            <div className="border border-slate-200 rounded-xl p-4 bg-slate-50">
+              <SignaturePad onChange={(base64) => setFirmaEntregaBase64(base64)} />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setSelectedRepair(null)}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-2.5 rounded-lg font-semibold transition-colors text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => handleEntregar(selectedRepair.id, selectedRepair.numeroSerie)}
+                disabled={loading || !firmaEntregaBase64}
+                className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold px-8 py-2.5 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all text-sm flex items-center gap-2"
+              >
+                {loading ? (
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  'Entregar y Archivar'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

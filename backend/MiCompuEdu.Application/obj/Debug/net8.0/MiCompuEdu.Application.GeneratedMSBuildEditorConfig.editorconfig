@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MiCompuEdu.Application
-build_property.ProjectDir = c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\
+build_property.ProjectDir = C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

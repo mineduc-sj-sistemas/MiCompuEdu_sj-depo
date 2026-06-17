@@ -14,6 +14,10 @@ namespace MiCompuEdu.Domain.Entities
         public Guid BeneficiarioId { get; set; }
         public Beneficiario Beneficiario { get; set; } = null!;
 
+        // FK opcional — Escalabilidad: vincula el equipo con el programa educativo de origen
+        public Guid? ProgramaEducativoId { get; set; }
+        public ProgramaEducativo? ProgramaEducativo { get; set; }
+
         public ICollection<Reparacion> Reparaciones { get; set; } = new List<Reparacion>();
     }
 }

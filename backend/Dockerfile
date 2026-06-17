@@ -10,7 +10,7 @@ COPY MiCompuEdu.Infrastructure/*.csproj ./MiCompuEdu.Infrastructure/
 COPY MiCompuEdu.WebApi/*.csproj ./MiCompuEdu.WebApi/
 
 # Restore dependencies
-RUN dotnet restore
+RUN dotnet restore MiCompuEdu.WebApi/MiCompuEdu.WebApi.csproj
 
 # Copy remaining source code
 COPY MiCompuEdu.Domain/ ./MiCompuEdu.Domain/

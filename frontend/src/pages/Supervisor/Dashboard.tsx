@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { DashboardStats } from '../../types';
 import { LogoSanJuan } from '../../components/Shared/LogoSanJuan';
+import { API_BASE_URL } from '../../config';
 
 interface DashboardProps {
   token: string;
@@ -13,7 +14,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5110/api/v1/Dashboard/stats', {
+      const response = await fetch(`${API_BASE_URL}/Dashboard/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -47,7 +48,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
           Listo_Para_Retirar: 0,
           No_Reparable: 0,
           Entregado: 82
-        }
+        },
+        reparacionesPorEscuela: [
+          { escuela: 'Escuela Normal Sarmiento', cantidad: 45 },
+          { escuela: 'EPET N° 1 Rogelio Boero', cantidad: 35 },
+          { escuela: 'Colegio Nacional Cabrera', cantidad: 22 },
+          { escuela: 'Colegio Provincial Concepción', cantidad: 18 }
+        ],
+        efectividadTecnicos: [
+          { tecnico: 'Técnico Reparador Alfa', reparados: 48, tiempoPromedioDias: 2.1 },
+          { tecnico: 'Técnico Beta Soporte', reparados: 34, tiempoPromedioDias: 3.2 }
+        ],
+        reparacionesPorMes: [
+          { mes: 'Mar 2026', cantidad: 18 },
+          { mes: 'Abr 2026', cantidad: 25 },
+          { mes: 'May 2026', cantidad: 38 },
+          { mes: 'Jun 2026', cantidad: 39 }
+        ]
       });
     } finally {
       setLoading(false);
@@ -73,7 +90,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
     equiposEntregados: 0,
     tiempoPromedioReparacionDias: 0.0,
     fallasMasFrecuentes: [],
-    equiposPorEstado: {}
+    equiposPorEstado: {},
+    reparacionesPorEscuela: [],
+    efectividadTecnicos: [],
+    reparacionesPorMes: []
   };
 
   const totalFallas = s.fallasMasFrecuentes.reduce((acc, item) => acc + item.cantidad, 0) || 1;
@@ -182,6 +202,82 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
                   }`}></div>
                 </div>
               ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Second row of charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Repairs by School */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 lg:col-span-1">
+          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Distribución por Escuela</h3>
+          <div className="space-y-3">
+            {!s.reparacionesPorEscuela || s.reparacionesPorEscuela.length === 0 ? (
+              <p className="text-slate-400 text-sm">No hay registros de escuelas.</p>
+            ) : (
+              s.reparacionesPorEscuela.map((esc, index) => (
+                <div key={index} className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <div className="truncate pr-2">
+                    <p className="font-semibold text-xs text-slate-700 truncate">{esc.escuela}</p>
+                  </div>
+                  <span className="bg-[#FF8200]/10 text-[#FF8200] font-mono font-bold text-xs px-2.5 py-1 rounded-full shrink-0">
+                    {esc.cantidad} eq.
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Technician Effectiveness */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 lg:col-span-1">
+          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Rendimiento Técnico</h3>
+          <div className="space-y-3">
+            {!s.efectividadTecnicos || s.efectividadTecnicos.length === 0 ? (
+              <p className="text-slate-400 text-sm">No hay datos de efectividad de técnicos.</p>
+            ) : (
+              s.efectividadTecnicos.map((t, index) => (
+                <div key={index} className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+                  <div className="flex justify-between text-xs font-bold text-slate-700">
+                    <span>👤 {t.tecnico}</span>
+                    <span className="text-green-700">{t.reparados} reparados</span>
+                  </div>
+                  <div className="flex justify-between text-[11px] text-slate-500">
+                    <span>Tiempo promedio:</span>
+                    <span className="font-mono font-semibold text-blue-700">{t.tiempoPromedioDias} días</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Monthly trends */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 lg:col-span-1">
+          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Ingresos Mensuales</h3>
+          <div className="space-y-3">
+            {!s.reparacionesPorMes || s.reparacionesPorMes.length === 0 ? (
+              <p className="text-slate-400 text-sm">No hay datos de tendencias mensuales.</p>
+            ) : (
+              s.reparacionesPorMes.map((mes, index) => {
+                const maxVal = Math.max(...s.reparacionesPorMes.map(m => m.cantidad)) || 1;
+                const percent = Math.round((mes.cantidad / maxVal) * 100);
+                return (
+                  <div key={index} className="space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-600 font-bold">{mes.mes}</span>
+                      <span className="text-slate-700 font-mono font-bold">{mes.cantidad} ingresos</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                      <div 
+                        className="bg-blue-600 h-full rounded-full transition-all duration-500" 
+                        style={{ width: `${percent}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiCompuEdu.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiCompuEdu.WebApi", "MiCompuEdu.WebApi\MiCompuEdu.WebApi.csproj", "{D0A2D470-E52E-4836-9543-E2A05141B197}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiCompuEdu.UnitTests", "MiCompuEdu.UnitTests\MiCompuEdu.UnitTests.csproj", "{055284AA-C556-474E-B826-F6A0905031B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{D0A2D470-E52E-4836-9543-E2A05141B197}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0A2D470-E52E-4836-9543-E2A05141B197}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0A2D470-E52E-4836-9543-E2A05141B197}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055284AA-C556-474E-B826-F6A0905031B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055284AA-C556-474E-B826-F6A0905031B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055284AA-C556-474E-B826-F6A0905031B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055284AA-C556-474E-B826-F6A0905031B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

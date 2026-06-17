@@ -16,7 +16,11 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string? Diagnostico,
         string? AccionesRealizadas,
         string? Observaciones,
-        Guid UsuarioId
+        Guid UsuarioId,
+        string? ProveedorGarantia = null,
+        string? RemitoGarantia = null,
+        DateTime? FechaEsperadaGarantia = null,
+        string? FirmaEntregaBase64 = null
     ) : IRequest<bool>;
 
     public class ActualizarEstadoCommandHandler : IRequestHandler<ActualizarEstadoCommand, bool>
@@ -53,6 +57,18 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 
             if (!string.IsNullOrEmpty(request.Observaciones))
                 reparacion.Observaciones = request.Observaciones;
+
+            if (!string.IsNullOrEmpty(request.ProveedorGarantia))
+                reparacion.ProveedorGarantia = request.ProveedorGarantia;
+
+            if (!string.IsNullOrEmpty(request.RemitoGarantia))
+                reparacion.RemitoGarantia = request.RemitoGarantia;
+
+            if (request.FechaEsperadaGarantia.HasValue)
+                reparacion.FechaEsperadaGarantia = request.FechaEsperadaGarantia;
+
+            if (!string.IsNullOrEmpty(request.FirmaEntregaBase64))
+                reparacion.FirmaEntregaBase64 = request.FirmaEntregaBase64;
 
             reparacion.ActualizadoEn = DateTime.UtcNow;
 
@@ -99,28 +115,7 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 _context.Notificaciones.Add(notificacionLog);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                // Llamada asíncrona de WhatsApp
-                try
-                {
-                    bool enviado = await _whatsAppService.SendNotificationAsync(beneficiario.Telefono, mensaje);
-                    if (enviado)
-                    {
-                        notificacionLog.Estado = EstadoNotificacion.Enviado;
-                        notificacionLog.FechaEnvio = DateTime.UtcNow;
-                    }
-                    else
-                    {
-                        notificacionLog.Estado = EstadoNotificacion.Fallido;
-                        notificacionLog.ErrorMensaje = "Error en el consumo del API de WhatsApp.";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    notificacionLog.Estado = EstadoNotificacion.Fallido;
-                    notificacionLog.ErrorMensaje = ex.Message;
-                }
-
-                await _context.SaveChangesAsync(cancellationToken);
+                // La notificación queda encolada en la BD como Pendiente para ser procesada asíncronamente por el Worker en segundo plano
             }
 
             return true;

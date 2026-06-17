@@ -29,3 +29,4 @@ c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Applicatio
 c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\refint\MiCompuEdu.Application.dll
 c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.pdb
 c:\Users\leone\OneDrive\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\ref\MiCompuEdu.Application.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.Application\obj\Debug\net8.0\MiCompuEdu.Application.sourcelink.json

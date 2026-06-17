@@ -16,5 +16,8 @@ namespace MiCompuEdu.Domain.Entities
 
         public DateTime? FechaEnvio { get; set; }
         public string? ErrorMensaje { get; set; }
+
+        public int Reintentos { get; set; } = 0;
+        public DateTime? ProximoIntento { get; set; }
     }
 }

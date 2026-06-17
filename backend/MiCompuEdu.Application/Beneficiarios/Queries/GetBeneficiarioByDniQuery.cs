@@ -24,7 +24,9 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
         public async Task<BeneficiarioDto?> Handle(GetBeneficiarioByDniQuery request, CancellationToken cancellationToken)
         {
             var beneficiario = await _context.Beneficiarios
+                .Include(b => b.Escuela)
                 .Include(b => b.Equipos)
+                    .ThenInclude(e => e.ProgramaEducativo)
                 .FirstOrDefaultAsync(b => b.Dni == request.Dni, cancellationToken);
 
             // Demo Auto-generator helper
@@ -59,7 +61,9 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
                     await _context.SaveChangesAsync(cancellationToken);
                     
                     beneficiario = await _context.Beneficiarios
+                        .Include(b => b.Escuela)
                         .Include(b => b.Equipos)
+                            .ThenInclude(e => e.ProgramaEducativo)
                         .FirstOrDefaultAsync(b => b.Dni == request.Dni, cancellationToken);
                 }
                 else
@@ -80,7 +84,9 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
                     NumeroSerie = eq.NumeroSerie,
                     Marca = eq.Marca,
                     Modelo = eq.Modelo,
-                    CredencialesOffice = eq.CredencialesOffice
+                    CredencialesOffice = eq.CredencialesOffice,
+                    ProgramaEducativoId = eq.ProgramaEducativoId,
+                    ProgramaEducativoNombre = eq.ProgramaEducativo?.Nombre
                 };
             }
 
@@ -92,6 +98,9 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
                 Apellido = beneficiario.Apellido,
                 Telefono = beneficiario.Telefono,
                 Email = beneficiario.Email,
+                EscuelaId = beneficiario.EscuelaId,
+                EscuelaNombre = beneficiario.Escuela?.Nombre,
+                EscuelaCue = beneficiario.Escuela?.Cue,
                 Equipo = equipoDto
             };
         }
