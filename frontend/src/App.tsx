@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { User } from './types'
+import type { User as UserType } from './types'
 import { Login } from './pages/Login'
 import { RegistrarIngreso } from './pages/Operator/RegistrarIngreso'
 import { EntregaNotebook } from './pages/Operator/EntregaNotebook'
@@ -7,16 +7,24 @@ import { PanelTecnico } from './pages/Technician/PanelTecnico'
 import { Dashboard } from './pages/Supervisor/Dashboard'
 import { LogoSanJuan } from './components/Shared/LogoSanJuan'
 import { GestionUsuarios } from './pages/Supervisor/GestionUsuarios'
+import { FirmaRemota } from './pages/Operator/FirmaRemota'
+import { HealthCheckBanner } from './components/Shared/HealthCheckBanner'
+import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon } from 'lucide-react'
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const isFirmaRemota = window.location.pathname === '/firma-remota';
+  if (isFirmaRemota) {
+    return <FirmaRemota />;
+  }
+
+  const [user, setUser] = useState<UserType | null>(null);
   const [currentPage, setCurrentPage] = useState<string>('');
 
   useEffect(() => {
     const session = localStorage.getItem('micompuedu_session');
     if (session) {
       try {
-        const parsed: User = JSON.parse(session);
+        const parsed: UserType = JSON.parse(session);
         setUser(parsed);
       } catch {
         localStorage.removeItem('micompuedu_session');
@@ -36,7 +44,7 @@ function App() {
     }
   }, [user]);
 
-  const handleLoginSuccess = (userData: User) => {
+  const handleLoginSuccess = (userData: UserType) => {
     setUser(userData);
     localStorage.setItem('micompuedu_session', JSON.stringify(userData));
   };
@@ -51,110 +59,124 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen bg-white text-[#1D252D]">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-slate-50 border-r border-slate-200 flex flex-col justify-between p-5 shrink-0">
-        <div className="space-y-8">
-          {/* Logo Oficial San Juan */}
-          <LogoSanJuan showMinistry={false} className="max-w-[180px]" />
+    <div className="flex flex-col min-h-screen bg-slate-50 text-[#1D252D]">
+      <HealthCheckBanner />
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar Navigation */}
+        <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-5 shrink-0 z-10">
+          <div className="space-y-8">
+            {/* Logo Oficial San Juan */}
+            <LogoSanJuan showMinistry={false} className="max-w-[180px]" />
 
-          {/* Navigation Links */}
-          <nav className="space-y-1">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2 px-3">Menú de Gestión</p>
-            
-            {/* Operator Actions */}
-            {(user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
-              <>
+            {/* Navigation Links */}
+            <nav className="space-y-1">
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-3 px-3">Menú de Gestión</p>
+              
+              {/* Operator Actions */}
+              {(user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
+                <>
+                  <button
+                    onClick={() => setCurrentPage('ingreso')}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                      currentPage === 'ingreso'
+                        ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Download className="w-4 h-4 text-current" />
+                    Registrar Ingreso
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage('entrega')}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                      currentPage === 'entrega'
+                        ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Upload className="w-4 h-4 text-current" />
+                    Entregar Notebook
+                  </button>
+                </>
+              )}
+
+              {/* Technician Actions */}
+              {(user.rol === 'Tecnico' || user.rol === 'Supervisor' || user.rol === 'Administrador' || user.rol === 'Operador') && (
                 <button
-                  onClick={() => setCurrentPage('ingreso')}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
-                    currentPage === 'ingreso'
-                      ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
-                      : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
+                  onClick={() => setCurrentPage('diagnostico')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                    currentPage === 'diagnostico'
+                      ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  📥 Registrar Ingreso
+                  <Wrench className="w-4 h-4 text-current" />
+                  Soporte y Garantía
                 </button>
+              )}
+
+              {/* Supervisor Actions */}
+              {(user.rol === 'Supervisor' || user.rol === 'Administrador') && (
                 <button
-                  onClick={() => setCurrentPage('entrega')}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
-                    currentPage === 'entrega'
-                      ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
-                      : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
+                  onClick={() => setCurrentPage('dashboard')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                    currentPage === 'dashboard'
+                      ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  📤 Entregar Notebook
+                  <BarChart3 className="w-4 h-4 text-current" />
+                  Dashboard Estadístico
                 </button>
-              </>
-            )}
+              )}
 
-            {/* Technician Actions */}
-            {(user.rol === 'Tecnico' || user.rol === 'Supervisor' || user.rol === 'Administrador' || user.rol === 'Operador') && (
-              <button
-                onClick={() => setCurrentPage('diagnostico')}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
-                  currentPage === 'diagnostico'
-                    ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
-                    : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
-                }`}
-              >
-                🔧 Soporte y Garantía
-              </button>
-            )}
-
-            {/* Supervisor Actions */}
-            {(user.rol === 'Supervisor' || user.rol === 'Administrador') && (
-              <button
-                onClick={() => setCurrentPage('dashboard')}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
-                  currentPage === 'dashboard'
-                    ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
-                    : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
-                }`}
-              >
-                📊 Dashboard Estadístico
-              </button>
-            )}
-
-            {/* Admin Actions */}
-            {user.rol === 'Administrador' && (
-              <button
-                onClick={() => setCurrentPage('usuarios')}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2.5 ${
-                  currentPage === 'usuarios'
-                    ? 'bg-[#FF8200]/10 text-[#FF8200] border-l-2 border-[#FF8200]'
-                    : 'text-slate-600 hover:text-[#1D252D] hover:bg-slate-100'
-                }`}
-              >
-                👥 Gestión de Personal
-              </button>
-            )}
-          </nav>
-        </div>
-
-        {/* User Profile & Logout */}
-        <div className="border-t border-slate-200 pt-4 space-y-3">
-          <div className="px-3">
-            <p className="text-[#1D252D] font-bold text-sm truncate">{user.nombreCompleto}</p>
-            <span className="text-[10px] text-[#FF8200] font-bold uppercase tracking-wider">{user.rol}</span>
+              {/* Admin Actions */}
+              {user.rol === 'Administrador' && (
+                <button
+                  onClick={() => setCurrentPage('usuarios')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                    currentPage === 'usuarios'
+                      ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                >
+                  <Users className="w-4 h-4 text-current" />
+                  Gestión de Personal
+                </button>
+              )}
+            </nav>
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-full bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-[#E03C31] border border-slate-200 hover:border-red-200 font-bold py-2 rounded-lg transition-all text-xs"
-          >
-            Cerrar Sesión
-          </button>
-        </div>
-      </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-8 overflow-y-auto max-h-screen">
-        {currentPage === 'ingreso' && <RegistrarIngreso token={user.token} />}
-        {currentPage === 'entrega' && <EntregaNotebook token={user.token} />}
-        {currentPage === 'diagnostico' && <PanelTecnico token={user.token} nombreTecnico={user.nombreCompleto} />}
-        {currentPage === 'dashboard' && <Dashboard token={user.token} />}
-        {currentPage === 'usuarios' && <GestionUsuarios token={user.token} />}
-      </main>
+          {/* User Profile & Logout */}
+          <div className="border-t border-slate-100 pt-4 space-y-3">
+            <div className="px-3 flex items-center gap-2.5">
+              <div className="p-1.5 bg-slate-100 rounded-lg text-slate-600">
+                <UserIcon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-slate-900 font-semibold text-sm truncate">{user.nombreCompleto}</p>
+                <span className="text-[10px] text-[#FF8200] font-semibold uppercase tracking-wider">{user.rol}</span>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full bg-slate-50 hover:bg-red-50 text-slate-600 hover:text-[#E03C31] border border-slate-200 hover:border-red-100 font-medium py-2 rounded-lg transition-all text-xs flex items-center justify-center gap-2"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Cerrar Sesión
+            </button>
+          </div>
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 p-8 overflow-y-auto max-h-[calc(100vh-48px)] bg-slate-50">
+          {currentPage === 'ingreso' && <RegistrarIngreso token={user.token} />}
+          {currentPage === 'entrega' && <EntregaNotebook token={user.token} />}
+          {currentPage === 'diagnostico' && <PanelTecnico token={user.token} nombreTecnico={user.nombreCompleto} />}
+          {currentPage === 'dashboard' && <Dashboard token={user.token} />}
+          {currentPage === 'usuarios' && <GestionUsuarios token={user.token} />}
+        </main>
+      </div>
     </div>
   )
 }

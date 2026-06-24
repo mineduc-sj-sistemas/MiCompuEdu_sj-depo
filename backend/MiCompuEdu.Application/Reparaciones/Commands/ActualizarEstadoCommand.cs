@@ -27,11 +27,13 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
     {
         private readonly IApplicationDbContext _context;
         private readonly IWhatsAppService _whatsAppService;
+        private readonly ISignalRService _signalRService;
 
-        public ActualizarEstadoCommandHandler(IApplicationDbContext context, IWhatsAppService whatsAppService)
+        public ActualizarEstadoCommandHandler(IApplicationDbContext context, IWhatsAppService whatsAppService, ISignalRService signalRService)
         {
             _context = context;
             _whatsAppService = whatsAppService;
+            _signalRService = signalRService;
         }
 
         public async Task<bool> Handle(ActualizarEstadoCommand request, CancellationToken cancellationToken)
@@ -89,8 +91,17 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 FechaMovimiento = DateTime.UtcNow
             };
 
-            _context.HistorialMovimientos.Add(movimiento);
+             _context.HistorialMovimientos.Add(movimiento);
             await _context.SaveChangesAsync(cancellationToken);
+
+            try
+            {
+                await _signalRService.SendStatusUpdateAsync(reparacion.Id.ToString(), request.NuevoEstado.ToString());
+            }
+            catch
+            {
+                // Ignorar excepciones de transporte en tiempo real
+            }
 
             // Trigger notificaciones de WhatsApp
             if (request.NuevoEstado == EstadoEquipo.Listo_Para_Retirar || request.NuevoEstado == EstadoEquipo.No_Reparable)

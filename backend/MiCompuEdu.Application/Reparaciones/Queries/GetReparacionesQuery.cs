@@ -126,6 +126,7 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
                 FechaEsperadaGarantia = r.FechaEsperadaGarantia,
                 FirmaIngresoBase64 = r.FirmaIngresoBase64,
                 FirmaEntregaBase64 = r.FirmaEntregaBase64,
+                FechaLimite = r.FechaLimite,
                 Evidencias = r.EvidenciasReparacion.Select(ev => new EvidenciaDto
                 {
                     Id = ev.Id,

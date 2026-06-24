@@ -62,7 +62,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
           setProgramas(await resProgramas.json());
         }
       } catch (err) {
-        console.warn('Error al cargar catálogos para filtros.', err);
+        console.warn('Error crítico: backend no disponible.', err);
       }
     };
     loadCatalogs();
@@ -90,32 +90,9 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
         setRepairs(data.filter(r => r.estado !== 'Entregado'));
       }
     } catch (error) {
-      console.warn('API no disponible. Usando fallback de simulación para técnicos.');
-      setRepairs([
-        {
-          id: 'mock-reparacion-101',
-          equipoId: 'eq-101',
-          numeroSerie: 'S-EDU-41002233-X',
-          marcaModelo: 'Exo Juana Manso v2',
-          nombreTutor: 'Roberto Carlos Díaz',
-          telefonoTutor: '+542644990011',
-          estado: 'Ingresado',
-          fallaReportada: 'El equipo se apaga solo luego de 5 minutos.',
-          fechaIngreso: '2026-06-12T09:00:00Z'
-        },
-        {
-          id: 'mock-reparacion-102',
-          equipoId: 'eq-102',
-          numeroSerie: 'S-EDU-45129843-X',
-          marcaModelo: 'BGH Conectar Igualdad',
-          nombreTutor: 'Gabriela Sabatini',
-          telefonoTutor: '+542644223344',
-          estado: 'En_Diagnostico',
-          fallaReportada: 'Bloqueo de seguridad Juana Manso. Muestra pantalla roja.',
-          diagnostico: 'Falta de sincronización con servidor escolar.',
-          fechaIngreso: '2026-06-12T11:30:00Z'
-        }
-      ]);
+      console.warn('API no disponible.');
+      setRepairs([]);
+      setMensaje({ tipo: 'error', texto: 'No se pudieron cargar las notebooks. Verifique la conexión con el servidor.' });
     } finally {
       setLoading(false);
     }
@@ -391,15 +368,15 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
   }, [token]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in max-w-[1400px] mx-auto">
       <div className="border-b border-slate-200 pb-5 flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-extrabold text-[#1D252D]">Soporte Técnico y Garantía</h2>
+          <h2 className="text-3xl font-extrabold text-[#1D252D] tracking-tight">Soporte Técnico y Garantía</h2>
           <p className="text-slate-500 mt-1 text-sm">Hola {nombreTecnico}, gestione los diagnósticos, desbloqueos y derivaciones a garantía.</p>
         </div>
         <button
           onClick={fetchRepairs}
-          className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg border border-slate-200 transition-colors text-sm"
+          className="glass-card hover:bg-slate-100 text-[#1D252D] font-semibold px-4 py-2 rounded-xl transition-all text-sm flex items-center gap-2"
         >
           🔄 Actualizar Lista
         </button>
@@ -429,7 +406,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
           </div>
 
           {/* Buscador y Filtros Avanzados */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-3 shadow-sm">
+          <div className="glass-panel rounded-xl p-4 space-y-3">
             <div className="flex gap-2">
               <input
                 type="text"

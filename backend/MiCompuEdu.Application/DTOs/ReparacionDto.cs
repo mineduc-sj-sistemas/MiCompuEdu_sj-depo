@@ -33,6 +33,7 @@ namespace MiCompuEdu.Application.DTOs
         public DateTime? FechaEsperadaGarantia { get; set; }
         public string? FirmaIngresoBase64 { get; set; }
         public string? FirmaEntregaBase64 { get; set; }
+        public DateTime? FechaLimite { get; set; }
         public System.Collections.Generic.List<EvidenciaDto> Evidencias { get; set; } = new();
     }
 

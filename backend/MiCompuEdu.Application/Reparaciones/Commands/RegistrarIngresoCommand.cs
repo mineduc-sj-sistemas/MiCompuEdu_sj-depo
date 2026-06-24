@@ -27,11 +27,13 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
     {
         private readonly IApplicationDbContext _context;
         private readonly IPdfGeneratorService _pdfGeneratorService;
+        private readonly ISignalRService _signalRService;
 
-        public RegistrarIngresoCommandHandler(IApplicationDbContext context, IPdfGeneratorService pdfGeneratorService)
+        public RegistrarIngresoCommandHandler(IApplicationDbContext context, IPdfGeneratorService pdfGeneratorService, ISignalRService signalRService)
         {
             _context = context;
             _pdfGeneratorService = pdfGeneratorService;
+            _signalRService = signalRService;
         }
 
         public async Task<ReparacionDto> Handle(RegistrarIngresoCommand request, CancellationToken cancellationToken)
@@ -57,6 +59,29 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 equipo.ProgramaEducativoId = request.ProgramaEducativoId.Value;
             }
 
+            double promedioDias = 7.0;
+            if (request.FallaCatalogoId.HasValue)
+            {
+                var historialReparaciones = await _context.Reparaciones
+                    .Where(r => r.FallaCatalogoId == request.FallaCatalogoId.Value && r.Estado == EstadoEquipo.Entregado && r.FechaEntrega.HasValue)
+                    .Select(r => new { r.FechaIngreso, r.FechaEntrega })
+                    .ToListAsync(cancellationToken);
+
+                if (historialReparaciones.Count > 0)
+                {
+                    double totalDays = 0;
+                    foreach (var hist in historialReparaciones)
+                    {
+                        totalDays += (hist.FechaEntrega.Value - hist.FechaIngreso).TotalDays;
+                    }
+                    promedioDias = totalDays / historialReparaciones.Count;
+                    if (promedioDias < 1) promedioDias = 1.0;
+                }
+            }
+
+            var fechaIngreso = DateTime.UtcNow;
+            var fechaLimite = fechaIngreso.AddDays(promedioDias);
+
             var reparacion = new Reparacion
             {
                 Id = Guid.NewGuid(),
@@ -68,7 +93,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 Observaciones = request.Observaciones,
                 UbicacionDepositoId = request.UbicacionDepositoId,
                 FirmaIngresoBase64 = request.FirmaIngresoBase64,
-                FechaIngreso = DateTime.UtcNow
+                FechaIngreso = fechaIngreso,
+                FechaLimite = fechaLimite
             };
 
             reparacion.Equipo = equipo;
@@ -89,6 +115,15 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             _context.HistorialMovimientos.Add(movimiento);
             
             await _context.SaveChangesAsync(cancellationToken);
+
+            try
+            {
+                await _signalRService.SendStatusUpdateAsync(reparacion.Id.ToString(), "Ingresado");
+            }
+            catch
+            {
+                // Ignorar excepciones de tiempo real
+            }
 
             try
             {
@@ -126,7 +161,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 UbicacionDepositoId = reparacion.UbicacionDepositoId,
                 UbicacionDepositoCodigo = reparacion.UbicacionDeposito?.Codigo,
                 FirmaIngresoBase64 = reparacion.FirmaIngresoBase64,
-                FirmaEntregaBase64 = reparacion.FirmaEntregaBase64
+                FirmaEntregaBase64 = reparacion.FirmaEntregaBase64,
+                FechaLimite = reparacion.FechaLimite
             };
         }
     }

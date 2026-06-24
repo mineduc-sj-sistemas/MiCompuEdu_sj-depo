@@ -2,6 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { Beneficiario } from '../../types';
 import { API_BASE_URL } from '../../config';
 import { parseDniScan } from '../../utils/dniParser';
+import { 
+  Search, 
+  User, 
+  Phone, 
+  Mail, 
+  Laptop, 
+  Trash2, 
+  AlertTriangle, 
+  Check, 
+  Loader2, 
+  FileText
+} from 'lucide-react';
 
 const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({ onChange }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -25,7 +37,6 @@ const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({
     
     if ('touches' in e) {
       if (e.touches.length === 0) return { x: 0, y: 0 };
-      // Touch events need clientX/clientY relative to page
       return {
         x: e.touches[0].clientX - rect.left,
         y: e.touches[0].clientY - rect.top
@@ -39,7 +50,6 @@ const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({
   };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    // Prevent scrolling when drawing on touch devices
     if (e.cancelable) e.preventDefault();
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -94,16 +104,17 @@ const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <label className="block text-slate-700 text-sm font-semibold">Firma Digital del Tutor / Beneficiario</label>
+        <label className="block text-slate-700 text-xs font-semibold">Firma Digital del Tutor / Beneficiario</label>
         <button
           type="button"
           onClick={clearCanvas}
-          className="text-xs text-[#E03C31] hover:underline font-semibold"
+          className="text-xs text-red-500 hover:text-red-600 font-semibold flex items-center gap-1 transition-colors"
         >
+          <Trash2 className="w-3.5 h-3.5" />
           Limpiar Firma
         </button>
       </div>
-      <div className="border-2 border-dashed border-slate-200 bg-white rounded-lg overflow-hidden">
+      <div className="border border-slate-200 bg-white rounded-lg overflow-hidden">
         <canvas
           ref={canvasRef}
           width={500}
@@ -137,7 +148,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
   const [mensajeExito, setMensajeExito] = useState('');
   const [firmaIngresoBase64, setFirmaIngresoBase64] = useState<string | null>(null);
 
-  // Estados para catálogos dinámicos
+  // Catálogos
   const [escuelas, setEscuelas] = useState<any[]>([]);
   const [programas, setProgramas] = useState<any[]>([]);
   const [ubicaciones, setUbicaciones] = useState<any[]>([]);
@@ -147,7 +158,6 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
   
   const dniInputRef = useRef<HTMLInputElement>(null);
 
-  // Cargar Escuelas, Programas y Ubicaciones
   useEffect(() => {
     const cargarCatalogos = async () => {
       try {
@@ -172,20 +182,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
           setUbicaciones(await resUbicaciones.json());
         }
       } catch (e) {
-        console.warn('Error al cargar catálogos dinámicos. Usando mocks locales.', e);
-        setEscuelas([
-          { id: '1', nombre: 'Escuela Normal Superior Sarmiento', cue: '700123401' },
-          { id: '2', nombre: 'Escuela EPET N° 1 Rogelio Boero', cue: '700567802' }
-        ]);
-        setProgramas([
-          { id: '1', nombre: 'Conectar Igualdad' },
-          { id: '2', nombre: 'Juana Manso' }
-        ]);
-        setUbicaciones([
-          { id: 'u1', codigo: 'EST-A-F1-P1', estanteria: 'Estantería A', fila: 1, posicion: 1 },
-          { id: 'u2', codigo: 'EST-A-F1-P2', estanteria: 'Estantería A', fila: 1, posicion: 2 },
-          { id: 'u3', codigo: 'EST-B-F2-P3', estanteria: 'Estantería B', fila: 2, posicion: 3 }
-        ]);
+        console.warn('Error crítico: backend no disponible.', e);
+        setMensajeError('No se pudieron cargar los catálogos del sistema. Verifique la conexión con el servidor.');
       }
     };
     cargarCatalogos();
@@ -202,13 +200,10 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     const value = e.target.value;
     setDniInput(value);
     
-    // Auto-detect and parse DNI scan if it matches the PDF417 raw format
     if (value.includes('@') && value.trim().length > 20) {
       const parsed = parseDniScan(value);
       if (parsed) {
-        // Update input to clean DNI so it searches clean value
         setDniInput(parsed.dni);
-        // Trigger search in next tick after state updates
         setTimeout(() => {
           buscarBeneficiario(parsed.dni, parsed);
         }, 50);
@@ -221,7 +216,6 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     let cleanDni = rawInput;
     let scanInfo = scannedData;
 
-    // Fallback detection in case they pressed Enter with raw barcode without triggering onChange auto-detect
     if (!scanInfo && cleanDni.includes('@')) {
       const parsed = parseDniScan(cleanDni);
       if (parsed) {
@@ -247,7 +241,6 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
       if (response.ok) {
         const data: Beneficiario = await response.json();
         
-        // If we scanned the card, override names in frontend display to reflect real card details
         if (scanInfo) {
           data.nombre = scanInfo.nombre;
           data.apellido = scanInfo.apellido;
@@ -257,10 +250,9 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         setSelectedEscuelaId(data.escuelaId || '');
         setSelectedProgramaId(data.equipo?.programaEducativoId || '');
         if (scanInfo) {
-          setMensajeExito(`DNI Escaneado correctamente. Beneficiario: ${scanInfo.nombre} ${scanInfo.apellido}`);
+          setMensajeExito(`DNI Escaneado: ${scanInfo.nombre} ${scanInfo.apellido}`);
         }
       } else {
-        // If not found in the database, but we have card scanned details, let's create a temporary beneficiary state
         if (scanInfo) {
           setBeneficiario({
             id: 'mock-scanned-id',
@@ -279,13 +271,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
           });
           setSelectedEscuelaId('');
           setSelectedProgramaId('');
-          setMensajeExito(`DNI Escaneado (No en padrón nominal central, cargado de la tarjeta): ${scanInfo.nombre} ${scanInfo.apellido}`);
+          setMensajeExito(`DNI Escaneado (Carga temporal de la tarjeta): ${scanInfo.nombre} ${scanInfo.apellido}`);
         } else {
           setMensajeError('DNI no encontrado en el padrón nominal del Ministerio.');
         }
       }
     } catch (error) {
-      console.warn('API no disponible. Usando fallback de simulación de padrón.');
+      console.warn('API no disponible. Usando fallback de simulación.');
       const scanOrManual = scanInfo || (cleanDni.length >= 7 && cleanDni.length <= 9 ? { dni: cleanDni, nombre: 'Ana María', apellido: 'González' } : null);
       
       if (scanOrManual) {
@@ -304,8 +296,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
             credencialesOffice: `${scanOrManual.nombre.toLowerCase().replace(/ /g, '')}.${scanOrManual.dni} / passOffice2026`
           }
         });
-        setSelectedEscuelaId('1'); // Mock Sarmiento
-        setSelectedProgramaId('2'); // Mock Juana Manso
+        setSelectedEscuelaId('1');
+        setSelectedProgramaId('2');
         if (scanInfo) {
           setMensajeExito(`[SIMULACIÓN] DNI escaneado: ${scanInfo.nombre} ${scanInfo.apellido}`);
         }
@@ -344,9 +336,9 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
 
       if (response.ok) {
         const data = await response.json();
-        setMensajeExito(`Ingreso de notebook ${beneficiario.equipo.numeroSerie} registrado correctamente en el sistema.`);
+        setMensajeExito(`Ingreso de notebook ${beneficiario.equipo.numeroSerie} registrado.`);
         setTimeout(() => {
-          alert(`Descargando Comprobante Digital:\n\nOrden ID: ${data.id}\nBeneficiario: ${beneficiario.nombre} ${beneficiario.apellido}\nEquipo Serie: ${beneficiario.equipo?.numeroSerie}\nFalla: ${fallaReportada}`);
+          alert(`Descargando Comprobante Digital:\n\nOrden ID: ${data.id}\nBeneficiario: ${beneficiario.nombre} ${beneficiario.apellido}\nEquipo Serie: ${beneficiario.equipo?.numeroSerie}`);
         }, 500);
 
         setBeneficiario(null);
@@ -357,10 +349,10 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         setFirmaIngresoBase64(null);
         dniInputRef.current?.focus();
       } else {
-        setMensajeError('Ocurrió un error al guardar el ingreso en el sistema.');
+        setMensajeError('Error al guardar el ingreso en el sistema.');
       }
     } catch (error) {
-      setMensajeExito(`[SIMULACIÓN] Ingreso de notebook ${beneficiario.equipo.numeroSerie} guardado de forma local.`);
+      setMensajeExito(`[SIMULACIÓN] Ingreso de notebook ${beneficiario.equipo.numeroSerie} registrado.`);
       setBeneficiario(null);
       setDniInput('');
       setFallaReportada('');
@@ -378,23 +370,26 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-slate-200 pb-5">
-        <h2 className="text-3xl font-extrabold text-[#1D252D]">Registrar Ingreso de Notebook</h2>
-        <p className="text-slate-500 mt-1 text-sm">Escanea el DNI físico del tutor para autocompletar el padrón del Ministerio.</p>
+    <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
+      <div className="pb-4 border-b border-slate-200">
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Registrar Ingreso de Notebook</h2>
+        <p className="text-slate-400 mt-1 text-xs">Busca o escanea el DNI físico del tutor para registrar una orden de servicio.</p>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-md space-y-6">
+      <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-6">
         <div>
-          <label className="block text-[#1D252D] text-xs font-bold uppercase tracking-wider mb-2">
+          <label className="block text-slate-700 text-xs font-semibold mb-2">
             Escaneo de DNI (PDF417) / Búsqueda Manual
           </label>
           <div className="flex gap-3">
             <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <Search className="w-4 h-4" />
+              </div>
               <input
                 ref={dniInputRef}
                 type="text"
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
+                className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-8 py-2.5 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-[#FF8200] transition-colors"
                 placeholder="Escanee código de DNI o escriba el número..."
                 value={dniInput}
                 onChange={handleDniInputChange}
@@ -404,7 +399,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               {dniInput && (
                 <button 
                   onClick={() => setDniInput('')} 
-                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-xs font-bold"
                 >
                   ✕
                 </button>
@@ -413,98 +408,111 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
             <button
               onClick={() => buscarBeneficiario()}
               disabled={loading || !dniInput}
-              className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all flex items-center justify-center min-w-[120px] text-sm"
+              className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-100 disabled:text-slate-400 text-white font-medium px-5 py-2.5 rounded-lg text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer min-w-[120px]"
             >
               {loading ? (
-                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                'Buscar DNI'
+                'Buscar'
               )}
             </button>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
-            💡 Consejo: Coloque el cursor en la caja de texto y pase el lector de código de barras.
+          <p className="text-[10px] text-slate-400 mt-1.5">
+            Tip: Coloca el cursor en el campo de texto y lee el código de barras del DNI.
           </p>
         </div>
 
         {mensajeError && (
-          <div className="p-4 bg-[#E03C31]/10 border border-[#E03C31]/30 text-[#E03C31] rounded-lg text-sm font-semibold">
-            ⚠️ {mensajeError}
+          <div className="p-3 bg-red-50 border border-red-100 text-[#E03C31] rounded-lg text-xs font-semibold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            {mensajeError}
           </div>
         )}
 
         {mensajeExito && (
-          <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm font-semibold">
-            ✅ {mensajeExito}
+          <div className="p-3 bg-green-50 border border-green-100 text-green-700 rounded-lg text-xs font-semibold flex items-center gap-2">
+            <Check className="w-4 h-4 shrink-0" />
+            {mensajeExito}
           </div>
         )}
 
         {beneficiario && (
-          <form onSubmit={handleIngresarNotebook} className="space-y-6 pt-4 border-t border-slate-100 animate-fadeIn">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleIngresarNotebook} className="space-y-6 pt-4 border-t border-slate-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Tutor Column */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
-                <h3 className="text-lg font-bold text-[#FF8200] border-b border-slate-200 pb-2">Datos del Titular/Tutor</h3>
-                <div className="grid grid-cols-3 text-sm">
-                  <span className="text-slate-500">DNI:</span>
-                  <span className="col-span-2 text-[#1D252D] font-semibold">{beneficiario.dni}</span>
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
+                <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
+                  <User className="w-4.5 h-4.5" />
+                  <h3 className="text-sm font-semibold text-slate-800">Titular / Tutor</h3>
                 </div>
-                <div className="grid grid-cols-3 text-sm">
-                  <span className="text-slate-500">Nombre:</span>
-                  <span className="col-span-2 text-[#1D252D]">{beneficiario.nombre} {beneficiario.apellido}</span>
-                </div>
-                <div className="grid grid-cols-3 text-sm">
-                  <span className="text-slate-500">Teléfono:</span>
-                  <span className="col-span-2 text-[#1D252D]">{beneficiario.telefono}</span>
-                </div>
-                <div className="grid grid-cols-3 text-sm">
-                  <span className="text-slate-500">Email:</span>
-                  <span className="col-span-2 text-[#1D252D]">{beneficiario.email}</span>
+                <div className="space-y-1.5 text-xs text-slate-600">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">DNI</span>
+                    <span className="font-medium text-slate-900">{beneficiario.dni}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Nombre</span>
+                    <span className="font-medium text-slate-900">{beneficiario.nombre} {beneficiario.apellido}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Teléfono</span>
+                    <span className="font-medium text-slate-900 flex items-center gap-1"><Phone className="w-3 h-3 text-slate-400" />{beneficiario.telefono}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Email</span>
+                    <span className="font-medium text-slate-900 flex items-center gap-1"><Mail className="w-3 h-3 text-slate-400" />{beneficiario.email}</span>
+                  </div>
                 </div>
               </div>
 
               {/* Notebook Column */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
-                <h3 className="text-lg font-bold text-[#FF8200] border-b border-slate-200 pb-2">Notebook Asignada</h3>
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
+                <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
+                  <Laptop className="w-4.5 h-4.5" />
+                  <h3 className="text-sm font-semibold text-slate-800">Equipo Asignado</h3>
+                </div>
                 {beneficiario.equipo ? (
-                  <>
-                    <div className="grid grid-cols-3 text-sm">
-                      <span className="text-slate-500">Serie Nro:</span>
-                      <span className="col-span-2 text-[#1D252D] font-mono font-bold">{beneficiario.equipo.numeroSerie}</span>
+                  <div className="space-y-1.5 text-xs text-slate-600">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Nro Serie</span>
+                      <span className="font-mono font-bold text-slate-900">{beneficiario.equipo.numeroSerie}</span>
                     </div>
-                    <div className="grid grid-cols-3 text-sm">
-                      <span className="text-slate-500">Marca:</span>
-                      <span className="col-span-2 text-[#1D252D]">{beneficiario.equipo.marca}</span>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Marca</span>
+                      <span className="font-medium text-slate-900">{beneficiario.equipo.marca}</span>
                     </div>
-                    <div className="grid grid-cols-3 text-sm">
-                      <span className="text-slate-500">Modelo:</span>
-                      <span className="col-span-2 text-[#1D252D]">{beneficiario.equipo.modelo}</span>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Modelo</span>
+                      <span className="font-medium text-slate-900">{beneficiario.equipo.modelo}</span>
                     </div>
                     {beneficiario.equipo.credencialesOffice && (
-                      <div className="grid grid-cols-3 text-sm">
-                        <span className="text-slate-500">Office Creds:</span>
-                        <span className="col-span-2 text-slate-500 font-mono text-xs">{beneficiario.equipo.credencialesOffice}</span>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Office</span>
+                        <span className="font-mono text-[10px] text-slate-500 truncate max-w-[180px]">{beneficiario.equipo.credencialesOffice}</span>
                       </div>
                     )}
-                  </>
+                  </div>
                 ) : (
-                  <p className="text-sm text-yellow-650">Sin notebook registrada en el padrón nominal.</p>
+                  <p className="text-xs text-yellow-600">Sin notebook registrada en el padrón.</p>
                 )}
               </div>
             </div>
 
             {/* Catalog Associations (Escuelas y Programas) */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
-              <h3 className="text-lg font-bold text-[#FF8200] border-b border-slate-200 pb-2">Asociación Ministerial (Padrón Provincial)</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
+                <FileText className="w-4.5 h-4.5" />
+                <h3 className="text-sm font-semibold text-slate-800">Ubicación y Distribución</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-slate-700 text-sm font-semibold mb-2">Establecimiento Educativo (Origen)</label>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Escuela</label>
                   <select
-                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200] text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
                     value={selectedEscuelaId}
                     onChange={(e) => setSelectedEscuelaId(e.target.value)}
                   >
-                    <option value="">-- Asignar Escuela --</option>
+                    <option value="">-- Seleccionar Escuela --</option>
                     {escuelas.map((esc) => (
                       <option key={esc.id} value={esc.id}>
                         {esc.nombre} (CUE: {esc.cue})
@@ -513,13 +521,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-700 text-sm font-semibold mb-2">Programa de Distribución del Equipo</label>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Programa</label>
                   <select
-                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200] text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
                     value={selectedProgramaId}
                     onChange={(e) => setSelectedProgramaId(e.target.value)}
                   >
-                    <option value="">-- Asignar Programa --</option>
+                    <option value="">-- Seleccionar Programa --</option>
                     {programas.map((prog) => (
                       <option key={prog.id} value={prog.id}>
                         {prog.nombre}
@@ -528,13 +536,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-700 text-sm font-semibold mb-2">Ubicación Física en Depósito</label>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Ubicación Depósito</label>
                   <select
-                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200] text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
                     value={selectedUbicacionId}
                     onChange={(e) => setSelectedUbicacionId(e.target.value)}
                   >
-                    <option value="">-- Asignar Estantería --</option>
+                    <option value="">-- Seleccionar Estantería --</option>
                     {ubicaciones.map((ub) => (
                       <option key={ub.id} value={ub.id}>
                         {ub.codigo} ({ub.estanteria} - Fila {ub.fila})
@@ -547,13 +555,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
 
             {/* Falla Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-200 pb-2">Detalle del Soporte</h3>
+              <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">Detalles del Soporte</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-1">
-                  <label className="block text-slate-700 text-sm font-semibold mb-2">Falla del Catálogo</label>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Falla Común</label>
                   <select
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200]"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
                     value={fallaCatalogoId}
                     onChange={(e) => setFallaCatalogoId(Number(e.target.value))}
                   >
@@ -566,12 +574,12 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                 </div>
                 
                 <div className="md:col-span-2">
-                  <label className="block text-slate-700 text-sm font-semibold mb-2">Falla Reportada (Descripción Libre)</label>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Descripción de Falla</label>
                   <textarea
                     required
-                    rows={3}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200]"
-                    placeholder="Escriba los detalles de la falla reportada por el docente/tutor..."
+                    rows={2}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                    placeholder="Escriba los detalles de la falla reportada..."
                     value={fallaReportada}
                     onChange={(e) => setFallaReportada(e.target.value)}
                   />
@@ -579,39 +587,39 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
               </div>
 
               <div>
-                <label className="block text-slate-700 text-sm font-semibold mb-2">Observaciones Estéticas / Accesorios</label>
+                <label className="block text-slate-700 text-xs font-semibold mb-1.5">Observaciones Estéticas / Accesorios</label>
                 <input
                   type="text"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200]"
-                  placeholder="Ej: Trae cargador original. Bisagra izquierda trizada, etc."
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                  placeholder="Ej: Trae cargador original. Tapa rayada."
                   value={observaciones}
                   onChange={(e) => setObservaciones(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Firma Digital del Tutor */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+            {/* Signature */}
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
               <SignaturePad onChange={(base64) => setFirmaIngresoBase64(base64)} />
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setBeneficiario(null)}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-lg font-semibold transition-colors text-sm"
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors text-xs cursor-pointer"
               >
-                Limpiar
+                Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold px-8 py-3 rounded-lg shadow-md hover:shadow-lg shadow-orange-500/10 transition-all flex items-center justify-center min-w-[200px] text-sm"
+                className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-100 disabled:text-slate-400 text-white font-semibold px-6 py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer min-w-[150px]"
               >
                 {loading ? (
-                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  'Registrar Ingreso (F8)'
+                  'Registrar Ingreso'
                 )}
               </button>
             </div>

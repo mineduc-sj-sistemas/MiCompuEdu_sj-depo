@@ -64,6 +64,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Regis
 builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
 builder.Services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
 builder.Services.AddHostedService<NotificationWorkerService>();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<ISignalRService, SignalRService>();
 
 builder.Services.AddCors(options =>
 {
@@ -115,6 +117,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<MiCompuEdu.Infrastructure.Hubs.ReparacionHub>("/hubs/reparaciones");
 
 // Seeding DB on startup with retry logic (robust Docker initialization)
 using (var scope = app.Services.CreateScope())

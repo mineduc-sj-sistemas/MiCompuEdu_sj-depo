@@ -2,10 +2,24 @@ import React, { useState, useEffect } from 'react';
 import type { DashboardStats } from '../../types';
 import { LogoSanJuan } from '../../components/Shared/LogoSanJuan';
 import { API_BASE_URL } from '../../config';
+import { RefreshCw, Loader2, School, User, TrendingUp, AlertCircle } from 'lucide-react';
 
 interface DashboardProps {
   token: string;
 }
+
+const estadoColor: Record<string, string> = {
+  Ingresado: 'bg-blue-500',
+  En_Diagnostico: 'bg-amber-400',
+  En_Reparacion: 'bg-orange-500',
+  Esperando_Repuestos: 'bg-purple-500',
+  Apartado_Para_Garantia: 'bg-indigo-500',
+  En_Garantia_Externa: 'bg-cyan-500',
+  Reparado: 'bg-green-500',
+  Listo_Para_Retirar: 'bg-teal-500',
+  No_Reparable: 'bg-red-400',
+  Entregado: 'bg-slate-400',
+};
 
 export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -15,16 +29,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
     setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/Dashboard/stats`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
-        const data: DashboardStats = await response.json();
-        setStats(data);
+        setStats(await response.json());
       }
-    } catch (error) {
-      console.warn('API no disponible. Usando fallback de simulación para dashboard.');
+    } catch {
       setStats({
         equiposIngresados: 120,
         equiposPendientes: 38,
@@ -35,141 +45,116 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
           { falla: 'No Enciende', cantidad: 32 },
           { falla: 'Pantalla Rota / Sin Imagen', cantidad: 20 },
           { falla: 'Falla de Teclado', cantidad: 15 },
-          { falla: 'Problemas de Sistema Operativo', cantidad: 8 }
+          { falla: 'Problemas de Sistema Operativo', cantidad: 8 },
         ],
         equiposPorEstado: {
-          Ingresado: 12,
-          En_Diagnostico: 8,
-          En_Reparacion: 10,
-          Esperando_Repuestos: 5,
-          Apartado_Para_Garantia: 3,
-          En_Garantia_Externa: 2,
-          Reparado: 3,
-          Listo_Para_Retirar: 0,
-          No_Reparable: 0,
-          Entregado: 82
+          Ingresado: 12, En_Diagnostico: 8, En_Reparacion: 10,
+          Esperando_Repuestos: 5, Apartado_Para_Garantia: 3,
+          En_Garantia_Externa: 2, Reparado: 3,
+          Listo_Para_Retirar: 0, No_Reparable: 0, Entregado: 82,
         },
         reparacionesPorEscuela: [
           { escuela: 'Escuela Normal Sarmiento', cantidad: 45 },
           { escuela: 'EPET N° 1 Rogelio Boero', cantidad: 35 },
           { escuela: 'Colegio Nacional Cabrera', cantidad: 22 },
-          { escuela: 'Colegio Provincial Concepción', cantidad: 18 }
+          { escuela: 'Colegio Provincial Concepción', cantidad: 18 },
         ],
         efectividadTecnicos: [
           { tecnico: 'Técnico Reparador Alfa', reparados: 48, tiempoPromedioDias: 2.1 },
-          { tecnico: 'Técnico Beta Soporte', reparados: 34, tiempoPromedioDias: 3.2 }
+          { tecnico: 'Técnico Beta Soporte', reparados: 34, tiempoPromedioDias: 3.2 },
         ],
         reparacionesPorMes: [
           { mes: 'Mar 2026', cantidad: 18 },
           { mes: 'Abr 2026', cantidad: 25 },
           { mes: 'May 2026', cantidad: 38 },
-          { mes: 'Jun 2026', cantidad: 39 }
-        ]
+          { mes: 'Jun 2026', cantidad: 39 },
+        ],
       });
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchStats();
-  }, [token]);
+  useEffect(() => { fetchStats(); }, [token]);
 
   if (loading && !stats) {
     return (
-      <div className="text-center py-20">
-        <span className="inline-block w-10 h-10 border-4 border-[#FF8200] border-t-transparent rounded-full animate-spin"></span>
-        <p className="text-slate-500 mt-2">Cargando estadísticas del Ministerio...</p>
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-[#FF8200]" />
+        <p className="text-slate-400 text-sm">Cargando estadísticas...</p>
       </div>
     );
   }
 
-  const s = stats || {
-    equiposIngresados: 0,
-    equiposPendientes: 0,
-    equiposEntregados: 0,
-    tiempoPromedioReparacionDias: 0.0,
-    fallasMasFrecuentes: [],
-    equiposPorEstado: {},
-    reparacionesPorEscuela: [],
-    efectividadTecnicos: [],
-    reparacionesPorMes: []
+  const s = stats ?? {
+    equiposIngresados: 0, equiposPendientes: 0, equiposEntregados: 0,
+    tiempoPromedioReparacionDias: 0, fallasMasFrecuentes: [],
+    equiposPorEstado: {}, reparacionesPorEscuela: [],
+    efectividadTecnicos: [], reparacionesPorMes: [],
   };
 
   const totalFallas = s.fallasMasFrecuentes.reduce((acc, item) => acc + item.cantidad, 0) || 1;
+  const maxMes = Math.max(...(s.reparacionesPorMes.map(m => m.cantidad) || [1])) || 1;
+
+  const metricCards = [
+    { label: 'Total Ingresados', value: s.equiposIngresados, color: 'text-slate-900', bar: 'bg-slate-800', pct: 100 },
+    { label: 'Pendientes', value: s.equiposPendientes, color: 'text-[#FF8200]', bar: 'bg-[#FF8200]', pct: Math.min(100, (s.equiposPendientes / (s.equiposIngresados || 1)) * 100) },
+    { label: 'Entregados', value: s.equiposEntregados, color: 'text-green-700', bar: 'bg-green-500', pct: Math.min(100, (s.equiposEntregados / (s.equiposIngresados || 1)) * 100) },
+    { label: 'Tiempo Prom.', value: `${s.tiempoPromedioReparacionDias}d`, color: 'text-blue-700', bar: 'bg-blue-500', pct: 65 },
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* Header with Dashboard info and official crest */}
-      <div className="border-b border-slate-200 pb-5 flex justify-between items-center">
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="pb-4 border-b border-slate-200 flex justify-between items-center flex-wrap gap-4">
         <div className="flex items-center gap-4">
-          <LogoSanJuan className="max-w-[320px]" />
-          <div className="border-l border-slate-300 pl-4">
-            <h2 className="text-2xl font-extrabold text-[#1D252D] m-0">Monitoreo de Soporte Técnico</h2>
-            <p className="text-slate-500 text-xs mt-0.5">Indicadores de gestión y trazabilidad en tiempo real.</p>
+          <LogoSanJuan className="max-w-[280px]" showMinistry={false} />
+          <div className="border-l border-slate-200 pl-4">
+            <h2 className="text-xl font-bold text-slate-900">Monitoreo de Soporte Técnico</h2>
+            <p className="text-slate-400 text-xs mt-0.5">Indicadores de gestión y trazabilidad en tiempo real.</p>
           </div>
         </div>
         <button
           onClick={fetchStats}
-          className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg border border-slate-200 transition-colors text-sm"
+          className="bg-slate-50 hover:bg-slate-100 text-slate-600 font-medium px-4 py-2 rounded-lg border border-slate-200 transition-colors text-sm flex items-center gap-1.5 cursor-pointer"
         >
-          🔄 Actualizar
+          <RefreshCw className="w-3.5 h-3.5" />
+          Actualizar
         </button>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Total Ingresados</p>
-          <p className="text-4xl font-extrabold text-[#1D252D] mt-2 font-mono">{s.equiposIngresados}</p>
-          <div className="w-full bg-slate-200 h-1.5 rounded-full mt-4 overflow-hidden">
-            <div className="bg-[#1D252D] h-full rounded-full" style={{ width: '100%' }}></div>
+      {/* Metric Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {metricCards.map((card, i) => (
+          <div key={i} className="bg-white border border-slate-200 rounded-xl p-5">
+            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">{card.label}</p>
+            <p className={`text-3xl font-bold mt-1 font-mono ${card.color}`}>{card.value}</p>
+            <div className="w-full bg-slate-100 h-1 rounded-full mt-3 overflow-hidden">
+              <div className={`${card.bar} h-full rounded-full transition-all duration-700`} style={{ width: `${card.pct}%` }} />
+            </div>
           </div>
-        </div>
-
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Pendientes de Soporte</p>
-          <p className="text-4xl font-extrabold text-[#FF8200] mt-2 font-mono">{s.equiposPendientes}</p>
-          <div className="w-full bg-slate-200 h-1.5 rounded-full mt-4 overflow-hidden">
-            <div className="bg-[#FF8200] h-full rounded-full" style={{ width: `${Math.min(100, (s.equiposPendientes / (s.equiposIngresados || 1)) * 100)}%` }}></div>
-          </div>
-        </div>
-
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Entregados / Listos</p>
-          <p className="text-4xl font-extrabold text-green-700 mt-2 font-mono">{s.equiposEntregados}</p>
-          <div className="w-full bg-slate-200 h-1.5 rounded-full mt-4 overflow-hidden">
-            <div className="bg-green-600 h-full rounded-full" style={{ width: `${Math.min(100, (s.equiposEntregados / (s.equiposIngresados || 1)) * 100)}%` }}></div>
-          </div>
-        </div>
-
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Tiempo Res. Promedio</p>
-          <p className="text-4xl font-extrabold text-blue-700 mt-2 font-mono">{s.tiempoPromedioReparacionDias}d</p>
-          <div className="w-full bg-slate-200 h-1.5 rounded-full mt-4 overflow-hidden">
-            <div className="bg-blue-600 h-full rounded-full" style={{ width: '65%' }}></div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Faults Bar Chart */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
-          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Fallas más Frecuentes</h3>
-          <div className="space-y-4">
-            {s.fallasMasFrecuentes.map((item, index) => {
-              const percentage = Math.round((item.cantidad / totalFallas) * 100);
+      {/* Charts Row 1 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Top Faults */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <AlertCircle className="w-4 h-4 text-[#FF8200]" />
+            <h3 className="text-sm font-semibold text-slate-800">Fallas más Frecuentes</h3>
+          </div>
+          <div className="space-y-3">
+            {s.fallasMasFrecuentes.map((item, i) => {
+              const pct = Math.round((item.cantidad / totalFallas) * 100);
               return (
-                <div key={index} className="space-y-1.5">
+                <div key={i} className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-700 font-semibold">{item.falla}</span>
-                    <span className="text-[#FF8200] font-mono font-bold">{item.cantidad} equipos ({percentage}%)</span>
+                    <span className="text-slate-700 truncate pr-2">{item.falla}</span>
+                    <span className="text-[#FF8200] font-mono font-semibold shrink-0">{item.cantidad} ({pct}%)</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200">
-                    <div 
-                      className="bg-[#FF8200] h-full rounded-full transition-all duration-500" 
-                      style={{ width: `${percentage}%` }}
-                    ></div>
+                  <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div className="bg-[#FF8200] h-full rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               );
@@ -177,107 +162,91 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
           </div>
         </div>
 
-        {/* State Breakdown */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
-          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Distribución por Estado</h3>
-          <div className="grid grid-cols-2 gap-4">
+        {/* Estado Breakdown */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+          <div className="border-b border-slate-100 pb-3">
+            <h3 className="text-sm font-semibold text-slate-800">Distribución por Estado</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
             {Object.entries(s.equiposPorEstado)
               .filter(([estado]) => estado !== 'Entregado')
-              .map(([estado, cantidad], idx) => (
-                <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex justify-between items-center">
+              .map(([estado, cantidad], i) => (
+                <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 flex items-center justify-between">
                   <div>
-                    <span className="text-slate-500 text-[10px] uppercase tracking-wider font-bold">
-                      {estado.replace(/_/g, ' ')}
-                    </span>
-                    <p className="text-2xl font-bold text-[#1D252D] mt-1 font-mono">{cantidad}</p>
+                    <p className="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">{estado.replace(/_/g, ' ')}</p>
+                    <p className="text-xl font-bold text-slate-900 font-mono mt-0.5">{cantidad}</p>
                   </div>
-                  <div className={`w-3 h-3 rounded-full ${
-                    estado === 'Ingresado' ? 'bg-blue-500' :
-                    estado === 'En_Diagnostico' ? 'bg-[#FBDD40]' :
-                    estado === 'En_Reparacion' ? 'bg-[#FF8200]' :
-                    estado === 'Esperando_Repuestos' ? 'bg-purple-500' :
-                    estado === 'Apartado_Para_Garantia' ? 'bg-indigo-500' :
-                    estado === 'En_Garantia_Externa' ? 'bg-cyan-500' :
-                    'bg-green-500'
-                  }`}></div>
+                  <div className={`w-2.5 h-2.5 rounded-full ${estadoColor[estado] || 'bg-slate-300'} shrink-0`} />
                 </div>
               ))}
           </div>
         </div>
       </div>
 
-      {/* Second row of charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Repairs by School */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 lg:col-span-1">
-          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Distribución por Escuela</h3>
-          <div className="space-y-3">
-            {!s.reparacionesPorEscuela || s.reparacionesPorEscuela.length === 0 ? (
-              <p className="text-slate-400 text-sm">No hay registros de escuelas.</p>
-            ) : (
-              s.reparacionesPorEscuela.map((esc, index) => (
-                <div key={index} className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
-                  <div className="truncate pr-2">
-                    <p className="font-semibold text-xs text-slate-700 truncate">{esc.escuela}</p>
-                  </div>
-                  <span className="bg-[#FF8200]/10 text-[#FF8200] font-mono font-bold text-xs px-2.5 py-1 rounded-full shrink-0">
-                    {esc.cantidad} eq.
-                  </span>
+      {/* Charts Row 2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* By School */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <School className="w-4 h-4 text-[#FF8200]" />
+            <h3 className="text-sm font-semibold text-slate-800">Por Escuela</h3>
+          </div>
+          <div className="space-y-2">
+            {s.reparacionesPorEscuela.length === 0
+              ? <p className="text-slate-400 text-xs">Sin datos.</p>
+              : s.reparacionesPorEscuela.map((esc, i) => (
+                <div key={i} className="flex items-center justify-between bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                  <p className="text-xs text-slate-700 font-medium truncate pr-2">{esc.escuela}</p>
+                  <span className="text-[10px] font-bold text-[#FF8200] bg-orange-50 border border-orange-100 px-2 py-0.5 rounded-full shrink-0">{esc.cantidad}</span>
                 </div>
-              ))
-            )}
+              ))}
           </div>
         </div>
 
-        {/* Technician Effectiveness */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 lg:col-span-1">
-          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Rendimiento Técnico</h3>
-          <div className="space-y-3">
-            {!s.efectividadTecnicos || s.efectividadTecnicos.length === 0 ? (
-              <p className="text-slate-400 text-sm">No hay datos de efectividad de técnicos.</p>
-            ) : (
-              s.efectividadTecnicos.map((t, index) => (
-                <div key={index} className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
-                  <div className="flex justify-between text-xs font-bold text-slate-700">
-                    <span>👤 {t.tecnico}</span>
-                    <span className="text-green-700">{t.reparados} reparados</span>
-                  </div>
-                  <div className="flex justify-between text-[11px] text-slate-500">
-                    <span>Tiempo promedio:</span>
-                    <span className="font-mono font-semibold text-blue-700">{t.tiempoPromedioDias} días</span>
+        {/* Tech Effectiveness */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <User className="w-4 h-4 text-[#FF8200]" />
+            <h3 className="text-sm font-semibold text-slate-800">Rendimiento Técnico</h3>
+          </div>
+          <div className="space-y-2">
+            {s.efectividadTecnicos.length === 0
+              ? <p className="text-slate-400 text-xs">Sin datos.</p>
+              : s.efectividadTecnicos.map((t, i) => (
+                <div key={i} className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5">
+                  <p className="text-xs font-semibold text-slate-800">{t.tecnico}</p>
+                  <div className="flex justify-between text-[10px] text-slate-500">
+                    <span>Reparados: <span className="font-bold text-green-700">{t.reparados}</span></span>
+                    <span>Prom: <span className="font-mono font-bold text-blue-700">{t.tiempoPromedioDias}d</span></span>
                   </div>
                 </div>
-              ))
-            )}
+              ))}
           </div>
         </div>
 
-        {/* Monthly trends */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 lg:col-span-1">
-          <h3 className="text-lg font-bold text-[#1D252D] border-b border-slate-100 pb-2">Ingresos Mensuales</h3>
+        {/* Monthly Trend */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <TrendingUp className="w-4 h-4 text-[#FF8200]" />
+            <h3 className="text-sm font-semibold text-slate-800">Ingresos Mensuales</h3>
+          </div>
           <div className="space-y-3">
-            {!s.reparacionesPorMes || s.reparacionesPorMes.length === 0 ? (
-              <p className="text-slate-400 text-sm">No hay datos de tendencias mensuales.</p>
-            ) : (
-              s.reparacionesPorMes.map((mes, index) => {
-                const maxVal = Math.max(...s.reparacionesPorMes.map(m => m.cantidad)) || 1;
-                const percent = Math.round((mes.cantidad / maxVal) * 100);
+            {s.reparacionesPorMes.length === 0
+              ? <p className="text-slate-400 text-xs">Sin datos.</p>
+              : s.reparacionesPorMes.map((mes, i) => {
+                const pct = Math.round((mes.cantidad / maxMes) * 100);
                 return (
-                  <div key={index} className="space-y-1">
+                  <div key={i} className="space-y-1">
                     <div className="flex justify-between text-xs">
-                      <span className="text-slate-600 font-bold">{mes.mes}</span>
-                      <span className="text-slate-700 font-mono font-bold">{mes.cantidad} ingresos</span>
+                      <span className="text-slate-600 font-medium">{mes.mes}</span>
+                      <span className="text-slate-800 font-mono font-semibold">{mes.cantidad}</span>
                     </div>
-                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
-                      <div 
-                        className="bg-blue-600 h-full rounded-full transition-all duration-500" 
-                        style={{ width: `${percent}%` }}
-                      ></div>
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-blue-500 h-full rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );
-              })
-            )}
+              })}
           </div>
         </div>
       </div>
