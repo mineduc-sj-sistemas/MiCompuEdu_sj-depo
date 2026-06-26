@@ -17,8 +17,16 @@
       "PackagePath": "staticwebassets\\comprobantes\\35b5a96a-a4ef-48cf-be64-07bf628d08e2.pdf"
     },
     {
+      "Id": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\3e1cd701-d913-43bd-82b9-148202f0a915.pdf",
+      "PackagePath": "staticwebassets\\comprobantes\\3e1cd701-d913-43bd-82b9-148202f0a915.pdf"
+    },
+    {
       "Id": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\47520ca0-77d6-419c-8b0e-e9bdfd6d5d0f.pdf",
       "PackagePath": "staticwebassets\\comprobantes\\47520ca0-77d6-419c-8b0e-e9bdfd6d5d0f.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\4bac5d13-f950-4c16-beb3-a52dfa33900a.pdf",
+      "PackagePath": "staticwebassets\\comprobantes\\4bac5d13-f950-4c16-beb3-a52dfa33900a.pdf"
     },
     {
       "Id": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\56e296ff-b25d-4214-9103-cfd68d612419.pdf",
@@ -63,6 +71,10 @@
     {
       "Id": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\uploads\\evidencias\\10a4baf5-800a-4adf-9e3f-4dda5868b403.png",
       "PackagePath": "staticwebassets\\uploads\\evidencias\\10a4baf5-800a-4adf-9e3f-4dda5868b403.png"
+    },
+    {
+      "Id": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\uploads\\evidencias\\3e845186-0802-469c-9f7f-6e5e6d99f7f4.png",
+      "PackagePath": "staticwebassets\\uploads\\evidencias\\3e845186-0802-469c-9f7f-6e5e6d99f7f4.png"
     },
     {
       "Id": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\uploads\\evidencias\\7cf3afcb-053d-436b-bd9d-6540997c282b.png",

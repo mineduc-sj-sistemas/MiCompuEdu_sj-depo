@@ -10,14 +10,10 @@ export const HealthCheckBanner: React.FC = () => {
 
     const checkHealth = async () => {
       try {
-        // Evaluamos si el backend está respondiendo. Si no tenemos health endpoint, un OPTIONS a API_BASE_URL o metricas
-        const response = await fetch(`${API_BASE_URL}/Reparaciones/metricas`, { 
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        // 401 means auth is needed, but the server is definitely UP.
-        setIsHealthy(response.ok || response.status === 401 || response.status === 403); 
+        // Si el fetch no arroja excepción de red (ERR_CONNECTION_REFUSED), el servidor está encendido.
+        // Hacemos una petición simple a un endpoint conocido.
+        await fetch(`${API_BASE_URL}/Escuelas`);
+        setIsHealthy(true); 
       } catch (error) {
         setIsHealthy(false);
       }

@@ -1,0 +1,3267 @@
+{
+  "totalAlumnos": 22556,
+  "totalNetbooks": 22555,
+  "totalEscuelas": 566,
+  "totalTutores": 21483,
+  "conUsuario": 22471,
+  "sinUsuario": 85,
+  "duplicadosNetbook": [
+    {
+      "netbook": "SJMA025-017969",
+      "alumnos": [
+        "VALDEZ ALBARRACIN BAUTISTA BENJAMIN",
+        "MAZA NARVÁEZ, ROCÍO FERNANDA"
+      ],
+      "dnis": [
+        "53551634",
+        "53358557"
+      ]
+    }
+  ],
+  "duplicadosDNI": [
+    {
+      "dni": "54373412",
+      "nombres": [
+        "OVEJERO MARTINEZ URIEL ERNESTO",
+        "OVEJERO MARTINEZ URIEL ERNESTO"
+      ],
+      "netbooks": [
+        "SJMA025-022076",
+        "SJMA025-005352"
+      ]
+    }
+  ],
+  "porEscuela": [
+    {
+      "escuela": "SARMIENTO",
+      "cantidad": 274
+    },
+    {
+      "escuela": "BERNARDINO RIVADAVIA",
+      "cantidad": 271
+    },
+    {
+      "escuela": "14 DE FEBRERO",
+      "cantidad": 269
+    },
+    {
+      "escuela": "VICENTE LOPEZ Y PLANES",
+      "cantidad": 239
+    },
+    {
+      "escuela": "ESCUELA VILLICUM",
+      "cantidad": 193
+    },
+    {
+      "escuela": "CAMILO ROJO",
+      "cantidad": 191
+    },
+    {
+      "escuela": "JUAN MANTOVANI",
+      "cantidad": 187
+    },
+    {
+      "escuela": "CARLOS PELLEGRINI T.M.",
+      "cantidad": 186
+    },
+    {
+      "escuela": "INGENIEROS DE SAN JUAN",
+      "cantidad": 186
+    },
+    {
+      "escuela": "ANTONIO DE LA TORRE",
+      "cantidad": 185
+    },
+    {
+      "escuela": "ANTONIO TORRES TURNO MAÑANA",
+      "cantidad": 185
+    },
+    {
+      "escuela": "INGENIERO MARCO ANTONIO ZALAZAR",
+      "cantidad": 181
+    },
+    {
+      "escuela": "JOSÉ CHIRAPOZU",
+      "cantidad": 178
+    },
+    {
+      "escuela": "DR. ISIDRO MARIANO DE ZAVALLA",
+      "cantidad": 172
+    },
+    {
+      "escuela": "ESCUELA PBRO. MARIANO IANELLI",
+      "cantidad": 158
+    },
+    {
+      "escuela": "CLARA ROSA CORTÍNEZ",
+      "cantidad": 156
+    },
+    {
+      "escuela": "GRANADEROS DE SAN MARTÍN",
+      "cantidad": 155
+    },
+    {
+      "escuela": "ANTONIO TORRES TURNO TARDE",
+      "cantidad": 155
+    },
+    {
+      "escuela": "PROVINCIA DE SALTA",
+      "cantidad": 153
+    },
+    {
+      "escuela": "PAULA ALBARRACÍN DE SARMIENTO",
+      "cantidad": 153
+    },
+    {
+      "escuela": "DR. ANTONINO  ABERASTAIN",
+      "cantidad": 152
+    },
+    {
+      "escuela": "ELVIRA DE LA RIESTRA DE LAINEZ",
+      "cantidad": 149
+    },
+    {
+      "escuela": "INGENIERO FÉLIX AGUILAR",
+      "cantidad": 147
+    },
+    {
+      "escuela": "BERNARDO DE MONTEAGUDO",
+      "cantidad": 146
+    },
+    {
+      "escuela": "GENERAL DE LA NACIÓN INGENIERO ENRIQUE MOSCONI",
+      "cantidad": 146
+    },
+    {
+      "escuela": "DOMINGO FAUSTINO SARMIENTO",
+      "cantidad": 146
+    },
+    {
+      "escuela": "ESCUELA ESPAÑA",
+      "cantidad": 145
+    },
+    {
+      "escuela": "JOSÉ RUDECINDO ROJO",
+      "cantidad": 144
+    },
+    {
+      "escuela": "ESCUELA NORMAL SUPERIOR SARMIENTO",
+      "cantidad": 139
+    },
+    {
+      "escuela": "POLICÍA FEDERAL ARGENTINA",
+      "cantidad": 138
+    },
+    {
+      "escuela": "PROVINCIA DE CATAMARCA",
+      "cantidad": 137
+    },
+    {
+      "escuela": "PRESIDENTE DOCTOR ARTURO UMBERTO ILLIA",
+      "cantidad": 137
+    },
+    {
+      "escuela": "JOSÉ ARISTÓBULO GARCÍA",
+      "cantidad": 134
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA FALUCHO TURNO TARDE",
+      "cantidad": 131
+    },
+    {
+      "escuela": "NORMAL SUPERIOR GRAL. MANUEL BELGRANO",
+      "cantidad": 130
+    },
+    {
+      "escuela": "MANUEL PACÍFICO ANTEQUEDA",
+      "cantidad": 129
+    },
+    {
+      "escuela": "JORGE WASHINGTON",
+      "cantidad": 129
+    },
+    {
+      "escuela": "ÁNGEL DOMINGO ROJAS",
+      "cantidad": 128
+    },
+    {
+      "escuela": "PRESIDENTE AVELLANEDA",
+      "cantidad": 128
+    },
+    {
+      "escuela": "RABINDRANATH TAGORE",
+      "cantidad": 123
+    },
+    {
+      "escuela": "PERIODISTA LUIS JORGE BATES",
+      "cantidad": 122
+    },
+    {
+      "escuela": "PROVINCIA DE CORRIENTES",
+      "cantidad": 122
+    },
+    {
+      "escuela": "BARRIO PARQUE RIVADAVIA NORTE",
+      "cantidad": 121
+    },
+    {
+      "escuela": "ERNESTO A. BAVIO",
+      "cantidad": 117
+    },
+    {
+      "escuela": "PROVINCIA DE LA RIOJA",
+      "cantidad": 117
+    },
+    {
+      "escuela": "RAFAEL OBLIGADO",
+      "cantidad": 117
+    },
+    {
+      "escuela": "ANTONIA VILLASCUSA TM",
+      "cantidad": 117
+    },
+    {
+      "escuela": "ANTONIO QUARANTA",
+      "cantidad": 116
+    },
+    {
+      "escuela": "SATURNINO SARASSA",
+      "cantidad": 115
+    },
+    {
+      "escuela": "GOBERNADOR FEDERICO CANTONI",
+      "cantidad": 115
+    },
+    {
+      "escuela": "ESCUELA NORMAL SUPERIOR GRAL. SAN MARTÍN",
+      "cantidad": 115
+    },
+    {
+      "escuela": "MERCEDES SAN MARTIN DE BALCARCE",
+      "cantidad": 115
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA NUEVO CUYO TURNO MAÑANA",
+      "cantidad": 114
+    },
+    {
+      "escuela": "SEGUNDINO J. NAVARRO EMER",
+      "cantidad": 114
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA FALUCHO TURNO MAÑANA",
+      "cantidad": 112
+    },
+    {
+      "escuela": "MANUEL BELGRANO",
+      "cantidad": 112
+    },
+    {
+      "escuela": "PRILIDIANO PUEYRREDÓN",
+      "cantidad": 111
+    },
+    {
+      "escuela": "DOCTORA CARMEN PEÑALOZA DE VARESE",
+      "cantidad": 111
+    },
+    {
+      "escuela": "GRAL. ESTANISLAO SOLER TURNO MAÑANA",
+      "cantidad": 110
+    },
+    {
+      "escuela": "DIÓGENES PERRAMÓN",
+      "cantidad": 109
+    },
+    {
+      "escuela": "11 DE SETIEMBRE",
+      "cantidad": 108
+    },
+    {
+      "escuela": "REGIMIENTO DE PATRICIOS",
+      "cantidad": 108
+    },
+    {
+      "escuela": "PROVINCIA DEL CHACO",
+      "cantidad": 107
+    },
+    {
+      "escuela": "JUAN JOSÉ CASTELLI TURNO MAÑANA",
+      "cantidad": 106
+    },
+    {
+      "escuela": "LEOPOLDO CORRÉTJER",
+      "cantidad": 103
+    },
+    {
+      "escuela": "ESCUELA GENERAL SAN MARTÍN",
+      "cantidad": 103
+    },
+    {
+      "escuela": "MARY O GRAHAN",
+      "cantidad": 102
+    },
+    {
+      "escuela": "ESCUELA JULIA LEÓN",
+      "cantidad": 101
+    },
+    {
+      "escuela": "MARINO BARTOLOME CARRERAS T. MAÑANA",
+      "cantidad": 101
+    },
+    {
+      "escuela": "GENERAL ANTONIO GONZÁLEZ BALCARCE",
+      "cantidad": 101
+    },
+    {
+      "escuela": "CANDELARIA ALBARRACÍN DE GODOY",
+      "cantidad": 100
+    },
+    {
+      "escuela": "FRANCISCO NARCISO DE LAPRIDA",
+      "cantidad": 100
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA NUEVO CUYO TURNO TARDE",
+      "cantidad": 99
+    },
+    {
+      "escuela": "BARRIO FRANKLIN RAWSON",
+      "cantidad": 99
+    },
+    {
+      "escuela": "PROVINCIA DE FORMOSA - Nº 722",
+      "cantidad": 99
+    },
+    {
+      "escuela": "REPÚBLICA DE CHILE",
+      "cantidad": 97
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA BANDERA CIUDADANA",
+      "cantidad": 96
+    },
+    {
+      "escuela": "MERCEDES NIEVAS DE CASTRO",
+      "cantidad": 96
+    },
+    {
+      "escuela": "MARIANO NECOCHEA T.M.",
+      "cantidad": 96
+    },
+    {
+      "escuela": "LUIS JORGE FONTANA",
+      "cantidad": 96
+    },
+    {
+      "escuela": "PRESIDENTE JUAN DOMINGO PERÓN",
+      "cantidad": 96
+    },
+    {
+      "escuela": "JUAN ENRIQUE PESTALOZZI TURNO MAÑANA",
+      "cantidad": 95
+    },
+    {
+      "escuela": "JUAN JUFRÉ",
+      "cantidad": 94
+    },
+    {
+      "escuela": "DR. LUIS AGOTE",
+      "cantidad": 93
+    },
+    {
+      "escuela": "SATURNINO SEGUROLA",
+      "cantidad": 92
+    },
+    {
+      "escuela": "CORNELIO SAAVEDRA TURNO MAÑANA",
+      "cantidad": 92
+    },
+    {
+      "escuela": "WERFIELD SALINAS",
+      "cantidad": 91
+    },
+    {
+      "escuela": "PRIMARIA BARRIO VALLE GRANDE TURNO MAÑANA",
+      "cantidad": 91
+    },
+    {
+      "escuela": "JOSÉ MARÍA TORRES",
+      "cantidad": 91
+    },
+    {
+      "escuela": "ESCUELA NORMAL SUPERIOR FRAY JUSTO SANTA MARÍA DE ORO",
+      "cantidad": 89
+    },
+    {
+      "escuela": "FLORENTINO AMEGHINO",
+      "cantidad": 89
+    },
+    {
+      "escuela": "MANUEL LÁINEZ",
+      "cantidad": 89
+    },
+    {
+      "escuela": "INDEPENDENCIA ARGENTINA",
+      "cantidad": 88
+    },
+    {
+      "escuela": "ESCUELA DOCENTES SANJUANINOS",
+      "cantidad": 87
+    },
+    {
+      "escuela": "TTE. PEDRO NOLASCO FONSECA",
+      "cantidad": 87
+    },
+    {
+      "escuela": "LA CAPILLA",
+      "cantidad": 87
+    },
+    {
+      "escuela": "PROVINCIA DE TUCUMÁN PRIMARIA",
+      "cantidad": 86
+    },
+    {
+      "escuela": "DR. NICANOR LARRAÍN",
+      "cantidad": 86
+    },
+    {
+      "escuela": "JUAN LARREA EMER",
+      "cantidad": 86
+    },
+    {
+      "escuela": "VICECOMODORO GUSTAVO MARAMBIO",
+      "cantidad": 84
+    },
+    {
+      "escuela": "JUAN ENRIQUE PESTALOZZI-TURNO TARDE",
+      "cantidad": 83
+    },
+    {
+      "escuela": "ERNESTINA ECHEGARAY DE ANDINO",
+      "cantidad": 83
+    },
+    {
+      "escuela": "ESCUELA PRIMARIA BARRIO VALLE GRANDE TURNO TARDE",
+      "cantidad": 82
+    },
+    {
+      "escuela": "ESCUELA GABRIELA MISTRAL",
+      "cantidad": 82
+    },
+    {
+      "escuela": "PEDRO DE MÁRQUEZ",
+      "cantidad": 81
+    },
+    {
+      "escuela": "BENJAMÍN LENOIR",
+      "cantidad": 81
+    },
+    {
+      "escuela": "CARLOS MARIA DE ALVEAR TURNO TARDE",
+      "cantidad": 81
+    },
+    {
+      "escuela": "PROVINCIA DE SANTA FÉ",
+      "cantidad": 81
+    },
+    {
+      "escuela": "PROVINCIA DE SANTA CRUZ",
+      "cantidad": 80
+    },
+    {
+      "escuela": "ALEJANDRO MARÍA DE AGUADO",
+      "cantidad": 80
+    },
+    {
+      "escuela": "JOSÉ PEDRO CORTÍNEZ",
+      "cantidad": 79
+    },
+    {
+      "escuela": "PERITO FRANCISCO PASCASIO MORENO",
+      "cantidad": 79
+    },
+    {
+      "escuela": "POLICÍA DE LA PROVINCIA DE SAN JUAN",
+      "cantidad": 78
+    },
+    {
+      "escuela": "CARLOS MARÍA DE ALVEAR T.M.",
+      "cantidad": 78
+    },
+    {
+      "escuela": "DR. PABLO A. RAMELLA",
+      "cantidad": 78
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA BARRIO FRONDIZZI",
+      "cantidad": 78
+    },
+    {
+      "escuela": "DR. AMABLE JONES",
+      "cantidad": 77
+    },
+    {
+      "escuela": "25 DE MAYO",
+      "cantidad": 77
+    },
+    {
+      "escuela": "LEONOR SANCHEZ DE ARANCIBIA",
+      "cantidad": 77
+    },
+    {
+      "escuela": "SALVADOR MARÍA DEL CARRIL",
+      "cantidad": 77
+    },
+    {
+      "escuela": "LAS HORNILLAS",
+      "cantidad": 76
+    },
+    {
+      "escuela": "ROQUE SÁENZ PEÑA",
+      "cantidad": 74
+    },
+    {
+      "escuela": "PROVINCIA DE LA PAMPA",
+      "cantidad": 74
+    },
+    {
+      "escuela": "13 DE JUNIO",
+      "cantidad": 74
+    },
+    {
+      "escuela": "JOSÉ HERNÁNDEZ",
+      "cantidad": 73
+    },
+    {
+      "escuela": "REPÚBLICA ORIENTAL DEL URUGUAY",
+      "cantidad": 71
+    },
+    {
+      "escuela": "TENIENTE GENERAL PEDRO EUGENIO ARAMBURU TURNO MAÑANA",
+      "cantidad": 71
+    },
+    {
+      "escuela": "ESTRELLA DE SAN JUAN",
+      "cantidad": 70
+    },
+    {
+      "escuela": "TIMOTEO MARADONA",
+      "cantidad": 70
+    },
+    {
+      "escuela": "FRAY LUIS BELTRÁN",
+      "cantidad": 70
+    },
+    {
+      "escuela": "CONTRALMIRANTE ELEAZAR VIDELA",
+      "cantidad": 70
+    },
+    {
+      "escuela": "ARTURO CAPDEVILA",
+      "cantidad": 70
+    },
+    {
+      "escuela": "FLORENCIA NIGHTINGALE",
+      "cantidad": 67
+    },
+    {
+      "escuela": "SAN JUAN EUDES",
+      "cantidad": 66
+    },
+    {
+      "escuela": "JUAN PEDRO ESNAOLA",
+      "cantidad": 66
+    },
+    {
+      "escuela": "EUGENIA BELÍN SARMIENTO",
+      "cantidad": 66
+    },
+    {
+      "escuela": "PROVINCIA DE BUENOS AIRES",
+      "cantidad": 65
+    },
+    {
+      "escuela": "MARCELINO GUARDIOLA",
+      "cantidad": 65
+    },
+    {
+      "escuela": "DR. GUILLERMO RAWSON",
+      "cantidad": 65
+    },
+    {
+      "escuela": "TRÁNSITO DE ORO DE RODRÍGUEZ",
+      "cantidad": 65
+    },
+    {
+      "escuela": "DOMINGO DE ORO",
+      "cantidad": 64
+    },
+    {
+      "escuela": "CAMPAÑA DEL DESIERTO",
+      "cantidad": 63
+    },
+    {
+      "escuela": "CARLOS N. VERGARA EMER",
+      "cantidad": 63
+    },
+    {
+      "escuela": "CORNELIO SAAVEDRA TURNO TARDE",
+      "cantidad": 62
+    },
+    {
+      "escuela": "CECILIO ÁVILA",
+      "cantidad": 62
+    },
+    {
+      "escuela": "DR. HONORIO PUEYRREDÓN",
+      "cantidad": 62
+    },
+    {
+      "escuela": "12 DE AGOSTO",
+      "cantidad": 62
+    },
+    {
+      "escuela": "BARTOLOMÉ DEL BONO",
+      "cantidad": 61
+    },
+    {
+      "escuela": "MALVINAS ARGENTINAS",
+      "cantidad": 60
+    },
+    {
+      "escuela": "JUAN IGNACIO GORRITI",
+      "cantidad": 60
+    },
+    {
+      "escuela": "HIPÓLITO VIEYTES",
+      "cantidad": 60
+    },
+    {
+      "escuela": "ALBERGUE DR. JUAN CARLOS NAVARRO",
+      "cantidad": 59
+    },
+    {
+      "escuela": "ENRIQUE LARRETA EMER",
+      "cantidad": 58
+    },
+    {
+      "escuela": "MARÍA LUISA VILLARINO DE DEL CARRIL",
+      "cantidad": 58
+    },
+    {
+      "escuela": "ESTEBAN ECHEVERRÍA",
+      "cantidad": 57
+    },
+    {
+      "escuela": "CRUCE DE LOS ANDES",
+      "cantidad": 56
+    },
+    {
+      "escuela": "PROVINCIA SANTIAGO DEL ESTERO",
+      "cantidad": 56
+    },
+    {
+      "escuela": "PROVINCIA DE SAN JUAN",
+      "cantidad": 56
+    },
+    {
+      "escuela": "PRESIDENTE SARMIENTO",
+      "cantidad": 56
+    },
+    {
+      "escuela": "JUSTO JOSÉ DE URQUIZA",
+      "cantidad": 56
+    },
+    {
+      "escuela": "PROVINCIA DE NEUQUÉN",
+      "cantidad": 55
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA GENDARME ARGENTINO",
+      "cantidad": 54
+    },
+    {
+      "escuela": "SANTIAGO PAREDES",
+      "cantidad": 54
+    },
+    {
+      "escuela": "MARTÍN YANZÓN",
+      "cantidad": 54
+    },
+    {
+      "escuela": "JUAN EUGENIO SERÚ EMER",
+      "cantidad": 53
+    },
+    {
+      "escuela": "ESCUELA JUAN DOLORES GODOY",
+      "cantidad": 52
+    },
+    {
+      "escuela": "JUANA CARDOSO ABERASTAIN",
+      "cantidad": 52
+    },
+    {
+      "escuela": "FRAY JUSTO SANTA MARÍA DE ORO",
+      "cantidad": 52
+    },
+    {
+      "escuela": "BLAS PARERA",
+      "cantidad": 52
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA B°EJÉRCITO DE LOS ANDES",
+      "cantidad": 51
+    },
+    {
+      "escuela": "AGUSTÍN VICTORIO GNECCO TURNO TARDE",
+      "cantidad": 51
+    },
+    {
+      "escuela": "PROVINCIA DE MENDOZA",
+      "cantidad": 49
+    },
+    {
+      "escuela": "BENITA DÁVILA DE DE LOS RÍOS",
+      "cantidad": 49
+    },
+    {
+      "escuela": "24 DE SEPTIEMBRE",
+      "cantidad": 49
+    },
+    {
+      "escuela": "TIERRA DEL FUEGO",
+      "cantidad": 49
+    },
+    {
+      "escuela": "EUSEBIO SEGUNDO ZAPATA",
+      "cantidad": 48
+    },
+    {
+      "escuela": "EUGENIA BELIN SARMIENTO",
+      "cantidad": 48
+    },
+    {
+      "escuela": "OBISPO ZAPATA",
+      "cantidad": 48
+    },
+    {
+      "escuela": "ANDINA",
+      "cantidad": 48
+    },
+    {
+      "escuela": "ALAS ARGENTINAS",
+      "cantidad": 47
+    },
+    {
+      "escuela": "PEDRO ÁLVAREZ",
+      "cantidad": 47
+    },
+    {
+      "escuela": "ABENHAMAR RODRIGO",
+      "cantidad": 46
+    },
+    {
+      "escuela": "MIGUEL DE CERVANTES SAAVEDRA",
+      "cantidad": 46
+    },
+    {
+      "escuela": "GENERAL MARIANO ACHA",
+      "cantidad": 46
+    },
+    {
+      "escuela": "EDUCACIÓN POPULAR",
+      "cantidad": 45
+    },
+    {
+      "escuela": "DALMACIO VÉLEZ SARSFIELD",
+      "cantidad": 45
+    },
+    {
+      "escuela": "PROVINCIA DE JUJUY",
+      "cantidad": 44
+    },
+    {
+      "escuela": "FRANCISCO DE VILLAGRA",
+      "cantidad": 44
+    },
+    {
+      "escuela": "PEDRO BONIFACIO PALACIOS",
+      "cantidad": 44
+    },
+    {
+      "escuela": "GOBERNADOR ELOY CAMUS",
+      "cantidad": 44
+    },
+    {
+      "escuela": "CAPITAL FEDERAL",
+      "cantidad": 43
+    },
+    {
+      "escuela": "PATRICIAS MENDOCINAS",
+      "cantidad": 42
+    },
+    {
+      "escuela": "ROSARIO VERA PEÑALOZA",
+      "cantidad": 42
+    },
+    {
+      "escuela": "PEDRO ECHAGÜE",
+      "cantidad": 42
+    },
+    {
+      "escuela": "ARTURO BERUTI",
+      "cantidad": 41
+    },
+    {
+      "escuela": "EJÉRCITO DE LOS ANDES",
+      "cantidad": 40
+    },
+    {
+      "escuela": "ALBERGUE JOSÉ MANUEL ESTRADA",
+      "cantidad": 40
+    },
+    {
+      "escuela": "SAN JOSÉ DE CALASANZ",
+      "cantidad": 40
+    },
+    {
+      "escuela": "MARY MANN",
+      "cantidad": 40
+    },
+    {
+      "escuela": "DR. JUAN CRISOSTOMO ALBARRACÍN",
+      "cantidad": 39
+    },
+    {
+      "escuela": "SATURNINO S. ARÁOZ",
+      "cantidad": 39
+    },
+    {
+      "escuela": "20 DE JUNIO",
+      "cantidad": 38
+    },
+    {
+      "escuela": "FRONTERAS ARGENTINAS",
+      "cantidad": 38
+    },
+    {
+      "escuela": "9 DE JULIO",
+      "cantidad": 38
+    },
+    {
+      "escuela": "PASO DE VALLE HERMOSO",
+      "cantidad": 38
+    },
+    {
+      "escuela": "JOSÉ MARÍA DEL CARRIL",
+      "cantidad": 37
+    },
+    {
+      "escuela": "RICARDO GÜIRALDES",
+      "cantidad": 37
+    },
+    {
+      "escuela": "YAPEYÚ",
+      "cantidad": 37
+    },
+    {
+      "escuela": "DR. ANTONINO ABERASTAIN",
+      "cantidad": 37
+    },
+    {
+      "escuela": "ESCUELA ESTEBAN DE LUCA",
+      "cantidad": 36
+    },
+    {
+      "escuela": "PRESIDENTE HIPÓLITO YRIGOYEN",
+      "cantidad": 36
+    },
+    {
+      "escuela": "LEANDRO NICÉFORO ALEM",
+      "cantidad": 35
+    },
+    {
+      "escuela": "NORMALSUPERIORGENERAL MANUEL BELGRANO",
+      "cantidad": 35
+    },
+    {
+      "escuela": "ESCUELA DE EDUCACIÓN PRIMARIA LOS MANANTIALES",
+      "cantidad": 35
+    },
+    {
+      "escuela": "DR. CARLOS SAAVEDRA LAMAS",
+      "cantidad": 35
+    },
+    {
+      "escuela": "ALBERGUE JOSEFA RAMÍREZ DE GARCÍA",
+      "cantidad": 34
+    },
+    {
+      "escuela": "HÉCTOR CONTE GRAND",
+      "cantidad": 34
+    },
+    {
+      "escuela": "SUBOFICIAL MAYOR SEGUNDO ATENOR YUBEL",
+      "cantidad": 34
+    },
+    {
+      "escuela": "PROCESA SARMIENTO DE LENOIR",
+      "cantidad": 33
+    },
+    {
+      "escuela": "JUANA DE IBARBOUROU",
+      "cantidad": 33
+    },
+    {
+      "escuela": "NORMAL SUPERIOR GENERAL MANUEL BELGRANO",
+      "cantidad": 33
+    },
+    {
+      "escuela": "GENERAL MARTÍN MIGUEL GÜEMES",
+      "cantidad": 33
+    },
+    {
+      "escuela": "PEDRO DE VALDIVIA",
+      "cantidad": 33
+    },
+    {
+      "escuela": "ESCUELA CLARA ROSA CORTINEZ",
+      "cantidad": 32
+    },
+    {
+      "escuela": "ESTANISLAO DEL CAMPO",
+      "cantidad": 32
+    },
+    {
+      "escuela": "JOSÉ ALEJANDRO SEGOVIA EMER",
+      "cantidad": 32
+    },
+    {
+      "escuela": "RAMÓN BARRERA",
+      "cantidad": 31
+    },
+    {
+      "escuela": "JOSÉ MARÍA PAZ",
+      "cantidad": 31
+    },
+    {
+      "escuela": "JUAN ANTOLÍN ZAPATA",
+      "cantidad": 30
+    },
+    {
+      "escuela": "NORMAL SUPERIOR SARMIENTO",
+      "cantidad": 30
+    },
+    {
+      "escuela": "DOMINGUITO",
+      "cantidad": 30
+    },
+    {
+      "escuela": "LUIS VERNET",
+      "cantidad": 30
+    },
+    {
+      "escuela": "AUTONOMÍA CIUDAD DE BAILÉN",
+      "cantidad": 29
+    },
+    {
+      "escuela": "JUAN XXIII",
+      "cantidad": 29
+    },
+    {
+      "escuela": "CLARA ROSA CORTINEZ",
+      "cantidad": 29
+    },
+    {
+      "escuela": "MARCOS SASTRE-EMER",
+      "cantidad": 29
+    },
+    {
+      "escuela": "JUAN DE DIOS FLORES",
+      "cantidad": 29
+    },
+    {
+      "escuela": "DRA. FRANCISCA RÍOS DE PÁEZ",
+      "cantidad": 29
+    },
+    {
+      "escuela": "REPÚBLICA DEL PERÚ",
+      "cantidad": 29
+    },
+    {
+      "escuela": "JORGE NEWBERY",
+      "cantidad": 28
+    },
+    {
+      "escuela": "JUAN JOSÉ DE VERTIZ",
+      "cantidad": 28
+    },
+    {
+      "escuela": "REPÚBLICA DEL PARAGUAY",
+      "cantidad": 28
+    },
+    {
+      "escuela": "ANGEL DOMINGO ROJAS",
+      "cantidad": 28
+    },
+    {
+      "escuela": "BATALLA DE TUCUMÁN",
+      "cantidad": 28
+    },
+    {
+      "escuela": "SAN JUAN DE LA FRONTERA",
+      "cantidad": 27
+    },
+    {
+      "escuela": "JOSÉ MARÍA DE LOS RÍOS",
+      "cantidad": 27
+    },
+    {
+      "escuela": "CONSTANCIO C. VIGIL",
+      "cantidad": 26
+    },
+    {
+      "escuela": "COMANDANTE TOMÁS ESPORA EMER",
+      "cantidad": 26
+    },
+    {
+      "escuela": "17 DE AGOSTO",
+      "cantidad": 26
+    },
+    {
+      "escuela": "DR. JOSÉ IGNACIO DE LA ROZA",
+      "cantidad": 26
+    },
+    {
+      "escuela": "ESCUELA PRIMARIA PRESIDENTE ARTURO FRONDIZI",
+      "cantidad": 26
+    },
+    {
+      "escuela": "HORACIO MANN",
+      "cantidad": 25
+    },
+    {
+      "escuela": "ALBERGUE CASA DEL NIÑO",
+      "cantidad": 25
+    },
+    {
+      "escuela": "VALLE DE TULUM",
+      "cantidad": 24
+    },
+    {
+      "escuela": "ALMIRANTE RAMÓN GONZÁLEZ FERNÁNDEZ EMER",
+      "cantidad": 24
+    },
+    {
+      "escuela": "MIGUEL DE AZCUÉNAGA",
+      "cantidad": 24
+    },
+    {
+      "escuela": "DR. PABLO A RAMELLA",
+      "cantidad": 24
+    },
+    {
+      "escuela": "ESCUELA MARÍA LUISA VILLARINO DE DEL CARRIL",
+      "cantidad": 24
+    },
+    {
+      "escuela": "NORMAL SUP. GRAL. SAN MARTÍN",
+      "cantidad": 24
+    },
+    {
+      "escuela": "JUAN LAVALLE",
+      "cantidad": 24
+    },
+    {
+      "escuela": "JULIO VERNE",
+      "cantidad": 24
+    },
+    {
+      "escuela": "DR. ALBERT EINSTEIN",
+      "cantidad": 23
+    },
+    {
+      "escuela": "PEDRO VALENZUELA EMER",
+      "cantidad": 23
+    },
+    {
+      "escuela": "REMEDIOS ESCALADA DE SAN MARTÍN",
+      "cantidad": 23
+    },
+    {
+      "escuela": "ESCUELA MARTÍN GIL",
+      "cantidad": 23
+    },
+    {
+      "escuela": "PROVINCIA DE CHUBUT",
+      "cantidad": 23
+    },
+    {
+      "escuela": "NORMAL SUPERIOR GRAL.SAN MARTIN",
+      "cantidad": 23
+    },
+    {
+      "escuela": "ALBERT SCHWEITZER",
+      "cantidad": 23
+    },
+    {
+      "escuela": "CIRILO SARMIENTO",
+      "cantidad": 23
+    },
+    {
+      "escuela": "CAPITÁN JUAN EUGENIO DE MALLEA-EMER",
+      "cantidad": 23
+    },
+    {
+      "escuela": "ANTONIO PULENTA",
+      "cantidad": 23
+    },
+    {
+      "escuela": "ADÁN QUIROGA",
+      "cantidad": 22
+    },
+    {
+      "escuela": "MARY OLSTINE GRAHAM",
+      "cantidad": 22
+    },
+    {
+      "escuela": "JUAN MARTÍN DE PUEYRREDÓN",
+      "cantidad": 22
+    },
+    {
+      "escuela": "CARLOS MARIA DE ALVEAR T.M.",
+      "cantidad": 22
+    },
+    {
+      "escuela": "WALT DISNEY",
+      "cantidad": 22
+    },
+    {
+      "escuela": "ERNESTO ALEJANDRO BAVIO",
+      "cantidad": 22
+    },
+    {
+      "escuela": "JOSÉ LOMBARDO RADICE",
+      "cantidad": 21
+    },
+    {
+      "escuela": "PASCUAL CHENA",
+      "cantidad": 21
+    },
+    {
+      "escuela": "PRESIDENTE MITRE",
+      "cantidad": 21
+    },
+    {
+      "escuela": "PROVINCIA DE SANTA CRUZ 751",
+      "cantidad": 21
+    },
+    {
+      "escuela": "DR. ALEJANDRO FLEMING",
+      "cantidad": 21
+    },
+    {
+      "escuela": "JUAN JUFRE",
+      "cantidad": 21
+    },
+    {
+      "escuela": "NORMAL SUPERIOR GENERAL SAN MARTIN",
+      "cantidad": 21
+    },
+    {
+      "escuela": "DOCTOR SATURNINO SALAS",
+      "cantidad": 21
+    },
+    {
+      "escuela": "ERNESTO A BAVIO",
+      "cantidad": 21
+    },
+    {
+      "escuela": "BENITO LYNCH  N° 755",
+      "cantidad": 21
+    },
+    {
+      "escuela": "JOSE RUDECINDO ROJO",
+      "cantidad": 21
+    },
+    {
+      "escuela": "DR. ANACLETO GIL EMER",
+      "cantidad": 20
+    },
+    {
+      "escuela": "CARLOS GUIDO SPANO",
+      "cantidad": 20
+    },
+    {
+      "escuela": "MAR ARGENTINO",
+      "cantidad": 20
+    },
+    {
+      "escuela": "SATURNINO S.ARÁOZ",
+      "cantidad": 20
+    },
+    {
+      "escuela": "GABRIEL ALBARRACÍN",
+      "cantidad": 20
+    },
+    {
+      "escuela": "ESTEBAN AGUSTÍN GASCÓN",
+      "cantidad": 20
+    },
+    {
+      "escuela": "TTE. GTRAL. DON PEDRO EUGENIO ARAMBURU",
+      "cantidad": 20
+    },
+    {
+      "escuela": "COMANDANTE CABOT",
+      "cantidad": 20
+    },
+    {
+      "escuela": "DR.JOSÉ IGNACIO DE LA ROZA.",
+      "cantidad": 20
+    },
+    {
+      "escuela": "PADRE FEDERICO MAGGIO",
+      "cantidad": 19
+    },
+    {
+      "escuela": "TTE. GRAL. DON PEDRO EUGENIO ARAMBURU",
+      "cantidad": 19
+    },
+    {
+      "escuela": "FRANCISCO JAVIER MUÑIZ",
+      "cantidad": 19
+    },
+    {
+      "escuela": "CRISTÓBAL COLÓN",
+      "cantidad": 19
+    },
+    {
+      "escuela": "PRESBITERO MARIANO IANNELLI",
+      "cantidad": 19
+    },
+    {
+      "escuela": "MAESTRO ARGENTINO",
+      "cantidad": 19
+    },
+    {
+      "escuela": "DOCTOR CARLOS DONCEL",
+      "cantidad": 18
+    },
+    {
+      "escuela": "ALBERGUE DOMINGO FRENCH",
+      "cantidad": 18
+    },
+    {
+      "escuela": "CARLOS MARÍA DE ALVEAR",
+      "cantidad": 18
+    },
+    {
+      "escuela": "MAESTRO JOSÉ JOAQUÍN  BERRUTTI",
+      "cantidad": 18
+    },
+    {
+      "escuela": "TENIENTE PRIMERO FRANCISCO IBAÑEZ",
+      "cantidad": 18
+    },
+    {
+      "escuela": "ESCUELA ALBERGUE CASA DEL NIÑO",
+      "cantidad": 18
+    },
+    {
+      "escuela": "ESCUELA BARRIO VALLE GRANDE TURNO TARDE",
+      "cantidad": 17
+    },
+    {
+      "escuela": "SALVADOR MARIA DEL CARRIL",
+      "cantidad": 17
+    },
+    {
+      "escuela": "BATALLA DE MAIPÚ",
+      "cantidad": 16
+    },
+    {
+      "escuela": "JOSÉ MATÍAS ZAPIOLA",
+      "cantidad": 16
+    },
+    {
+      "escuela": "ESCUELA AMÉRICA",
+      "cantidad": 16
+    },
+    {
+      "escuela": "FAUSTINA SARMIENTO DE BELÍN",
+      "cantidad": 16
+    },
+    {
+      "escuela": "PRESBÍTERO CAYETANO DE QUIROGA",
+      "cantidad": 16
+    },
+    {
+      "escuela": "REPÚBLICA ARGENTINA",
+      "cantidad": 15
+    },
+    {
+      "escuela": "PROFESOR ALEJANDRO MATHUS",
+      "cantidad": 14
+    },
+    {
+      "escuela": "ANTÁRTIDA ARGENTINA",
+      "cantidad": 14
+    },
+    {
+      "escuela": "DR ALBERT SCHWEITEZ",
+      "cantidad": 14
+    },
+    {
+      "escuela": "JUAN JOSÉ PASO",
+      "cantidad": 14
+    },
+    {
+      "escuela": "ESCUELA CIRILO SARMIENTO",
+      "cantidad": 14
+    },
+    {
+      "escuela": "DRA.JULIETA LANTERI",
+      "cantidad": 14
+    },
+    {
+      "escuela": "JUAN GREGORIO DE LAS HERAS",
+      "cantidad": 13
+    },
+    {
+      "escuela": "REPÙBLICA ARGENTINA",
+      "cantidad": 13
+    },
+    {
+      "escuela": "PROVINCIA DE MISIONES",
+      "cantidad": 13
+    },
+    {
+      "escuela": "FRAY JUSTO SANTA MARIA DE ORO",
+      "cantidad": 13
+    },
+    {
+      "escuela": "DOCTOR BERNARDO HOUSSAY",
+      "cantidad": 13
+    },
+    {
+      "escuela": "MARIANO MORENO",
+      "cantidad": 12
+    },
+    {
+      "escuela": "COMODORO RIVADAVIA EMER",
+      "cantidad": 12
+    },
+    {
+      "escuela": "ALBERGUE TENIENTE CORONEL ALVAREZ CONDARCO",
+      "cantidad": 12
+    },
+    {
+      "escuela": "RUBÉN DARÍO",
+      "cantidad": 12
+    },
+    {
+      "escuela": "PRESBÍTERO PATRICIO LÓPEZ DEL CAMPO",
+      "cantidad": 12
+    },
+    {
+      "escuela": "ESCUELA DOCTOR ALFREDO CALCAGNO",
+      "cantidad": 12
+    },
+    {
+      "escuela": "DOCTOR ALBERT SCHWEITZER",
+      "cantidad": 12
+    },
+    {
+      "escuela": "VIRGINIA MORENO DE PARKES",
+      "cantidad": 12
+    },
+    {
+      "escuela": "JUAN JOSE PASO",
+      "cantidad": 12
+    },
+    {
+      "escuela": "PROFESOR VICTOR MERCANTE",
+      "cantidad": 12
+    },
+    {
+      "escuela": "JUAN HUARPE EMER",
+      "cantidad": 12
+    },
+    {
+      "escuela": "BATALLA DE MAIPÙ",
+      "cantidad": 11
+    },
+    {
+      "escuela": "JUAN DE ECHEGARAY",
+      "cantidad": 11
+    },
+    {
+      "escuela": "COMBATE DE SAN LORENZO EMER",
+      "cantidad": 11
+    },
+    {
+      "escuela": "MARIE CURIE",
+      "cantidad": 10
+    },
+    {
+      "escuela": "MANUEL ALBERTI",
+      "cantidad": 10
+    },
+    {
+      "escuela": "GABRIELA MISTRAL",
+      "cantidad": 10
+    },
+    {
+      "escuela": "REPÚBLICA DE BOLIVIA",
+      "cantidad": 10
+    },
+    {
+      "escuela": "ISLA VICECOMODORO MARAMBIO EMER",
+      "cantidad": 10
+    },
+    {
+      "escuela": "COMANDANTE LUIS PIEDRABUENA",
+      "cantidad": 9
+    },
+    {
+      "escuela": "ESCUELA PAULO VI",
+      "cantidad": 9
+    },
+    {
+      "escuela": "AUTONOMÍA BARTOLOMÉ DEL BONO",
+      "cantidad": 9
+    },
+    {
+      "escuela": "ALBERGUE PROVINCIA DE SAN LUIS",
+      "cantidad": 9
+    },
+    {
+      "escuela": "CLOTILDE GUILLÉN DE REZZANO",
+      "cantidad": 9
+    },
+    {
+      "escuela": "PRESIDENTE HIPOLITO YRIGOYEN",
+      "cantidad": 9
+    },
+    {
+      "escuela": "RAFAEL ALBERTO ARRIETA EMER",
+      "cantidad": 8
+    },
+    {
+      "escuela": "DR. BERNARDO HOUSSAY",
+      "cantidad": 8
+    },
+    {
+      "escuela": "JUAN JOSÉ LARREA",
+      "cantidad": 7
+    },
+    {
+      "escuela": "PRESIDENTE MANUEL QUINTANA",
+      "cantidad": 7
+    },
+    {
+      "escuela": "AGUSTÍN GÓMEZ",
+      "cantidad": 7
+    },
+    {
+      "escuela": "ALBERGUE CASA DE NIÑOS",
+      "cantidad": 7
+    },
+    {
+      "escuela": "PAULO SEXTO",
+      "cantidad": 6
+    },
+    {
+      "escuela": "(VACÍO)",
+      "cantidad": 6
+    },
+    {
+      "escuela": "LUIS PASTEUR",
+      "cantidad": 6
+    },
+    {
+      "escuela": "SATURNINO MARÍA DE LASPIUR",
+      "cantidad": 6
+    },
+    {
+      "escuela": "ESCUELA ALBERGUE DR. FEDERICO CANTONI EMER",
+      "cantidad": 6
+    },
+    {
+      "escuela": "REPÚBLICA DEL BRASIL",
+      "cantidad": 6
+    },
+    {
+      "escuela": "ESCUELA ALBERGUE",
+      "cantidad": 6
+    },
+    {
+      "escuela": "ANTENOR FLORES VIDAL",
+      "cantidad": 5
+    },
+    {
+      "escuela": "CAPITÁN DE FRAGATA HIPÓLITO BUCHARDO",
+      "cantidad": 5
+    },
+    {
+      "escuela": "RUBÉN DARÍO EMER",
+      "cantidad": 5
+    },
+    {
+      "escuela": "JOSÉ MÁRMOL",
+      "cantidad": 5
+    },
+    {
+      "escuela": "ALBERGUE DR. FEDERICO CANTONI",
+      "cantidad": 5
+    },
+    {
+      "escuela": "PEDRO ALVAREZ",
+      "cantidad": 5
+    },
+    {
+      "escuela": "JUAN PASCUAL PRINGLES EMER",
+      "cantidad": 5
+    },
+    {
+      "escuela": "MARIA ELENA VIDART DE MAURIN.",
+      "cantidad": 5
+    },
+    {
+      "escuela": "BETHSABÉ PELLIZA DE ESPINOSA",
+      "cantidad": 5
+    },
+    {
+      "escuela": "ALBERGUE MIGUEL CANÉ (H)",
+      "cantidad": 4
+    },
+    {
+      "escuela": "LORENZO LUZURIAGA",
+      "cantidad": 4
+    },
+    {
+      "escuela": "BENITO JUÁREZ",
+      "cantidad": 4
+    },
+    {
+      "escuela": "DR. DANIEL SEGUNDO AUBONE",
+      "cantidad": 4
+    },
+    {
+      "escuela": "DEAN GREGORIO FUNES",
+      "cantidad": 4
+    },
+    {
+      "escuela": "MONSEÑOR TOMÁS SEGUNDO  CRUZ",
+      "cantidad": 4
+    },
+    {
+      "escuela": "BIENVENIDA SARMIENTO",
+      "cantidad": 4
+    },
+    {
+      "escuela": "AGUSTIN GNECCO",
+      "cantidad": 4
+    },
+    {
+      "escuela": "BATALLA DE TUCUMAN",
+      "cantidad": 4
+    },
+    {
+      "escuela": "ANTONINO ABERASTAIN",
+      "cantidad": 4
+    },
+    {
+      "escuela": "JOSÉ IGNACIO FERNÁNDEZ DE MARADONA.",
+      "cantidad": 4
+    },
+    {
+      "escuela": "OLEGARIO VICTOR ANDRADE",
+      "cantidad": 3
+    },
+    {
+      "escuela": "JUAN CARLOS NAVARRO",
+      "cantidad": 3
+    },
+    {
+      "escuela": "ANEXO CACIQUE PISMANTA",
+      "cantidad": 3
+    },
+    {
+      "escuela": "BATALLA DE CHACABUCO",
+      "cantidad": 3
+    },
+    {
+      "escuela": "BUENAVENTURA LUNA",
+      "cantidad": 3
+    },
+    {
+      "escuela": "11 DE SEPTIEMBRE",
+      "cantidad": 3
+    },
+    {
+      "escuela": "REPUBLICA ARGENTINA ANEXO CASAS VIEJAS",
+      "cantidad": 3
+    },
+    {
+      "escuela": "DE LA PATRIA",
+      "cantidad": 3
+    },
+    {
+      "escuela": "FRAY CAYETANO RODRÍGUEZ",
+      "cantidad": 3
+    },
+    {
+      "escuela": "PRESBÍTERO CARLOS HUGO MEDINA SUÁREZ",
+      "cantidad": 3
+    },
+    {
+      "escuela": "ESCUELA ALBERGUE HERNANDO DE MAGALLANES",
+      "cantidad": 3
+    },
+    {
+      "escuela": "GRANADEROS DE SAN MARTIN",
+      "cantidad": 2
+    },
+    {
+      "escuela": "FRANKLIN RAWSON",
+      "cantidad": 2
+    },
+    {
+      "escuela": "BATALLA DE SUIPACHA",
+      "cantidad": 2
+    },
+    {
+      "escuela": "HILARIO ASCASUBI",
+      "cantidad": 2
+    },
+    {
+      "escuela": "ALBERGUE PASO DE LOS ANDES",
+      "cantidad": 2
+    },
+    {
+      "escuela": "JOSE PEDRO CORTINEZ",
+      "cantidad": 2
+    },
+    {
+      "escuela": "JOSÉ CLEMENTE SARMIENTO",
+      "cantidad": 2
+    },
+    {
+      "escuela": "INGENIERO DE SAN JUAN",
+      "cantidad": 2
+    },
+    {
+      "escuela": "JUAN MARÍA GUTIERREZ",
+      "cantidad": 2
+    },
+    {
+      "escuela": "PRESIDENTE PERON",
+      "cantidad": 2
+    },
+    {
+      "escuela": "JULIO ARGENTINO ROCA",
+      "cantidad": 2
+    },
+    {
+      "escuela": "FONSECA",
+      "cantidad": 2
+    },
+    {
+      "escuela": "FONTANA",
+      "cantidad": 2
+    },
+    {
+      "escuela": "NORMAL SARMIENTO",
+      "cantidad": 2
+    },
+    {
+      "escuela": "PERITO MORENO",
+      "cantidad": 2
+    },
+    {
+      "escuela": "PROVINCIA DE BUANOS AIRES",
+      "cantidad": 2
+    },
+    {
+      "escuela": "NORMAL GRAL. BELGRANO",
+      "cantidad": 2
+    },
+    {
+      "escuela": "TRANSITO DE ORO",
+      "cantidad": 2
+    },
+    {
+      "escuela": "REPUBLICA DE CHILE",
+      "cantidad": 2
+    },
+    {
+      "escuela": "ESCUELA ANTONINO ABERASTAIN",
+      "cantidad": 2
+    },
+    {
+      "escuela": "ESCUELA DOCTOR ALBERT SCHWEITZER",
+      "cantidad": 2
+    },
+    {
+      "escuela": "ELEAZAR VIDELA",
+      "cantidad": 2
+    },
+    {
+      "escuela": "DOCTORA FRANCESCA RIOS DE PAEZ",
+      "cantidad": 2
+    },
+    {
+      "escuela": "VIRGINIA MORENO DEL PARQUE",
+      "cantidad": 2
+    },
+    {
+      "escuela": "INGENIERO MARCOS SALAZAR",
+      "cantidad": 2
+    },
+    {
+      "escuela": "ESCUELA BALDOMERO FERNÁNDEZ MORENO",
+      "cantidad": 2
+    },
+    {
+      "escuela": "HIPOLITO VIEYTES",
+      "cantidad": 2
+    },
+    {
+      "escuela": "BENJAMIN LENOIR",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JORGE BATES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "LUIS JORGE BATES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PAULO VI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "FALUCHO, LOS BERROS",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA PRIMARIA NUEVO CUYO TURNO MAÑANA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CASTELLI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PROV. DE SALTA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ROQUE SAENZ PENA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DIOJENES PERRAMON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "POLICIA DE LA PROVINCIA DE SAN JUAN",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CUYO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CORNELLIO SAAVEDRA TURNO MAÑANA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DIOGENES PERRAMON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JUAN JOSE CASTELLI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BARTOLOME CARREA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "NUEVO CUYO TURNO TARDE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ROQUE SAENZ PEÑA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JULIA DE LEON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CARMEN PEÑALOZA DE VARESE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DR CARLOS PELLEGRINI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARIACURIE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PRILILIANO PUERREDEON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PRIGLIANO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PADRE FEDERICO MAGIO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "COMODORO RIVADAVIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "COMANDANTE TOMAS PORRAS",
+      "cantidad": 1
+    },
+    {
+      "escuela": "SEGUNDINO JNAVARRO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "TRILIARANO PUEYRREDON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "FLORENCIA NITINGALE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARTIN YANZON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PUEYRREDON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PUEYREDON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "RESIDENCIA DE DIRECCION DE NIÑEZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MIGUEL DE CERVANTES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JOSE ARISTÓBULO GARCÍA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "GENERAL ANTONIO BALCARSE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ANTONIO GONZALEZ BALCARCE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "NECOCHEA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "SATURNINO ARAOZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BATALLA DE MAIPU",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PEDRO ARAMBURO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "12 DE OCTUBRE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ALBERGUE PROVINCIA DE ENTRE RIOS",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JUAN MARTIN DE PUEYRREDON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MONSEÑOR TOMAS CRUZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BONIFACIO PALACIOS",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ANTONIO CUARANTA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ALBERGUE JOAQUÍN V. GONZALEZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ONOFRE ILLANES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "GRAHHAM",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BERRUTI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MERCEDES SAN MARTIN",
+      "cantidad": 1
+    },
+    {
+      "escuela": "LEOPOLDO CORRETJE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "VALLE GRANDE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BARRIO VALLE GRANDE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA TENIENTE PEDRO ARAMBURU",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARY O GRHAM",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CARLOS MARIA DE ALVEAR",
+      "cantidad": 1
+    },
+    {
+      "escuela": "12 DE DICIEMBRE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARCELINO GUARDIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARY OGRAHAN",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CORTINEZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESC. SARMIENTO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PAULA ALBARRAZIN DE SARMIENTO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PROVINCIA DE SANTA FE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESC. Bº FRONDIZI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESC. 25 DE MAYO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BERNARDINI RIVADAVIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ANTONIO TORRES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DR.GUILLERMO RAWSON",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PRVINCIA SANTA FE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BELGRANO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MANUEL PASIFICO ANTEQUEDA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JOSE CHIRAPOSE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ARANCIBIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DRA LETICIA ACOSTA DE SORMANI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PEDRO ECHAGUE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PREBISTERO MARIANO IANNELLI",
+      "cantidad": 1
+    },
+    {
+      "escuela": "SUBOFICIAL MAYOR SEGUNDO ANTENOR YUBEL",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MANANTIALES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ARTURO ILLIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ERNESTO DAVAB",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ARTURO CAPDEVILLA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESTANILAO SOLER",
+      "cantidad": 1
+    },
+    {
+      "escuela": "BERNARDO DE MONTE AGUDO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ARTURO CADEVILA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JOSE MARIA TORRES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ELIAZAR VIDELA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DR ANTONIO ABERASTAIN",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA PEDRO ALVAREZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CONTRAALMIRANTE ELEAZAR VIDELA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARIA JOSÉ TORRES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ELIAZAR",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESC.12 DE AGOSTO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "LATAGORE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA MARCOS SALAZAR",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA DOCTOR ANTONINO ABERASTAIN",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ELIASAR MIDEL",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARCOS SALAZAR",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MAESTRI ARGENTINOS",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA ELEAZAR VIDELA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA DOCTOR ANTONINO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DR. ALBERT SCHWEITZER",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARTIN MIGUEL DE GUEMEZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ANTONINO ALBERASTAIN",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA CLEMENTE ELEAZAR VIDELA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ALBERT SCHUEITZER",
+      "cantidad": 1
+    },
+    {
+      "escuela": "LUIS VERNÉ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESC.PEDRO DE VALDIVIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ORNILLAS",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CARLOS NORBERTO VERGARA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA DE CARPINTERUA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ALBERT  SCHWEITZER",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA CARLOS ALBERTO VERGARA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARCOS ANTONIO ZALAZAR",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CARLOS NOLBERTO VERGARA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CONTRA ALMIRANTE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "DR ANTONINO ABERASTAIN",
+      "cantidad": 1
+    },
+    {
+      "escuela": "JOSÉ MARIA TORRES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA CARLOS VERGARA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARTIN MIGUEL DE GUEMES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARTINEZ MIGUEL DE GUEMES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA ALBERT SCHWEITZER",
+      "cantidad": 1
+    },
+    {
+      "escuela": "CONTRA ALMIRANTE ELIAZAR VIDELA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARTIN MIGUEL GÜEMES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA PEDRO DE VALDIVIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA DOCTORA FRANCISCA RIOS DE PAEZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PEDRO DE VALVIA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "SIXTO SALINAS",
+      "cantidad": 1
+    },
+    {
+      "escuela": "SARGENTO CABRAL",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PROVINCIA DE FORMOSA - N 722",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA PROVINCIA DE FORMOSA 722",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA PROVINCIA DE FORMOSA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "PROVINCIA DE FORMOSA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "RECONQUISTA DE BUENOS AIRES",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARCOS JUSTINIANO GOMEZ NARVAEZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ESCUELA  ALBERGUE",
+      "cantidad": 1
+    },
+    {
+      "escuela": "FRAGATA PRESIDENTE SARMIENTO.",
+      "cantidad": 1
+    },
+    {
+      "escuela": "MARCOS NARVAEZ",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ARMADA ARGENTINA",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ALBERGE CASA DEL NIÑO",
+      "cantidad": 1
+    },
+    {
+      "escuela": "ELOY CAMUS",
+      "cantidad": 1
+    }
+  ],
+  "porGrado": [
+    {
+      "grado": "4° Grado",
+      "cantidad": 1
+    },
+    {
+      "grado": "5° Grado",
+      "cantidad": 11541
+    },
+    {
+      "grado": "6° Grado",
+      "cantidad": 11014
+    }
+  ],
+  "porSeccion": [
+    {
+      "seccion": "A",
+      "cantidad": 11204
+    },
+    {
+      "seccion": "B",
+      "cantidad": 6980
+    },
+    {
+      "seccion": "C",
+      "cantidad": 3038
+    },
+    {
+      "seccion": "D",
+      "cantidad": 967
+    },
+    {
+      "seccion": "E",
+      "cantidad": 122
+    },
+    {
+      "seccion": "UNICA",
+      "cantidad": 90
+    },
+    {
+      "seccion": "F",
+      "cantidad": 38
+    },
+    {
+      "seccion": "\"A\"",
+      "cantidad": 36
+    },
+    {
+      "seccion": "\"C\"",
+      "cantidad": 30
+    },
+    {
+      "seccion": "\"B\"",
+      "cantidad": 28
+    },
+    {
+      "seccion": "(VACÍO)",
+      "cantidad": 19
+    },
+    {
+      "seccion": "A°",
+      "cantidad": 2
+    },
+    {
+      "seccion": "A YB",
+      "cantidad": 1
+    },
+    {
+      "seccion": "C°",
+      "cantidad": 1
+    }
+  ],
+  "porEstado": [
+    {
+      "estado": "OK",
+      "cantidad": 22446
+    },
+    {
+      "estado": "SIN_USUARIO",
+      "cantidad": 82
+    },
+    {
+      "estado": "SIN_SECCION",
+      "cantidad": 15
+    },
+    {
+      "estado": "SIN_ESCUELA",
+      "cantidad": 5
+    },
+    {
+      "estado": "SIN_USUARIO | SIN_SECCION",
+      "cantidad": 3
+    },
+    {
+      "estado": "DUPLICADO_DNI",
+      "cantidad": 2
+    },
+    {
+      "estado": "DUPLICADO_NETBOOK",
+      "cantidad": 2
+    },
+    {
+      "estado": "SIN_ESCUELA | SIN_SECCION",
+      "cantidad": 1
+    }
+  ],
+  "top20Escuelas": [
+    {
+      "escuela": "SARMIENTO",
+      "cantidad": 274
+    },
+    {
+      "escuela": "BERNARDINO RIVADAVIA",
+      "cantidad": 271
+    },
+    {
+      "escuela": "14 DE FEBRERO",
+      "cantidad": 269
+    },
+    {
+      "escuela": "VICENTE LOPEZ Y PLANES",
+      "cantidad": 239
+    },
+    {
+      "escuela": "ESCUELA VILLICUM",
+      "cantidad": 193
+    },
+    {
+      "escuela": "CAMILO ROJO",
+      "cantidad": 191
+    },
+    {
+      "escuela": "JUAN MANTOVANI",
+      "cantidad": 187
+    },
+    {
+      "escuela": "CARLOS PELLEGRINI T.M.",
+      "cantidad": 186
+    },
+    {
+      "escuela": "INGENIEROS DE SAN JUAN",
+      "cantidad": 186
+    },
+    {
+      "escuela": "ANTONIO DE LA TORRE",
+      "cantidad": 185
+    },
+    {
+      "escuela": "ANTONIO TORRES TURNO MAÑANA",
+      "cantidad": 185
+    },
+    {
+      "escuela": "INGENIERO MARCO ANTONIO ZALAZAR",
+      "cantidad": 181
+    },
+    {
+      "escuela": "JOSÉ CHIRAPOZU",
+      "cantidad": 178
+    },
+    {
+      "escuela": "DR. ISIDRO MARIANO DE ZAVALLA",
+      "cantidad": 172
+    },
+    {
+      "escuela": "ESCUELA PBRO. MARIANO IANELLI",
+      "cantidad": 158
+    },
+    {
+      "escuela": "CLARA ROSA CORTÍNEZ",
+      "cantidad": 156
+    },
+    {
+      "escuela": "GRANADEROS DE SAN MARTÍN",
+      "cantidad": 155
+    },
+    {
+      "escuela": "ANTONIO TORRES TURNO TARDE",
+      "cantidad": 155
+    },
+    {
+      "escuela": "PROVINCIA DE SALTA",
+      "cantidad": 153
+    },
+    {
+      "escuela": "PAULA ALBARRACÍN DE SARMIENTO",
+      "cantidad": 153
+    }
+  ],
+  "sinEmail": 82,
+  "sinEscuela": 6,
+  "sinSeccion": 19,
+  "registrosProblematicos": [
+    {
+      "id": 22611,
+      "netbook": "SJMA025-011463",
+      "dniAlumno": "54932533",
+      "nombreAlumno": "JULIETA PRISCILA MOLINA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 22608,
+      "netbook": "SJMA025-011039",
+      "dniAlumno": "53697825",
+      "nombreAlumno": "OLIVERA GUADALUPE",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 22153,
+      "netbook": "SJMA025-008108",
+      "dniAlumno": "54566624",
+      "nombreAlumno": "LUNA CARRASCOZA ALFREDO CARLOS",
+      "problema": "SIN_ESCUELA"
+    },
+    {
+      "id": 22100,
+      "netbook": "SJMA025-008528",
+      "dniAlumno": "54149366",
+      "nombreAlumno": "VERA FERNANDEZ SERGIO DENIS",
+      "problema": "SIN_ESCUELA"
+    },
+    {
+      "id": 21976,
+      "netbook": "SJMA025-005663",
+      "dniAlumno": "52348037",
+      "nombreAlumno": "GUERRERO ATILIO GERMAN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 21909,
+      "netbook": "SJMA025-007224",
+      "dniAlumno": "53929182",
+      "nombreAlumno": "YACANTE CAMPILLAY AGUSTINA MARISOL",
+      "problema": "SIN_ESCUELA"
+    },
+    {
+      "id": 21781,
+      "netbook": "SJMA025-011353",
+      "dniAlumno": "52888153",
+      "nombreAlumno": "MORALES, BRAIAN BENJAMÍN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 21338,
+      "netbook": "SJMA025-010328",
+      "dniAlumno": "53356730",
+      "nombreAlumno": "MATURANO LEONARDO RODRIGO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 18829,
+      "netbook": "SJMA025-017314",
+      "dniAlumno": "53552007",
+      "nombreAlumno": "CATRIEL FABIAN GARCIA RIVEROS",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 18814,
+      "netbook": "SJMA025-011666",
+      "dniAlumno": "53929245",
+      "nombreAlumno": "QUINTANA AISHA IARA HELENA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 18788,
+      "netbook": "SJMA025-024992",
+      "dniAlumno": "53552834",
+      "nombreAlumno": "ORREGO FRANCISCO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 18786,
+      "netbook": "SJMA025-022490",
+      "dniAlumno": "52550766",
+      "nombreAlumno": "VILLEGAS YANN FRANCO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 18263,
+      "netbook": "SJMA025-008127",
+      "dniAlumno": "53552887",
+      "nombreAlumno": "DIAZ ARANZA JOSELIN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 18109,
+      "netbook": "SJMA025-012113",
+      "dniAlumno": "52550312",
+      "nombreAlumno": "GONZALEZ CASTRO, LUCAS YOEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 17474,
+      "netbook": "SJMA025-000762",
+      "dniAlumno": "53358667",
+      "nombreAlumno": "ROMERO PAEZ DILAN JONAS",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 17111,
+      "netbook": "SJMA025-022076",
+      "dniAlumno": "54373412",
+      "nombreAlumno": "OVEJERO MARTINEZ URIEL ERNESTO",
+      "problema": "DUPLICADO_DNI"
+    },
+    {
+      "id": 16927,
+      "netbook": "SJMA025-001032",
+      "dniAlumno": "52889663",
+      "nombreAlumno": "GONZALEZ SANTINO SAMUEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 16619,
+      "netbook": "SJMA025-007833",
+      "dniAlumno": "53699327",
+      "nombreAlumno": "CRUZ EZEQUIEL EMANUEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 16101,
+      "netbook": "SJMA025-018096",
+      "dniAlumno": "54566263",
+      "nombreAlumno": "RIVEROS NAVARRO, CARLOS DANIEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 15985,
+      "netbook": "SJMA025-002200",
+      "dniAlumno": "52547317",
+      "nombreAlumno": "JOSE IGNACIO VARGAS",
+      "problema": "SIN_USUARIO | SIN_SECCION"
+    },
+    {
+      "id": 15674,
+      "netbook": "SJMA025-002825",
+      "dniAlumno": "54564750",
+      "nombreAlumno": "PEREIRA, ALEXANDER LEONEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 15586,
+      "netbook": "SJMA025-008143",
+      "dniAlumno": "54567868",
+      "nombreAlumno": "PALACIO CAMARGO, YOSELI MARIBEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 14962,
+      "netbook": "SJMA025-003450",
+      "dniAlumno": "53551200",
+      "nombreAlumno": "ARIEL ALEJANDRO OLIVA",
+      "problema": "SIN_ESCUELA | SIN_SECCION"
+    },
+    {
+      "id": 14690,
+      "netbook": "SJMA025-012365",
+      "dniAlumno": "53355012",
+      "nombreAlumno": "ALAN URIEL CASTRO ESPINA",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 13448,
+      "netbook": "SJMA025-006908",
+      "dniAlumno": "53699736",
+      "nombreAlumno": "SALINA MUÑOZ LAUTARO GAEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 13441,
+      "netbook": "SJMA025-019236",
+      "dniAlumno": "52886151",
+      "nombreAlumno": "AGUIRRE CARLOS",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 13440,
+      "netbook": "SJMA025-017541",
+      "dniAlumno": "53155906",
+      "nombreAlumno": "ALMADA GAEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 13147,
+      "netbook": "SJMA025-006924",
+      "dniAlumno": "53109042",
+      "nombreAlumno": "QUIROGA ABALLAY SANTINO EZEQUIEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 13089,
+      "netbook": "SJMA025-010764",
+      "dniAlumno": "52888680",
+      "nombreAlumno": "ELIZONDO MARTIN CRISTIAN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 13025,
+      "netbook": "SJMA025-013743",
+      "dniAlumno": "53358464",
+      "nombreAlumno": "REINOSO HERRERA MILAGROS SHEILA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 12615,
+      "netbook": "SJMA025-007238",
+      "dniAlumno": "54371784",
+      "nombreAlumno": "MORALES ACOSTA, EMMA FEDERICA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 12413,
+      "netbook": "SJMA025-007045",
+      "dniAlumno": "53553018",
+      "nombreAlumno": "GUERRA, SOLANGE",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 12136,
+      "netbook": "SJMA025-001660",
+      "dniAlumno": "54373444",
+      "nombreAlumno": "ORMEÑO DÍAZ AISHA AYMARA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 12064,
+      "netbook": "SJMA025-014540",
+      "dniAlumno": "53553100",
+      "nombreAlumno": "CAYO ECHEGARAY GIOVANNI ALEJANDRO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 12058,
+      "netbook": "SJMA025-010233",
+      "dniAlumno": "54566746",
+      "nombreAlumno": "AGUIRRE CABALLERO DAILA YULISA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 12028,
+      "netbook": "SJMA025-013575",
+      "dniAlumno": "54719021",
+      "nombreAlumno": "MOYANO NAVARRO ROMEO VALENTINO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 11713,
+      "netbook": "SJMA025-005309",
+      "dniAlumno": "51090546",
+      "nombreAlumno": "RODRIGUEZ CÓRDOBA MICHELE ALISON",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 11621,
+      "netbook": "SJMA025-001216",
+      "dniAlumno": "54566253",
+      "nombreAlumno": "NAVARRO MARIÑO, NATASHA SOLANGE",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 11457,
+      "netbook": "SJMA025-014010",
+      "dniAlumno": "53932871",
+      "nombreAlumno": "ALVAREZ CUELLO, FERNANDO BENJAMIN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 11367,
+      "netbook": "SJMA025-008623",
+      "dniAlumno": "54373288",
+      "nombreAlumno": "JUAN ROBLEDO GIULIANO NICOLAS",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 11194,
+      "netbook": "SJMA025-005352",
+      "dniAlumno": "54373412",
+      "nombreAlumno": "OVEJERO MARTINEZ URIEL ERNESTO",
+      "problema": "DUPLICADO_DNI"
+    },
+    {
+      "id": 11187,
+      "netbook": "SJMA025-009554",
+      "dniAlumno": "54147368",
+      "nombreAlumno": "REYNOSO DIAZ, CIRO ALEXANDER",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 10665,
+      "netbook": "SJMA025-008757",
+      "dniAlumno": "53357201",
+      "nombreAlumno": "DONOSO CORNEJO ALEXIS ESTEBAN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 10666,
+      "netbook": "SJMA025-005158",
+      "dniAlumno": "541472341",
+      "nombreAlumno": "CARDOZO LOPEZ FEDERICO DAMIAN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 10624,
+      "netbook": "SJMA025-002818",
+      "dniAlumno": "53700400",
+      "nombreAlumno": "GARCIA ROMERO, IAN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 10499,
+      "netbook": "SJMA025-000563",
+      "dniAlumno": "54149023",
+      "nombreAlumno": "LOPEZ GUZMAN AMBER SOFIA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 9366,
+      "netbook": "SJMA025-000968",
+      "dniAlumno": "54148037",
+      "nombreAlumno": "LOPEZ LUCERO, JUAN PABLO",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 9011,
+      "netbook": "SJMA025-006802",
+      "dniAlumno": "62824202",
+      "nombreAlumno": "MARERAN DURAN FABIAN ENRIQUE",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 8334,
+      "netbook": "SJMA025-008043",
+      "dniAlumno": "53698517",
+      "nombreAlumno": "MONTIVEROS LAUTARO DANIEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 7665,
+      "netbook": "SJMA025-011323",
+      "dniAlumno": "53698622",
+      "nombreAlumno": "BARRIOS MATEO IGNACIO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 7599,
+      "netbook": "SJMA025-010919",
+      "dniAlumno": "53931836",
+      "nombreAlumno": "DYLAN MATEO SANCHEZ FLORES",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 7393,
+      "netbook": "SJMA025-001682",
+      "dniAlumno": "54373242",
+      "nombreAlumno": "VERA ARCE BIANCA SALOME",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 7256,
+      "netbook": "SJMA025-007013",
+      "dniAlumno": "54565158",
+      "nombreAlumno": "BERMUDEZ IBACETA JOAQUIN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 6889,
+      "netbook": "SJMA025-005617",
+      "dniAlumno": "54149954",
+      "nombreAlumno": "MORENO COBO LUIS GAEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 5634,
+      "netbook": "SJMA025-024865",
+      "dniAlumno": "53356772",
+      "nombreAlumno": "AGUIRRE, SAMUEL EMANUEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 4660,
+      "netbook": "SJMA025-015492",
+      "dniAlumno": "54373728",
+      "nombreAlumno": "AXEL MOISES GODOY LEIVA",
+      "problema": "SIN_ESCUELA"
+    },
+    {
+      "id": 3767,
+      "netbook": "SJMA025-019880",
+      "dniAlumno": "53552086",
+      "nombreAlumno": "OVIEDO NAHIARA NICOLE",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 3707,
+      "netbook": "SJMA025-019755",
+      "dniAlumno": "54720951",
+      "nombreAlumno": "ILLANES MOLINA MILO YUTHIEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2966,
+      "netbook": "SJMA025-018150",
+      "dniAlumno": "52352344",
+      "nombreAlumno": "SARMIENTO NUÑEZ, MORENA SOLANGE",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2926,
+      "netbook": "SJMA025-020674",
+      "dniAlumno": "53931205",
+      "nombreAlumno": "JOSELIN ANTONELA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2700,
+      "netbook": "SJMA025-024067",
+      "dniAlumno": "53106430",
+      "nombreAlumno": "ESTRELLA FLORES ALEXANDER LAUTARO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2626,
+      "netbook": "SJMA025-017969",
+      "dniAlumno": "53551634",
+      "nombreAlumno": "VALDEZ ALBARRACIN BAUTISTA BENJAMIN",
+      "problema": "DUPLICADO_NETBOOK"
+    },
+    {
+      "id": 2532,
+      "netbook": "SJMA025-022557",
+      "dniAlumno": "53929093",
+      "nombreAlumno": "ALLENDES, JORGE",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2502,
+      "netbook": "SJMA025-024548",
+      "dniAlumno": "53930029",
+      "nombreAlumno": "EXEQUIEL ALEJANDRO TORRES",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2337,
+      "netbook": "SJMA025-024465",
+      "dniAlumno": "54565619",
+      "nombreAlumno": "RAMOS OLIVERA PIA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2185,
+      "netbook": "SJMA025-021583",
+      "dniAlumno": "53356478",
+      "nombreAlumno": "JANNA YARITZA CABEZA MOLINA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2166,
+      "netbook": "SJMA025-019437",
+      "dniAlumno": "52551130",
+      "nombreAlumno": "HERRERA ARGUELLO SERGIO DAVID",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2165,
+      "netbook": "SJMA025-020248",
+      "dniAlumno": "54372742",
+      "nombreAlumno": "GONZÁLEZ JOFRE, ROMAN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2137,
+      "netbook": "SJMA025-020122",
+      "dniAlumno": "53931494",
+      "nombreAlumno": "ATENCIO IAN URIEL SANTINO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2104,
+      "netbook": "SJMA025-023794",
+      "dniAlumno": "53931537",
+      "nombreAlumno": "ARAGÓN, KEVIN YUTIEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2094,
+      "netbook": "SJMA025-024883",
+      "dniAlumno": "53108493",
+      "nombreAlumno": "MARTINEZ RIVEROS VALENTIN JUAN BAUTISTA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2084,
+      "netbook": "SJMA025-023658",
+      "dniAlumno": "54372103",
+      "nombreAlumno": "CHÁVEZ ALÍ SAHIR AGUSTÍN.",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2048,
+      "netbook": "SJMA025-023841",
+      "dniAlumno": "54718455",
+      "nombreAlumno": "GARRO, TEO BENJAMIN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 2004,
+      "netbook": "SJMA025-017738",
+      "dniAlumno": "54565924",
+      "nombreAlumno": "MARTINEZ PABLO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1977,
+      "netbook": "SJMA025-021672",
+      "dniAlumno": "54721615",
+      "nombreAlumno": "CASTRO LUNA, LISANDRO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1974,
+      "netbook": "SJMA025-018724",
+      "dniAlumno": "53551170",
+      "nombreAlumno": "MOLINA MORALES YULIANA MICAELA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1965,
+      "netbook": "SJMA025-018733",
+      "dniAlumno": "57700035",
+      "nombreAlumno": "IRIS ABRIL QUINTERO ACOSTA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1959,
+      "netbook": "SJMA025-018354",
+      "dniAlumno": "54721581",
+      "nombreAlumno": "MORALES ANGEL ISMAEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1954,
+      "netbook": "SJMA025-022503",
+      "dniAlumno": "51445393",
+      "nombreAlumno": "GUAQUINCHAY AXEL ALEJANDRO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1937,
+      "netbook": "SJMA025-024804",
+      "dniAlumno": "53108335",
+      "nombreAlumno": "AGUIRRE, UMA MAGALI",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1933,
+      "netbook": "SJMA025-023499",
+      "dniAlumno": "53700019",
+      "nombreAlumno": "PALACIO CAPARROS DELFINA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1927,
+      "netbook": "SJMA025-020614",
+      "dniAlumno": "54721144",
+      "nombreAlumno": "ONTIVERO ORTIZ NATASHA GUILLERMINA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1912,
+      "netbook": "SJMA025-022024",
+      "dniAlumno": "54370287",
+      "nombreAlumno": "VELAZQUEZ MATEO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1904,
+      "netbook": "SJMA025-017068",
+      "dniAlumno": "53256028",
+      "nombreAlumno": "MALDONADO PAEZ JANA DELFINA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1899,
+      "netbook": "SJMA025-017178",
+      "dniAlumno": "54373212",
+      "nombreAlumno": "LAUTARO ESEQUIEL ALFARO TRIGO",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1874,
+      "netbook": "SJMA025-020893",
+      "dniAlumno": "54147319",
+      "nombreAlumno": "QUIROGA NAZARENO YUTIEL",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1867,
+      "netbook": "SJMA025-022915",
+      "dniAlumno": "54370299",
+      "nombreAlumno": "SAMIRA JUANA DIAZ RUIZ",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1855,
+      "netbook": "SJMA025-017187",
+      "dniAlumno": "54370969",
+      "nombreAlumno": "LUNA RIVEROS BRAIAN YUTIEL",
+      "problema": "SIN_USUARIO | SIN_SECCION"
+    },
+    {
+      "id": 1854,
+      "netbook": "SJMA025-015711",
+      "dniAlumno": "54720334",
+      "nombreAlumno": "JOAQUIN ENRIQUE YACANTO BUENANUEVA",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1848,
+      "netbook": "SJMA025-020957",
+      "dniAlumno": "52888073",
+      "nombreAlumno": "NAVARRO ALEXANDER GAEL",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1842,
+      "netbook": "SJMA025-022062",
+      "dniAlumno": "54930710",
+      "nombreAlumno": "BIANCA INES MUÑOZ FERNANDEZ",
+      "problema": "SIN_ESCUELA"
+    },
+    {
+      "id": 1840,
+      "netbook": "SJMA025-019375",
+      "dniAlumno": "53356071",
+      "nombreAlumno": "ARAOZ ILLANES AINARA VALENTINA",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1815,
+      "netbook": "SJMA025-017711",
+      "dniAlumno": "53929114",
+      "nombreAlumno": "CHAVEZ MIA SAMIRA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1813,
+      "netbook": "SJMA025-020192",
+      "dniAlumno": "53107639",
+      "nombreAlumno": "SAMUEL BRIAN PAEZ PASTRAN",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1810,
+      "netbook": "SJMA025-015788",
+      "dniAlumno": "51546220",
+      "nombreAlumno": "ISAAC JEREMIAS ROMERO BRITO",
+      "problema": "SIN_USUARIO | SIN_SECCION"
+    },
+    {
+      "id": 1807,
+      "netbook": "SJMA025-024084",
+      "dniAlumno": "53552357",
+      "nombreAlumno": "GUTIERREZ MUÑOZ JONATHAN BENJAMIN",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1804,
+      "netbook": "SJMA025-023887",
+      "dniAlumno": "54719803",
+      "nombreAlumno": "MURUA OCHOA YANIRA ALEJANDRA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 1802,
+      "netbook": "SJMA025-024285",
+      "dniAlumno": "54567141",
+      "nombreAlumno": "AMAYA CASTILLO",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1663,
+      "netbook": "SJMA025-021653",
+      "dniAlumno": "53698437",
+      "nombreAlumno": "GUZMÁN, ZOE KEILA",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1641,
+      "netbook": "SJMA025-021352",
+      "dniAlumno": "52107286",
+      "nombreAlumno": "GUZMÁN, TIAGO BENJAMÍN",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 1167,
+      "netbook": "SJMA025-019856",
+      "dniAlumno": "53357215",
+      "nombreAlumno": "MARIN JUAN IGNACIO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 959,
+      "netbook": "SJMA025-021470",
+      "dniAlumno": "52888477",
+      "nombreAlumno": "MORÁN QUIROGA BRISA SARAI",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 958,
+      "netbook": "SJMA025-021904",
+      "dniAlumno": "52548169",
+      "nombreAlumno": "BUSTO GUADALUPE MARIA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 652,
+      "netbook": "SJMA025-024457",
+      "dniAlumno": "53699142",
+      "nombreAlumno": "GONZALEZ ALEXXANDER TADEO",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 588,
+      "netbook": "SJMA025-022626",
+      "dniAlumno": "54566209",
+      "nombreAlumno": "ENZO DAMIAN GOMEZ",
+      "problema": "SIN_SECCION"
+    },
+    {
+      "id": 346,
+      "netbook": "SJMA025-016458",
+      "dniAlumno": "54439035",
+      "nombreAlumno": "AYALA- SISTERNA, URIEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 271,
+      "netbook": "SJMA025-022378",
+      "dniAlumno": "53981338",
+      "nombreAlumno": "JAQUE ARCE PAULINA LUCIA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 238,
+      "netbook": "SJMA025-021107",
+      "dniAlumno": "59931261",
+      "nombreAlumno": "VALENTINA XIOMARA",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 237,
+      "netbook": "SJMA025-017281",
+      "dniAlumno": "53533164",
+      "nombreAlumno": "ALMA ESPERANZA ESQUIBEL",
+      "problema": "SIN_USUARIO"
+    },
+    {
+      "id": 13,
+      "netbook": "SJMA025-017969",
+      "dniAlumno": "53358557",
+      "nombreAlumno": "MAZA NARVÁEZ, ROCÍO FERNANDA",
+      "problema": "DUPLICADO_NETBOOK"
+    }
+  ]
+}

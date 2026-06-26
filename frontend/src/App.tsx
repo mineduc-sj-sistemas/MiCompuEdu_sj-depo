@@ -7,9 +7,10 @@ import { PanelTecnico } from './pages/Technician/PanelTecnico'
 import { Dashboard } from './pages/Supervisor/Dashboard'
 import { LogoSanJuan } from './components/Shared/LogoSanJuan'
 import { GestionUsuarios } from './pages/Supervisor/GestionUsuarios'
+import { ImportarPadron } from './pages/Supervisor/ImportarPadron'
 import { FirmaRemota } from './pages/Operator/FirmaRemota'
 import { HealthCheckBanner } from './components/Shared/HealthCheckBanner'
-import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon } from 'lucide-react'
+import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon, Database } from 'lucide-react'
 
 function App() {
   const isFirmaRemota = window.location.pathname === '/firma-remota';
@@ -117,17 +118,30 @@ function App() {
 
               {/* Supervisor Actions */}
               {(user.rol === 'Supervisor' || user.rol === 'Administrador') && (
-                <button
-                  onClick={() => setCurrentPage('dashboard')}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
-                    currentPage === 'dashboard'
-                      ? 'bg-slate-100 text-[#FF8200] font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                  }`}
-                >
-                  <BarChart3 className="w-4 h-4 text-current" />
-                  Dashboard Estadístico
-                </button>
+                <>
+                  <button
+                    onClick={() => setCurrentPage('dashboard')}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                      currentPage === 'dashboard'
+                        ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <BarChart3 className="w-4 h-4 text-current" />
+                    Dashboard Estadístico
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage('importar')}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                      currentPage === 'importar'
+                        ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Database className="w-4 h-4 text-current" />
+                    Importar Padrón
+                  </button>
+                </>
               )}
 
               {/* Admin Actions */}
@@ -174,6 +188,7 @@ function App() {
           {currentPage === 'entrega' && <EntregaNotebook token={user.token} />}
           {currentPage === 'diagnostico' && <PanelTecnico token={user.token} nombreTecnico={user.nombreCompleto} />}
           {currentPage === 'dashboard' && <Dashboard token={user.token} />}
+          {currentPage === 'importar' && <ImportarPadron token={user.token} />}
           {currentPage === 'usuarios' && <GestionUsuarios token={user.token} />}
         </main>
       </div>

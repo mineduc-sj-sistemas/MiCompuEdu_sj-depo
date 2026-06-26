@@ -211,6 +211,35 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     }
   };
 
+  useEffect(() => {
+    const cleanTerm = dniInput.trim();
+    if (!cleanTerm) {
+      setBeneficiario(null);
+      setMensajeError('');
+      setMensajeExito('');
+      return;
+    }
+
+    if (cleanTerm.includes('@')) return;
+
+    // Búsqueda automática:
+    // - Es un DNI (7 u 8 dígitos numéricos)
+    // - Es un número de serie (ej: SJMA... o similar, min 8 caracteres con letras)
+    const isDni = /^\d{7,8}$/.test(cleanTerm);
+    const isSerial = cleanTerm.length >= 8 && /[A-Za-z]/.test(cleanTerm);
+
+    if (isDni || isSerial) {
+      const delayDebounceFn = setTimeout(() => {
+        if (beneficiario && (beneficiario.dni === cleanTerm || beneficiario.equipo?.numeroSerie.toUpperCase() === cleanTerm.toUpperCase())) {
+          return;
+        }
+        buscarBeneficiario(cleanTerm);
+      }, 400);
+
+      return () => clearTimeout(delayDebounceFn);
+    }
+  }, [dniInput]);
+
   const buscarBeneficiario = async (overrideDni?: string, scannedData?: any) => {
     const rawInput = overrideDni || dniInput.trim();
     let cleanDni = rawInput;
@@ -373,13 +402,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
       <div className="pb-4 border-b border-slate-200">
         <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Registrar Ingreso de Notebook</h2>
-        <p className="text-slate-400 mt-1 text-xs">Busca o escanea el DNI físico del tutor para registrar una orden de servicio.</p>
+        <p className="text-slate-400 mt-1 text-xs">Busca por DNI de tutor, alumno o número de serie de la netbook para registrar la orden de servicio.</p>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-6">
         <div>
           <label className="block text-slate-700 text-xs font-semibold mb-2">
-            Escaneo de DNI (PDF417) / Búsqueda Manual
+            Identificación de Alumno, Tutor o Netbook
           </label>
           <div className="flex gap-3">
             <div className="relative flex-1">
@@ -390,7 +419,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                 ref={dniInputRef}
                 type="text"
                 className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-8 py-2.5 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-[#FF8200] transition-colors"
-                placeholder="Escanee código de DNI o escriba el número..."
+                placeholder="Ingrese DNI (alumno/tutor) o número de serie (ej: SJMA025-011176)..."
                 value={dniInput}
                 onChange={handleDniInputChange}
                 onKeyDown={handleKeyDown}
@@ -418,7 +447,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
             </button>
           </div>
           <p className="text-[10px] text-slate-400 mt-1.5">
-            Tip: Coloca el cursor en el campo de texto y lee el código de barras del DNI.
+            Tip: La búsqueda se realiza de manera automática al completar un DNI de 7-8 dígitos o un código de netbook.
           </p>
         </div>
 

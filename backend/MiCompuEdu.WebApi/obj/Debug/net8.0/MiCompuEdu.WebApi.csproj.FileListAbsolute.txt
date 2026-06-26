@@ -274,3 +274,11 @@ C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\runtimes\win-x86\native\libSkiaSharp.dll
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\obj\Debug\net8.0\MiCompuEdu.WebApi.sourcelink.json
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\MiCompuEdu.WebApi.staticwebassets.runtime.json
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\ClosedXML.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\ClosedXML.Parser.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\DocumentFormat.OpenXml.Framework.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\ExcelNumberFormat.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\RBush.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\SixLabors.Fonts.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.WebApi\bin\Debug\net8.0\System.IO.Packaging.dll

@@ -89,6 +89,11 @@ namespace MiCompuEdu.Infrastructure.Persistence
                 entity.Property(b => b.Apellido).HasMaxLength(100).IsRequired();
                 entity.Property(b => b.Telefono).HasMaxLength(30);
                 entity.Property(b => b.Email).HasMaxLength(200);
+                entity.Property(b => b.DniTutor).HasMaxLength(15);
+                entity.Property(b => b.NombreTutor).HasMaxLength(200);
+                entity.Property(b => b.TelefonoTutor).HasMaxLength(30);
+                entity.Property(b => b.Grado).HasMaxLength(50);
+                entity.Property(b => b.Seccion).HasMaxLength(50);
                 entity.Property(b => b.CreadoEn).HasDefaultValueSql("NOW()");
 
                 // FK opcional a Escuela

@@ -158,3 +158,11 @@ C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\obj\Deb
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\obj\Debug\net8.0\MiCompuEdu.UnitTests.pdb
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\obj\Debug\net8.0\MiCompuEdu.UnitTests.genruntimeconfig.cache
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\obj\Debug\net8.0\ref\MiCompuEdu.UnitTests.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\ClosedXML.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\ClosedXML.Parser.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\DocumentFormat.OpenXml.Framework.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\ExcelNumberFormat.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\RBush.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\SixLabors.Fonts.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\System.IO.Packaging.dll

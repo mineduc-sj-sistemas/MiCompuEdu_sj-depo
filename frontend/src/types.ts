@@ -26,6 +26,11 @@ export interface Beneficiario {
   escuelaId?: string;
   escuelaNombre?: string;
   escuelaCue?: string;
+  dniTutor?: string;
+  nombreTutor?: string;
+  telefonoTutor?: string;
+  grado?: string;
+  seccion?: string;
   equipo?: Equipo;
 }
 
