@@ -49,6 +49,10 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             }
 
             var estadoAnterior = reparacion.Estado;
+            if (!ValidarTransicion(estadoAnterior, request.NuevoEstado))
+            {
+                throw new InvalidOperationException($"La transición de estado desde '{estadoAnterior}' hacia '{request.NuevoEstado}' no está permitida.");
+            }
             reparacion.Estado = request.NuevoEstado;
             
             if (!string.IsNullOrEmpty(request.Diagnostico))
@@ -130,6 +134,59 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             }
 
             return true;
+        }
+
+        public static bool ValidarTransicion(EstadoEquipo anterior, EstadoEquipo nuevo)
+        {
+            if (anterior == nuevo) return true;
+
+            return anterior switch
+            {
+                EstadoEquipo.Ingresado => 
+                    nuevo == EstadoEquipo.En_Diagnostico || 
+                    nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.No_Reparable,
+
+                EstadoEquipo.En_Diagnostico => 
+                    nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.Esperando_Repuestos || 
+                    nuevo == EstadoEquipo.Apartado_Para_Garantia || 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar || 
+                    nuevo == EstadoEquipo.No_Reparable,
+
+                EstadoEquipo.En_Reparacion => 
+                    nuevo == EstadoEquipo.Esperando_Repuestos || 
+                    nuevo == EstadoEquipo.Apartado_Para_Garantia || 
+                    nuevo == EstadoEquipo.Reparado || 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar || 
+                    nuevo == EstadoEquipo.No_Reparable,
+
+                EstadoEquipo.Esperando_Repuestos => 
+                    nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.No_Reparable,
+
+                EstadoEquipo.Apartado_Para_Garantia => 
+                    nuevo == EstadoEquipo.En_Garantia_Externa,
+
+                EstadoEquipo.En_Garantia_Externa => 
+                    nuevo == EstadoEquipo.Reparado || 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar || 
+                    nuevo == EstadoEquipo.No_Reparable,
+
+                EstadoEquipo.Reparado => 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar,
+
+                EstadoEquipo.Listo_Para_Retirar => 
+                    nuevo == EstadoEquipo.Entregado,
+
+                EstadoEquipo.No_Reparable => 
+                    nuevo == EstadoEquipo.Entregado,
+
+                EstadoEquipo.Entregado => 
+                    false, // Estado final
+
+                _ => false
+            };
         }
     }
 }

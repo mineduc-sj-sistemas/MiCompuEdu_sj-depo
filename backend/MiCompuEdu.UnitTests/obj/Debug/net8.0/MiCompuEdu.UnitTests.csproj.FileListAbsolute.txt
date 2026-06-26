@@ -166,3 +166,4 @@ C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Deb
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\RBush.dll
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\SixLabors.Fonts.dll
 C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\System.IO.Packaging.dll
+C:\Users\Docente\Desktop\MiCompuEdu_sj-depo\backend\MiCompuEdu.UnitTests\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.InMemory.dll

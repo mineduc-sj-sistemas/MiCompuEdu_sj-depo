@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "zzLdLgH9O+Y=",
+  "dgSpecHash": "Wkbx5c8cTUo=",
   "success": true,
   "projectFilePath": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.UnitTests\\MiCompuEdu.UnitTests.csproj",
   "expectedPackageFiles": [
@@ -26,6 +26,7 @@
     "C:\\Users\\Docente\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.28\\microsoft.entityframeworkcore.8.0.28.nupkg.sha512",
     "C:\\Users\\Docente\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.28\\microsoft.entityframeworkcore.abstractions.8.0.28.nupkg.sha512",
     "C:\\Users\\Docente\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\8.0.28\\microsoft.entityframeworkcore.analyzers.8.0.28.nupkg.sha512",
+    "C:\\Users\\Docente\\.nuget\\packages\\microsoft.entityframeworkcore.inmemory\\8.0.28\\microsoft.entityframeworkcore.inmemory.8.0.28.nupkg.sha512",
     "C:\\Users\\Docente\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\8.0.11\\microsoft.entityframeworkcore.relational.8.0.11.nupkg.sha512",
     "C:\\Users\\Docente\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\Docente\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\8.0.0\\microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",

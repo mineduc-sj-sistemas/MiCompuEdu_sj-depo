@@ -31,61 +31,20 @@ namespace MiCompuEdu.WebApi.Controllers
             var usuario = await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.NombreUsuario.ToLower() == request.NombreUsuario.ToLower() && u.Activo);
 
-            bool isValid = false;
-            string nombre = "Administrador Demo";
-            string rol = "Administrador";
-            string email = "admin@micompuedu.com";
-            Guid userId = Guid.NewGuid();
-
-            if (usuario != null)
+            if (usuario == null)
             {
-                try
-                {
-                    isValid = BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash);
-                }
-                catch
-                {
-                    isValid = (request.Password == "Admin123!" || request.Password == usuario.PasswordHash);
-                }
-
-                if (isValid)
-                {
-                    nombre = usuario.NombreCompleto;
-                    rol = usuario.Rol.ToString();
-                    email = usuario.Email;
-                    userId = usuario.Id;
-                }
+                return Unauthorized("Usuario o contraseña incorrectos.");
             }
-            else
+
+            bool isValid = false;
+            try
             {
-                if (request.NombreUsuario == "admin" && request.Password == "Admin123!")
-                {
-                    isValid = true;
-                    nombre = "Administrador del Sistema";
-                    rol = "Administrador";
-                    email = "admin.micompuedu@sanjuan.edu.ar";
-                }
-                else if (request.NombreUsuario == "supervisor" && request.Password == "Admin123!")
-                {
-                    isValid = true;
-                    nombre = "Supervisor de Depósito";
-                    rol = "Supervisor";
-                    email = "supervisor.micompuedu@sanjuan.edu.ar";
-                }
-                else if (request.NombreUsuario == "tecnico" && request.Password == "Admin123!")
-                {
-                    isValid = true;
-                    nombre = "Técnico Reparador Alfa";
-                    rol = "Tecnico";
-                    email = "tecnico1.micompuedu@sanjuan.edu.ar";
-                }
-                else if (request.NombreUsuario == "operador" && request.Password == "Admin123!")
-                {
-                    isValid = true;
-                    nombre = "Operador de Recepción Uno";
-                    rol = "Operador";
-                    email = "operador1.micompuedu@sanjuan.edu.ar";
-                }
+                isValid = BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash);
+            }
+            catch (Exception)
+            {
+                // Solo registramos el error internamente (si existiera logger), y mantenemos isValid = false
+                isValid = false;
             }
 
             if (!isValid)
@@ -93,7 +52,16 @@ namespace MiCompuEdu.WebApi.Controllers
                 return Unauthorized("Usuario o contraseña incorrectos.");
             }
 
-            var keyStr = _configuration["Jwt:Key"] ?? "ClaveSecretaSuperSeguraParaSanJuanDeAlMenos32Caracteres!";
+            string nombre = usuario.NombreCompleto;
+            string rol = usuario.Rol.ToString();
+            string email = usuario.Email;
+            Guid userId = usuario.Id;
+
+            var keyStr = _configuration["Jwt:Key"];
+            if (string.IsNullOrEmpty(keyStr))
+            {
+                throw new InvalidOperationException("La clave secreta del JWT ('Jwt:Key') no está configurada en la aplicación.");
+            }
             var issuer = _configuration["Jwt:Issuer"] ?? "MiCompuEdu_Issuer";
             var audience = _configuration["Jwt:Audience"] ?? "MiCompuEdu_Audience";
 

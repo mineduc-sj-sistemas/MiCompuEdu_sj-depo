@@ -78,5 +78,23 @@ namespace MiCompuEdu.UnitTests
             reparacion.FirmaIngresoBase64.Should().Be(mockSignature);
             reparacion.FirmaEntregaBase64.Should().BeNull();
         }
+
+        [Theory]
+        [InlineData(EstadoEquipo.Ingresado, EstadoEquipo.En_Diagnostico, true)]
+        [InlineData(EstadoEquipo.Ingresado, EstadoEquipo.En_Reparacion, true)]
+        [InlineData(EstadoEquipo.Ingresado, EstadoEquipo.Entregado, false)]
+        [InlineData(EstadoEquipo.En_Diagnostico, EstadoEquipo.Listo_Para_Retirar, true)]
+        [InlineData(EstadoEquipo.En_Reparacion, EstadoEquipo.Reparado, true)]
+        [InlineData(EstadoEquipo.Reparado, EstadoEquipo.Listo_Para_Retirar, true)]
+        [InlineData(EstadoEquipo.Listo_Para_Retirar, EstadoEquipo.Entregado, true)]
+        [InlineData(EstadoEquipo.Entregado, EstadoEquipo.En_Diagnostico, false)]
+        public void ValidarTransicion_ShouldCheckValidStateTransitionsCorrectly(EstadoEquipo anterior, EstadoEquipo nuevo, bool expectedResult)
+        {
+            // Act
+            var result = MiCompuEdu.Application.Reparaciones.Commands.ActualizarEstadoCommandHandler.ValidarTransicion(anterior, nuevo);
+
+            // Assert
+            result.Should().Be(expectedResult);
+        }
     }
 }

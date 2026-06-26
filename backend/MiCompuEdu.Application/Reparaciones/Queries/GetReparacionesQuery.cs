@@ -19,7 +19,9 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
         Guid? TecnicoAsignadoId = null,
         int? FallaCatalogoId = null,
         DateTime? FechaInicio = null,
-        DateTime? FechaFin = null
+        DateTime? FechaFin = null,
+        int? PageIndex = null,
+        int? PageSize = null
     ) : IRequest<List<ReparacionDto>>;
 
     public class GetReparacionesQueryHandler : IRequestHandler<GetReparacionesQuery, List<ReparacionDto>>
@@ -34,6 +36,7 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
         public async Task<List<ReparacionDto>> Handle(GetReparacionesQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Reparaciones
+                .AsNoTracking()
                 .Include(r => r.Equipo)
                     .ThenInclude(e => e.Beneficiario)
                         .ThenInclude(b => b.Escuela)
@@ -91,9 +94,16 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
                 query = query.Where(r => r.FechaIngreso <= request.FechaFin.Value);
             }
 
-            var list = await query
-                .OrderByDescending(r => r.FechaIngreso)
-                .ToListAsync(cancellationToken);
+            query = query.OrderByDescending(r => r.FechaIngreso);
+
+            if (request.PageSize.HasValue)
+            {
+                var pageIndex = request.PageIndex ?? 1;
+                if (pageIndex < 1) pageIndex = 1;
+                query = query.Skip((pageIndex - 1) * request.PageSize.Value).Take(request.PageSize.Value);
+            }
+
+            var list = await query.ToListAsync(cancellationToken);
 
             return list.Select(r => new ReparacionDto
             {

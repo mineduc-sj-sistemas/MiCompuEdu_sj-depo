@@ -8,12 +8,17 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
+using Microsoft.Extensions.Configuration;
+
 namespace MiCompuEdu.Infrastructure.Services
 {
     public class PdfGeneratorService : IPdfGeneratorService
     {
-        public PdfGeneratorService()
+        private readonly IConfiguration _configuration;
+
+        public PdfGeneratorService(IConfiguration configuration)
         {
+            _configuration = configuration;
             // Registrar licencia de QuestPDF (requerido para versión comunitaria)
             try
             {
@@ -56,7 +61,8 @@ namespace MiCompuEdu.Infrastructure.Services
 
             // Generar código QR
             byte[] qrCodeBytes;
-            string statusUrl = $"http://localhost:5173/consulta?id={reparacion.Id}";
+            string frontendUrl = _configuration["Frontend:BaseUrl"] ?? "http://localhost:5173";
+            string statusUrl = $"{frontendUrl.TrimEnd('/')}/consulta?id={reparacion.Id}";
             using (var qrGenerator = new QRCodeGenerator())
             using (var qrCodeData = qrGenerator.CreateQrCode(statusUrl, QRCodeGenerator.ECCLevel.Q))
             using (var pngByteQrCode = new PngByteQRCode(qrCodeData))
@@ -163,7 +169,7 @@ namespace MiCompuEdu.Infrastructure.Services
             });
 
             // Directorio físico de guardado
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "comprobantes");
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "comprobantes");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);

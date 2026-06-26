@@ -160,6 +160,22 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\6bec6952-0f3a-4a19-968c-ff8d4286c543.pdf))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\729f3104-c1af-49df-b6d2-d363b78bfd70.pdf))">
+      <SourceType>Package</SourceType>
+      <SourceId>MiCompuEdu.WebApi</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/MiCompuEdu.WebApi</BasePath>
+      <RelativePath>comprobantes/729f3104-c1af-49df-b6d2-d363b78bfd70.pdf</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\729f3104-c1af-49df-b6d2-d363b78bfd70.pdf))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\83775aba-8ac2-4080-bd6c-0069de586910.pdf))">
       <SourceType>Package</SourceType>
       <SourceId>MiCompuEdu.WebApi</SourceId>
@@ -223,6 +239,22 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\b64c1f0b-ad98-4af7-a222-021fa421208a.pdf))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\bc43ef8c-94c9-4200-9075-a3eb6f296f9d.pdf))">
+      <SourceType>Package</SourceType>
+      <SourceId>MiCompuEdu.WebApi</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/MiCompuEdu.WebApi</BasePath>
+      <RelativePath>comprobantes/bc43ef8c-94c9-4200-9075-a3eb6f296f9d.pdf</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\bc43ef8c-94c9-4200-9075-a3eb6f296f9d.pdf))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\comprobantes\d2d5383a-c314-4efc-8921-a61a64f79436.pdf))">
       <SourceType>Package</SourceType>

@@ -49,55 +49,120 @@ namespace MiCompuEdu.Infrastructure.Services
         {
             using var scope = _scopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-            var whatsAppService = scope.ServiceProvider.GetRequiredService<IWhatsAppService>();
 
-            var now = DateTime.UtcNow;
-
-            // Fetch notifications that are Pendiente, or Fallido but eligible for a retry (limit to 5 attempts)
-            var pendingNotifications = await context.Notificaciones
-                .Where(n => n.Estado == EstadoNotificacion.Pendiente || 
-                            (n.Estado == EstadoNotificacion.Fallido && n.Reintentos < 5 && (n.ProximoIntento == null || n.ProximoIntento <= now)))
-                .OrderBy(n => n.CreadoEn)
-                .Take(10) // Process in chunks
-                .ToListAsync(stoppingToken);
-
-            if (pendingNotifications.Count == 0)
+            // Si es DbContext de EF Core, abrimos una transacción explícita para sostener el bloqueo FOR UPDATE
+            if (context is DbContext dbContext)
             {
-                return;
-            }
-
-            _logger.LogInformation("Found {Count} notifications to process in queue.", pendingNotifications.Count);
-
-            foreach (var notif in pendingNotifications)
-            {
-                if (stoppingToken.IsCancellationRequested) break;
-
+                using var transaction = await dbContext.Database.BeginTransactionAsync(stoppingToken);
                 try
                 {
-                    _logger.LogInformation("Sending notification ID {Id} to {Recipient} (Attempt {Attempt})...", 
-                        notif.Id, notif.Destinatario, notif.Reintentos + 1);
+                    var whatsAppService = scope.ServiceProvider.GetRequiredService<IWhatsAppService>();
+                    var now = DateTime.UtcNow;
 
-                    bool sent = await whatsAppService.SendNotificationAsync(notif.Destinatario, notif.Mensaje);
+                    // Fetch notifications that are Pendiente, or Fallido but eligible for a retry (limit to 5 attempts)
+                    // Usamos ForUpdate().SkipLocked() para asegurar exclusividad entre múltiples réplicas (concurrencia)
+                    var pendingNotifications = await dbContext.Set<Notificacion>()
+                        .FromSqlRaw(@"
+                            SELECT * FROM ""notificaciones""
+                            WHERE ""Estado"" = {0} OR (
+                                ""Estado"" = {1} AND ""Reintentos"" < 5 AND (""ProximoIntento"" IS NULL OR ""ProximoIntento"" <= {2})
+                            )
+                            ORDER BY ""CreadoEn""
+                            LIMIT 10
+                            FOR UPDATE SKIP LOCKED",
+                            EstadoNotificacion.Pendiente.ToString(),
+                            EstadoNotificacion.Fallido.ToString(),
+                            now)
+                        .ToListAsync(stoppingToken);
 
-                    if (sent)
+                    if (pendingNotifications.Count == 0)
                     {
-                        notif.Estado = EstadoNotificacion.Enviado;
-                        notif.FechaEnvio = DateTime.UtcNow;
-                        notif.ErrorMensaje = null;
-                        _logger.LogInformation("Notification ID {Id} sent successfully.", notif.Id);
+                        await transaction.CommitAsync(stoppingToken);
+                        return;
                     }
-                    else
+
+                    _logger.LogInformation("Found {Count} notifications to process in queue.", pendingNotifications.Count);
+
+                    foreach (var notif in pendingNotifications)
                     {
-                        HandleFailure(notif, "WhatsApp Service returned failure.");
+                        if (stoppingToken.IsCancellationRequested) break;
+
+                        try
+                        {
+                            _logger.LogInformation("Sending notification ID {Id} to {Recipient} (Attempt {Attempt})...", 
+                                notif.Id, notif.Destinatario, notif.Reintentos + 1);
+
+                            bool sent = await whatsAppService.SendNotificationAsync(notif.Destinatario, notif.Mensaje);
+
+                            if (sent)
+                            {
+                                notif.Estado = EstadoNotificacion.Enviado;
+                                notif.FechaEnvio = DateTime.UtcNow;
+                                notif.ErrorMensaje = null;
+                                _logger.LogInformation("Notification ID {Id} sent successfully.", notif.Id);
+                            }
+                            else
+                            {
+                                HandleFailure(notif, "WhatsApp Service returned failure.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            HandleFailure(notif, ex.Message);
+                        }
                     }
+
+                    await context.SaveChangesAsync(stoppingToken);
+                    await transaction.CommitAsync(stoppingToken);
                 }
                 catch (Exception ex)
                 {
-                    HandleFailure(notif, ex.Message);
+                    await transaction.RollbackAsync(stoppingToken);
+                    _logger.LogError(ex, "Error processing notifications inside transaction.");
+                    throw;
                 }
             }
+            else
+            {
+                // Fallback para testing o sin DbContext real
+                var whatsAppService = scope.ServiceProvider.GetRequiredService<IWhatsAppService>();
+                var now = DateTime.UtcNow;
 
-            await context.SaveChangesAsync(stoppingToken);
+                var pendingNotifications = await context.Notificaciones
+                    .Where(n => n.Estado == EstadoNotificacion.Pendiente || 
+                                (n.Estado == EstadoNotificacion.Fallido && n.Reintentos < 5 && (n.ProximoIntento == null || n.ProximoIntento <= now)))
+                    .OrderBy(n => n.CreadoEn)
+                    .Take(10)
+                    .ToListAsync(stoppingToken);
+
+                if (pendingNotifications.Count == 0) return;
+
+                foreach (var notif in pendingNotifications)
+                {
+                    if (stoppingToken.IsCancellationRequested) break;
+
+                    try
+                    {
+                        bool sent = await whatsAppService.SendNotificationAsync(notif.Destinatario, notif.Mensaje);
+                        if (sent)
+                        {
+                            notif.Estado = EstadoNotificacion.Enviado;
+                            notif.FechaEnvio = DateTime.UtcNow;
+                            notif.ErrorMensaje = null;
+                        }
+                        else
+                        {
+                            HandleFailure(notif, "WhatsApp Service returned failure.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleFailure(notif, ex.Message);
+                    }
+                }
+
+                await context.SaveChangesAsync(stoppingToken);
+            }
         }
 
         private void HandleFailure(Notificacion notif, string errorMsg)

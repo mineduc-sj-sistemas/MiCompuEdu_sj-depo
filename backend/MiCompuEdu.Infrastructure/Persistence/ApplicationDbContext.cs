@@ -443,13 +443,28 @@ namespace MiCompuEdu.Infrastructure.Persistence
             // 2. Preparar logs de auditoría antes del guardado físico
             var auditEntries = OnBeforeSaveChanges();
 
-            // 3. Guardar los cambios base
-            var result = await base.SaveChangesAsync(cancellationToken);
+            // Si ya hay una transacción activa de base de datos, simplemente guardamos en ese contexto
+            if (Database.CurrentTransaction != null)
+            {
+                var result = await base.SaveChangesAsync(cancellationToken);
+                await OnAfterSaveChanges(auditEntries, cancellationToken);
+                return result;
+            }
 
-            // 4. Escribir logs de auditoría finales (resolviendo PKs recién generadas si aplica)
-            await OnAfterSaveChanges(auditEntries, cancellationToken);
-
-            return result;
+            // Si no hay transacción activa, creamos una transacción atómica local
+            using var transaction = await Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var result = await base.SaveChangesAsync(cancellationToken);
+                await OnAfterSaveChanges(auditEntries, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
 
         private List<AuditEntry> OnBeforeSaveChanges()

@@ -10,6 +10,10 @@ using MiCompuEdu.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using MiCompuEdu.Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+
 namespace MiCompuEdu.WebApi.Controllers
 {
     [Authorize]
@@ -18,10 +22,12 @@ namespace MiCompuEdu.WebApi.Controllers
     public class ReparacionesController : ControllerBase
     {
         private readonly ISender _mediator;
+        private readonly IApplicationDbContext _context;
 
-        public ReparacionesController(ISender mediator)
+        public ReparacionesController(ISender mediator, IApplicationDbContext context)
         {
             _mediator = mediator;
+            _context = context;
         }
 
         [HttpPost]
@@ -161,6 +167,43 @@ namespace MiCompuEdu.WebApi.Controllers
             {
                 return StatusCode(500, $"Error al guardar la evidencia física: {ex.Message}");
             }
+        }
+
+        [HttpGet("{id}/comprobante")]
+        [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
+        public async Task<IActionResult> DescargarComprobante(Guid id)
+        {
+            var filePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "App_Data", "comprobantes", $"{id}.pdf");
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("El archivo físico del comprobante no existe en el servidor.");
+            }
+
+            var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            return File(fileBytes, "application/pdf", $"comprobante_{id.ToString().Substring(0, 8)}.pdf");
+        }
+
+        [HttpGet("{id}/estado-publico")]
+        [AllowAnonymous]
+        public async Task<ActionResult<object>> ObtenerEstadoPublico(Guid id)
+        {
+            var rep = await _context.Reparaciones
+                .Include(r => r.Equipo)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (rep == null)
+            {
+                return NotFound("No se encontró información para la reparación consultada.");
+            }
+
+            return Ok(new
+            {
+                NumeroSerie = rep.Equipo.NumeroSerie,
+                MarcaModelo = $"{rep.Equipo.Marca} {rep.Equipo.Modelo}",
+                Estado = rep.Estado.ToString(),
+                FechaIngreso = rep.FechaIngreso,
+                FechaLimite = rep.FechaLimite
+            });
         }
     }
 

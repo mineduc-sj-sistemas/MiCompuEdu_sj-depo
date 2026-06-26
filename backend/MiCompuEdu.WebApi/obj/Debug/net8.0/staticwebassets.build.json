@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "i4A4EiRnOxosian3sC+3IrXciyIWujWjQv0zyzOKlJc=",
+  "Hash": "kXxmIAxicnTR38xTeIZ44ZI2D5GE2lnJMeJ5j6DWWHU=",
   "Source": "MiCompuEdu.WebApi",
   "BasePath": "_content/MiCompuEdu.WebApi",
   "Mode": "Default",
@@ -207,6 +207,25 @@
       "OriginalItemSpec": "wwwroot\\comprobantes\\6bec6952-0f3a-4a19-968c-ff8d4286c543.pdf"
     },
     {
+      "Identity": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\729f3104-c1af-49df-b6d2-d363b78bfd70.pdf",
+      "SourceId": "MiCompuEdu.WebApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\",
+      "BasePath": "_content/MiCompuEdu.WebApi",
+      "RelativePath": "comprobantes/729f3104-c1af-49df-b6d2-d363b78bfd70.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\comprobantes\\729f3104-c1af-49df-b6d2-d363b78bfd70.pdf"
+    },
+    {
       "Identity": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\83775aba-8ac2-4080-bd6c-0069de586910.pdf",
       "SourceId": "MiCompuEdu.WebApi",
       "SourceType": "Discovered",
@@ -281,6 +300,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\comprobantes\\b64c1f0b-ad98-4af7-a222-021fa421208a.pdf"
+    },
+    {
+      "Identity": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\bc43ef8c-94c9-4200-9075-a3eb6f296f9d.pdf",
+      "SourceId": "MiCompuEdu.WebApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\",
+      "BasePath": "_content/MiCompuEdu.WebApi",
+      "RelativePath": "comprobantes/bc43ef8c-94c9-4200-9075-a3eb6f296f9d.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\comprobantes\\bc43ef8c-94c9-4200-9075-a3eb6f296f9d.pdf"
     },
     {
       "Identity": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\comprobantes\\d2d5383a-c314-4efc-8921-a61a64f79436.pdf",
