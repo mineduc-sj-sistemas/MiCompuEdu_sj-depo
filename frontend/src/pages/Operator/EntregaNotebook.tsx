@@ -1,99 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Reparacion } from '../../types';
 import { API_BASE_URL } from '../../config';
-import { Search, RefreshCw, Laptop, User, MapPin, AlertTriangle, Check, Loader2, X, Trash2 } from 'lucide-react';
+import { Search, RefreshCw, Laptop, User, MapPin, AlertTriangle, Check, Loader2, X } from 'lucide-react';
 
-const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({ onChange }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.strokeStyle = '#1d252d';
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  }, []);
-
-  const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-    const rect = canvas.getBoundingClientRect();
-    if ('touches' in e) {
-      if (e.touches.length === 0) return { x: 0, y: 0 };
-      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
-    }
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  };
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (e.cancelable) e.preventDefault();
-    const ctx = canvasRef.current?.getContext('2d');
-    if (!ctx) return;
-    const { x, y } = getCoordinates(e);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    setIsDrawing(true);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    if (e.cancelable) e.preventDefault();
-    const ctx = canvasRef.current?.getContext('2d');
-    if (!ctx) return;
-    const { x, y } = getCoordinates(e);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  };
-
-  const stopDrawing = () => {
-    if (!isDrawing) return;
-    setIsDrawing(false);
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const blank = document.createElement('canvas');
-    blank.width = canvas.width;
-    blank.height = canvas.height;
-    if (canvas.toDataURL() === blank.toDataURL()) { onChange(null); return; }
-    onChange(canvas.toDataURL('image/png'));
-  };
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvasRef.current?.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
-    onChange(null);
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <label className="text-xs font-semibold text-slate-700">Firma del Tutor (Retiro de Equipo)</label>
-        <button type="button" onClick={clearCanvas} className="text-xs text-red-500 hover:text-red-600 font-semibold flex items-center gap-1 transition-colors">
-          <Trash2 className="w-3.5 h-3.5" /> Limpiar
-        </button>
-      </div>
-      <div className="border border-slate-200 bg-white rounded-lg overflow-hidden">
-        <canvas
-          ref={canvasRef}
-          width={450}
-          height={120}
-          className="w-full h-[120px] cursor-crosshair touch-none bg-slate-50"
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-          onTouchStart={startDrawing}
-          onTouchMove={draw}
-          onTouchEnd={stopDrawing}
-        />
-      </div>
-    </div>
-  );
-};
 
 interface EntregaNotebookProps {
   token: string;
@@ -105,7 +14,7 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
   const [selectedRepair, setSelectedRepair] = useState<Reparacion | null>(null);
-  const [firmaEntregaBase64, setFirmaEntregaBase64] = useState<string | null>(null);
+
 
   const fetchRepairsToDeliver = async () => {
     setLoading(true);
@@ -141,16 +50,13 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
   };
 
   const handleEntregar = async (reparacionId: string, numeroSerie: string) => {
-    if (!firmaEntregaBase64) {
-      alert('Por favor, el tutor debe firmar antes de realizar la entrega.');
-      return;
-    }
+
     setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/Reparaciones/${reparacionId}/estado`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ nuevoEstado: 'Entregado', observaciones: 'Entregado al tutor validando DNI.', firmaEntregaBase64 })
+        body: JSON.stringify({ nuevoEstado: 'Entregado', observaciones: 'Entregado al tutor validando DNI.' })
       });
       if (response.ok) {
         setMensaje({ tipo: 'exito', texto: `Equipo ${numeroSerie} entregado correctamente.` });
@@ -249,7 +155,7 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
                   </div>
                 </div>
                 <button
-                  onClick={() => { setSelectedRepair(repair); setFirmaEntregaBase64(null); }}
+                  onClick={() => { setSelectedRepair(repair); }}
                   className="bg-[#FF8200] hover:bg-[#e07200] text-white font-medium px-5 py-2 rounded-lg text-xs transition-colors whitespace-nowrap cursor-pointer"
                 >
                   Confirmar Entrega
@@ -293,9 +199,7 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
               </div>
             </div>
 
-            <div className="border border-slate-200 rounded-xl p-4 bg-slate-50">
-              <SignaturePad onChange={(base64) => setFirmaEntregaBase64(base64)} />
-            </div>
+
 
             <div className="flex justify-end gap-3">
               <button
@@ -308,7 +212,7 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
               <button
                 type="button"
                 onClick={() => handleEntregar(selectedRepair.id, selectedRepair.numeroSerie)}
-                disabled={loading || !firmaEntregaBase64}
+                disabled={loading}
                 className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-100 disabled:text-slate-400 text-white font-semibold px-6 py-2 rounded-lg text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entregar y Archivar'}

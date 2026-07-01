@@ -8,16 +8,12 @@ import { Dashboard } from './pages/Supervisor/Dashboard'
 import { LogoSanJuan } from './components/Shared/LogoSanJuan'
 import { GestionUsuarios } from './pages/Supervisor/GestionUsuarios'
 import { ImportarPadron } from './pages/Supervisor/ImportarPadron'
-import { FirmaRemota } from './pages/Operator/FirmaRemota'
+
 import { ConsultaPublica } from './pages/ConsultaPublica'
 import { HealthCheckBanner } from './components/Shared/HealthCheckBanner'
 import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon, Database } from 'lucide-react'
 
 function App() {
-  const isFirmaRemota = window.location.pathname === '/firma-remota';
-  if (isFirmaRemota) {
-    return <FirmaRemota />;
-  }
 
   const isConsulta = window.location.pathname === '/consulta';
   if (isConsulta) {

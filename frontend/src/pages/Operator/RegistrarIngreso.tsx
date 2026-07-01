@@ -2,136 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { Beneficiario } from '../../types';
 import { API_BASE_URL } from '../../config';
 import { parseDniScan } from '../../utils/dniParser';
+import { CrearEscuelaModal } from '../../components/Escuelas/CrearEscuelaModal';
 import { 
   Search, 
   User, 
   Phone, 
   Mail, 
   Laptop, 
-  Trash2, 
   AlertTriangle, 
-  Check, 
+  Check,
   Loader2, 
-  FileText
+  FileText,
+  Plus
 } from 'lucide-react';
 
-const SignaturePad: React.FC<{ onChange: (base64: string | null) => void }> = ({ onChange }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.strokeStyle = '#1d252d';
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  }, []);
-
-  const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-    const rect = canvas.getBoundingClientRect();
-    
-    if ('touches' in e) {
-      if (e.touches.length === 0) return { x: 0, y: 0 };
-      return {
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top
-      };
-    } else {
-      return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-    }
-  };
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (e.cancelable) e.preventDefault();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const { x, y } = getCoordinates(e);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    setIsDrawing(true);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    if (e.cancelable) e.preventDefault();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const { x, y } = getCoordinates(e);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  };
-
-  const stopDrawing = () => {
-    if (!isDrawing) return;
-    setIsDrawing(false);
-    saveSignature();
-  };
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    onChange(null);
-  };
-
-  const saveSignature = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const blank = document.createElement('canvas');
-    blank.width = canvas.width;
-    blank.height = canvas.height;
-    if (canvas.toDataURL() === blank.toDataURL()) {
-      onChange(null);
-      return;
-    }
-    onChange(canvas.toDataURL('image/png'));
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <label className="block text-slate-700 text-xs font-semibold">Firma Digital del Tutor / Beneficiario</label>
-        <button
-          type="button"
-          onClick={clearCanvas}
-          className="text-xs text-red-500 hover:text-red-600 font-semibold flex items-center gap-1 transition-colors"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-          Limpiar Firma
-        </button>
-      </div>
-      <div className="border border-slate-200 bg-white rounded-lg overflow-hidden">
-        <canvas
-          ref={canvasRef}
-          width={500}
-          height={120}
-          className="w-full h-[120px] cursor-crosshair touch-none bg-slate-50"
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-          onTouchStart={startDrawing}
-          onTouchMove={draw}
-          onTouchEnd={stopDrawing}
-        />
-      </div>
-    </div>
-  );
-};
 
 interface RegistrarIngresoProps {
   token: string;
@@ -146,14 +31,27 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
   const [observaciones, setObservaciones] = useState('');
   const [mensajeError, setMensajeError] = useState('');
   const [mensajeExito, setMensajeExito] = useState('');
-  const [firmaIngresoBase64, setFirmaIngresoBase64] = useState<string | null>(null);
+
+  const [isCrearEscuelaModalOpen, setIsCrearEscuelaModalOpen] = useState(false);
+
+  // Nuevo estado para el programa inicial y modo manual
+  const [selectedProgramaInicialId, setSelectedProgramaInicialId] = useState<string>('');
+  const [manualTitularDni, setManualTitularDni] = useState('');
+  const [manualTitularNombre, setManualTitularNombre] = useState('');
+  const [manualTitularApellido, setManualTitularApellido] = useState('');
+  const [manualTitularTelefono, setManualTitularTelefono] = useState('');
+  const [manualTitularEmail, setManualTitularEmail] = useState('');
+  const [manualEquipoNumeroSerie, setManualEquipoNumeroSerie] = useState('');
+  const [manualEquipoMarca, setManualEquipoMarca] = useState('');
+  const [manualEquipoModelo, setManualEquipoModelo] = useState('');
+  const [manualEquipoCredencialesOffice, setManualEquipoCredencialesOffice] = useState('');
 
   // Catálogos
   const [escuelas, setEscuelas] = useState<any[]>([]);
   const [programas, setProgramas] = useState<any[]>([]);
-  const [ubicaciones, setUbicaciones] = useState<any[]>([]);
+
   const [selectedEscuelaId, setSelectedEscuelaId] = useState<string>('');
-  const [selectedProgramaId, setSelectedProgramaId] = useState<string>('');
+
   const [selectedUbicacionId, setSelectedUbicacionId] = useState<string>('');
   
   const dniInputRef = useRef<HTMLInputElement>(null);
@@ -175,12 +73,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
           setProgramas(await resProgramas.json());
         }
 
-        const resUbicaciones = await fetch(`${API_BASE_URL}/Ubicaciones`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (resUbicaciones.ok) {
-          setUbicaciones(await resUbicaciones.json());
-        }
+
       } catch (e) {
         console.warn('Error crítico: backend no disponible.', e);
         setMensajeError('No se pudieron cargar los catálogos del sistema. Verifique la conexión con el servidor.');
@@ -188,6 +81,12 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     };
     cargarCatalogos();
   }, [token]);
+
+  const handleEscuelaCreada = (nuevaEscuela: any) => {
+    setEscuelas((prev) => [...prev, nuevaEscuela].sort((a, b) => a.nombre.localeCompare(b.nombre)));
+    setSelectedEscuelaId(nuevaEscuela.id);
+    setIsCrearEscuelaModalOpen(false);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -277,7 +176,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         
         setBeneficiario(data);
         setSelectedEscuelaId(data.escuelaId || '');
-        setSelectedProgramaId(data.equipo?.programaEducativoId || '');
+
         if (scanInfo) {
           setMensajeExito(`DNI Escaneado: ${scanInfo.nombre} ${scanInfo.apellido}`);
         }
@@ -299,7 +198,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
             }
           });
           setSelectedEscuelaId('');
-          setSelectedProgramaId('');
+
           setMensajeExito(`DNI Escaneado (Carga temporal de la tarjeta): ${scanInfo.nombre} ${scanInfo.apellido}`);
         } else {
           setMensajeError('DNI no encontrado en el padrón nominal del Ministerio.');
@@ -326,7 +225,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
           }
         });
         setSelectedEscuelaId('1');
-        setSelectedProgramaId('2');
+
         if (scanInfo) {
           setMensajeExito(`[SIMULACIÓN] DNI escaneado: ${scanInfo.nombre} ${scanInfo.apellido}`);
         }
@@ -337,37 +236,63 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
     setLoading(false);
   };
 
+  const isMaestrosDeAmerica = selectedProgramaInicialId !== '' && (programas.find(p => p.id === selectedProgramaInicialId)?.nombre.toLowerCase().includes('maestros') ?? true);
+  const isManualMode = selectedProgramaInicialId !== '' && !isMaestrosDeAmerica;
+
   const handleIngresarNotebook = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!beneficiario || !beneficiario.equipo) return;
+    if (!isManualMode && (!beneficiario || !beneficiario.equipo)) return;
 
     setLoading(true);
     setMensajeError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/Reparaciones`, {
+      const endpoint = isManualMode ? `${API_BASE_URL}/Reparaciones/manual` : `${API_BASE_URL}/Reparaciones`;
+      const body = isManualMode ? {
+        titularDni: manualTitularDni,
+        titularNombre: manualTitularNombre,
+        titularApellido: manualTitularApellido,
+        titularTelefono: manualTitularTelefono,
+        titularEmail: manualTitularEmail,
+        equipoNumeroSerie: manualEquipoNumeroSerie,
+        equipoMarca: manualEquipoMarca,
+        equipoModelo: manualEquipoModelo,
+        equipoCredencialesOffice: manualEquipoCredencialesOffice,
+        fallaReportada,
+        fallaCatalogoId,
+        observaciones,
+        escuelaId: selectedEscuelaId || null,
+        programaEducativoId: selectedProgramaInicialId || null,
+        ubicacionDepositoId: selectedUbicacionId || null,
+
+      } : {
+        equipoId: beneficiario!.equipo!.id,
+        fallaReportada,
+        fallaCatalogoId,
+        observaciones,
+        escuelaId: selectedEscuelaId || null,
+        programaEducativoId: selectedProgramaInicialId || null,
+        ubicacionDepositoId: selectedUbicacionId || null,
+
+      };
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          equipoId: beneficiario.equipo.id,
-          fallaReportada,
-          fallaCatalogoId,
-          observaciones,
-          escuelaId: selectedEscuelaId || null,
-          programaEducativoId: selectedProgramaId || null,
-          ubicacionDepositoId: selectedUbicacionId || null,
-          firmaIngresoBase64: firmaIngresoBase64 || null
-        })
+        body: JSON.stringify(body)
       });
 
       if (response.ok) {
         const data = await response.json();
-        setMensajeExito(`Ingreso de notebook ${beneficiario.equipo.numeroSerie} registrado.`);
+        const numSerie = isManualMode ? manualEquipoNumeroSerie : beneficiario!.equipo!.numeroSerie;
+        const nombreBenef = isManualMode ? `${manualTitularNombre} ${manualTitularApellido}` : `${beneficiario!.nombre} ${beneficiario!.apellido}`;
+        
+        setMensajeExito(`Ingreso de notebook ${numSerie} registrado.`);
         setTimeout(() => {
-          alert(`Descargando Comprobante Digital:\n\nOrden ID: ${data.id}\nBeneficiario: ${beneficiario.nombre} ${beneficiario.apellido}\nEquipo Serie: ${beneficiario.equipo?.numeroSerie}`);
+          alert(`Descargando Comprobante Digital:\n\nOrden ID: ${data.id}\nBeneficiario: ${nombreBenef}\nEquipo Serie: ${numSerie}`);
         }, 500);
 
         setBeneficiario(null);
@@ -375,20 +300,24 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         setFallaReportada('');
         setObservaciones('');
         setSelectedUbicacionId('');
-        setFirmaIngresoBase64(null);
-        dniInputRef.current?.focus();
+
+        if (isManualMode) {
+          setManualTitularDni('');
+          setManualTitularNombre('');
+          setManualTitularApellido('');
+          setManualTitularTelefono('');
+          setManualTitularEmail('');
+          setManualEquipoNumeroSerie('');
+          setManualEquipoMarca('');
+          setManualEquipoModelo('');
+          setManualEquipoCredencialesOffice('');
+        }
+        if (!isManualMode) dniInputRef.current?.focus();
       } else {
         setMensajeError('Error al guardar el ingreso en el sistema.');
       }
     } catch (error) {
-      setMensajeExito(`[SIMULACIÓN] Ingreso de notebook ${beneficiario.equipo.numeroSerie} registrado.`);
-      setBeneficiario(null);
-      setDniInput('');
-      setFallaReportada('');
-      setObservaciones('');
-      setSelectedUbicacionId('');
-      setFirmaIngresoBase64(null);
-      dniInputRef.current?.focus();
+      setMensajeError('Error de conexión al servidor.');
     } finally {
       setLoading(false);
     }
@@ -400,16 +329,49 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
 
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
+      {isCrearEscuelaModalOpen && (
+        <CrearEscuelaModal 
+          token={token} 
+          onClose={() => setIsCrearEscuelaModalOpen(false)} 
+          onSuccess={handleEscuelaCreada} 
+        />
+      )}
       <div className="pb-4 border-b border-slate-200">
         <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Registrar Ingreso de Notebook</h2>
         <p className="text-slate-400 mt-1 text-xs">Busca por DNI de tutor, alumno o número de serie de la netbook para registrar la orden de servicio.</p>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-6">
-        <div>
+        {/* Paso 1: Selección de Programa */}
+        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
           <label className="block text-slate-700 text-xs font-semibold mb-2">
-            Identificación de Alumno, Tutor o Netbook
+            Paso 1: Seleccionar Programa de Entrega
           </label>
+          <select
+            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 focus:outline-none focus:border-[#FF8200] text-sm font-medium transition-colors"
+            value={selectedProgramaInicialId}
+            onChange={(e) => {
+              setSelectedProgramaInicialId(e.target.value);
+              setBeneficiario(null);
+              setDniInput('');
+              setMensajeError('');
+              setMensajeExito('');
+            }}
+          >
+            <option value="">-- Seleccione el Programa --</option>
+            {programas.map((prog) => (
+              <option key={prog.id} value={prog.id}>
+                {prog.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedProgramaInicialId && isMaestrosDeAmerica && (
+          <div className="animate-fade-in space-y-2 pt-2">
+            <label className="block text-slate-700 text-xs font-semibold mb-2">
+              Paso 2: Identificación de Alumno, Tutor o Netbook
+            </label>
           <div className="flex gap-3">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -449,7 +411,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
           <p className="text-[10px] text-slate-400 mt-1.5">
             Tip: La búsqueda se realiza de manera automática al completar un DNI de 7-8 dígitos o un código de netbook.
           </p>
-        </div>
+          </div>
+        )}
 
         {mensajeError && (
           <div className="p-3 bg-red-50 border border-red-100 text-[#E03C31] rounded-lg text-xs font-semibold flex items-center gap-2">
@@ -463,6 +426,150 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
             <Check className="w-4 h-4 shrink-0" />
             {mensajeExito}
           </div>
+        )}
+
+        {selectedProgramaInicialId && isManualMode && (
+          <form onSubmit={handleIngresarNotebook} className="space-y-6 pt-4 border-t border-slate-100 animate-fade-in">
+            <div className="bg-yellow-50 text-yellow-800 p-3 rounded-lg text-xs font-medium border border-yellow-200">
+              Has seleccionado un programa distinto a Maestros de América. Por favor, carga los datos del beneficiario y el equipo manualmente.
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
+                <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
+                  <User className="w-4.5 h-4.5" />
+                  <h3 className="text-sm font-semibold text-slate-800">Datos del Titular / Tutor</h3>
+                </div>
+                <div className="space-y-3 text-xs">
+                  <div><label className="block text-slate-500 mb-1">DNI</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularDni} onChange={e => setManualTitularDni(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Nombre</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularNombre} onChange={e => setManualTitularNombre(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Apellido</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularApellido} onChange={e => setManualTitularApellido(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Teléfono</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularTelefono} onChange={e => setManualTitularTelefono(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Email</label><input required type="email" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularEmail} onChange={e => setManualTitularEmail(e.target.value)} /></div>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
+                <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
+                  <Laptop className="w-4.5 h-4.5" />
+                  <h3 className="text-sm font-semibold text-slate-800">Datos del Equipo</h3>
+                </div>
+                <div className="space-y-3 text-xs">
+                  <div><label className="block text-slate-500 mb-1">Nro Serie</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualEquipoNumeroSerie} onChange={e => setManualEquipoNumeroSerie(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Marca</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualEquipoMarca} onChange={e => setManualEquipoMarca(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Modelo</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualEquipoModelo} onChange={e => setManualEquipoModelo(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Credenciales Office (Opcional)</label><input type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualEquipoCredencialesOffice} onChange={e => setManualEquipoCredencialesOffice(e.target.value)} /></div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
+                <FileText className="w-4.5 h-4.5" />
+                <h3 className="text-sm font-semibold text-slate-800">Ubicación y Distribución</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Escuela (Opcional)</label>
+                  <div className="flex gap-2">
+                    <select
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                      value={selectedEscuelaId}
+                      onChange={(e) => setSelectedEscuelaId(e.target.value)}
+                    >
+                      <option value="">-- Sin Escuela Asignada --</option>
+                      {escuelas.map((esc) => (
+                        <option key={esc.id} value={esc.id}>
+                          {esc.nombre}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setIsCrearEscuelaModalOpen(true)}
+                      className="flex-shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-lg transition-colors"
+                      title="Agregar nueva escuela"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Ubicación Depósito (Opcional)</label>
+                  <select
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors cursor-not-allowed opacity-80"
+                    value="sistemas"
+                    disabled
+                  >
+                    <option value="sistemas">Área Sistemas</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">Detalles del Soporte</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-1">
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Falla Común</label>
+                  <select
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                    value={fallaCatalogoId}
+                    onChange={(e) => setFallaCatalogoId(Number(e.target.value))}
+                  >
+                    <option value={1}>No Enciende</option>
+                    <option value={2}>Pantalla Rota / Sin Imagen</option>
+                    <option value={3}>Bloqueo de Seguridad Juana Manso</option>
+                    <option value={4}>Falla de Teclado</option>
+                    <option value={5}>Problemas de Sistema Operativo</option>
+                    <option value={6}>Otro</option>
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Descripción de Falla</label>
+                  <textarea
+                    required={fallaCatalogoId === 6}
+                    rows={2}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                    placeholder="Escriba los detalles de la falla reportada..."
+                    value={fallaReportada}
+                    onChange={(e) => setFallaReportada(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-slate-700 text-xs font-semibold mb-1.5">Observaciones Estéticas / Accesorios</label>
+                <input
+                  type="text"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                  placeholder="Ej: Trae cargador original. Tapa rayada."
+                  value={observaciones}
+                  onChange={(e) => setObservaciones(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedProgramaInicialId('')}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors text-xs cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-100 disabled:text-slate-400 text-white font-semibold px-6 py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer min-w-[150px]"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Registrar Ingreso Manual'}
+              </button>
+            </div>
+          </form>
         )}
 
         {beneficiario && (
@@ -533,50 +640,40 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                 <FileText className="w-4.5 h-4.5" />
                 <h3 className="text-sm font-semibold text-slate-800">Ubicación y Distribución</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-slate-700 text-xs font-semibold mb-1.5">Escuela</label>
-                  <select
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
-                    value={selectedEscuelaId}
-                    onChange={(e) => setSelectedEscuelaId(e.target.value)}
-                  >
-                    <option value="">-- Seleccionar Escuela --</option>
-                    {escuelas.map((esc) => (
-                      <option key={esc.id} value={esc.id}>
-                        {esc.nombre} (CUE: {esc.cue})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Programa</label>
-                  <select
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
-                    value={selectedProgramaId}
-                    onChange={(e) => setSelectedProgramaId(e.target.value)}
-                  >
-                    <option value="">-- Seleccionar Programa --</option>
-                    {programas.map((prog) => (
-                      <option key={prog.id} value={prog.id}>
-                        {prog.nombre}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                      value={selectedEscuelaId}
+                      onChange={(e) => setSelectedEscuelaId(e.target.value)}
+                    >
+                      <option value="">-- Seleccionar Escuela --</option>
+                      {escuelas.map((esc) => (
+                        <option key={esc.id} value={esc.id}>
+                          {esc.nombre}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setIsCrearEscuelaModalOpen(true)}
+                      className="flex-shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-lg transition-colors"
+                      title="Agregar nueva escuela"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-slate-700 text-xs font-semibold mb-1.5">Ubicación Depósito</label>
                   <select
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
-                    value={selectedUbicacionId}
-                    onChange={(e) => setSelectedUbicacionId(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors cursor-not-allowed opacity-80"
+                    value="sistemas"
+                    disabled
                   >
-                    <option value="">-- Seleccionar Estantería --</option>
-                    {ubicaciones.map((ub) => (
-                      <option key={ub.id} value={ub.id}>
-                        {ub.codigo} ({ub.estanteria} - Fila {ub.fila})
-                      </option>
-                    ))}
+                    <option value="sistemas">Área Sistemas</option>
                   </select>
                 </div>
               </div>
@@ -599,13 +696,14 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
                     <option value={3}>Bloqueo de Seguridad Juana Manso</option>
                     <option value={4}>Falla de Teclado</option>
                     <option value={5}>Problemas de Sistema Operativo</option>
+                    <option value={6}>Otro</option>
                   </select>
                 </div>
                 
                 <div className="md:col-span-2">
                   <label className="block text-slate-700 text-xs font-semibold mb-1.5">Descripción de Falla</label>
                   <textarea
-                    required
+                    required={fallaCatalogoId === 6}
                     rows={2}
                     className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
                     placeholder="Escriba los detalles de la falla reportada..."
@@ -629,7 +727,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
 
             {/* Signature */}
             <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
-              <SignaturePad onChange={(base64) => setFirmaIngresoBase64(base64)} />
+
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">

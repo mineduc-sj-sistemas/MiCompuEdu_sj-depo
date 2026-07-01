@@ -154,10 +154,7 @@ namespace MiCompuEdu.Application.Beneficiarios.Commands
                                 escuela = new Escuela
                                 {
                                     Id = Guid.NewGuid(),
-                                    Cue = $"AUTO-{autoCueCounter:D4}",
                                     Nombre = escuelaNombre,
-                                    Localidad = "San Juan",
-                                    Departamento = "San Juan",
                                     Activo = true,
                                     CreadoEn = DateTime.UtcNow
                                 };

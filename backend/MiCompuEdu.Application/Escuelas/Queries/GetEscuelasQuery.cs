@@ -12,9 +12,7 @@ namespace MiCompuEdu.Application.Escuelas.Queries
     public class EscuelaDto
     {
         public Guid Id { get; set; }
-        public string Cue { get; set; } = string.Empty;
         public string Nombre { get; set; } = string.Empty;
-        public string Localidad { get; set; } = string.Empty;
     }
 
     public record GetEscuelasQuery : IRequest<List<EscuelaDto>>;
@@ -36,9 +34,7 @@ namespace MiCompuEdu.Application.Escuelas.Queries
                 .Select(e => new EscuelaDto
                 {
                     Id = e.Id,
-                    Cue = e.Cue,
-                    Nombre = e.Nombre,
-                    Localidad = e.Localidad
+                    Nombre = e.Nombre
                 })
                 .ToListAsync(cancellationToken);
         }

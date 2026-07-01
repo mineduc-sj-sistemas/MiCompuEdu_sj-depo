@@ -25,7 +25,6 @@ export interface Beneficiario {
   email: string;
   escuelaId?: string;
   escuelaNombre?: string;
-  escuelaCue?: string;
   dniTutor?: string;
   nombreTutor?: string;
   telefonoTutor?: string;
@@ -55,8 +54,8 @@ export interface Reparacion {
   proveedorGarantia?: string;
   remitoGarantia?: string;
   fechaEsperadaGarantia?: string;
-  firmaIngresoBase64?: string;
-  firmaEntregaBase64?: string;
+
+
 }
 
 export interface FallaFrecuente {

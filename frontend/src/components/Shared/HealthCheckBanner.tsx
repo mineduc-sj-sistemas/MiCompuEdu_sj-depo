@@ -11,8 +11,8 @@ export const HealthCheckBanner: React.FC = () => {
     const checkHealth = async () => {
       try {
         // Si el fetch no arroja excepción de red (ERR_CONNECTION_REFUSED), el servidor está encendido.
-        // Hacemos una petición simple a un endpoint conocido.
-        await fetch(`${API_BASE_URL}/Escuelas`);
+        // Hacemos una petición simple a un endpoint público conocido.
+        await fetch(`${API_BASE_URL}/health`);
         setIsHealthy(true); 
       } catch (error) {
         setIsHealthy(false);

@@ -58,7 +58,6 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
                 Email = beneficiario.Email,
                 EscuelaId = beneficiario.EscuelaId,
                 EscuelaNombre = beneficiario.Escuela?.Nombre,
-                EscuelaCue = beneficiario.Escuela?.Cue,
                 DniTutor = beneficiario.DniTutor,
                 NombreTutor = beneficiario.NombreTutor,
                 TelefonoTutor = beneficiario.TelefonoTutor,

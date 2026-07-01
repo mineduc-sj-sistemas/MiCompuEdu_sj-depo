@@ -13,7 +13,6 @@ namespace MiCompuEdu.Application.DTOs
         
         public Guid? EscuelaId { get; set; }
         public string? EscuelaNombre { get; set; }
-        public string? EscuelaCue { get; set; }
 
         // Datos del tutor / responsable
         public string? DniTutor { get; set; }

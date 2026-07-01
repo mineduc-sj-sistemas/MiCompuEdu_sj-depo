@@ -145,6 +145,7 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 EstadoEquipo.Ingresado => 
                     nuevo == EstadoEquipo.En_Diagnostico || 
                     nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar ||
                     nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.En_Diagnostico => 

@@ -57,6 +57,41 @@ namespace MiCompuEdu.WebApi.Controllers
             return CreatedAtAction(nameof(RegistrarIngreso), new { id = resultado.Id }, resultado);
         }
 
+        [HttpPost("manual")]
+        [Authorize(Roles = "Operador,Supervisor,Administrador")]
+        public async Task<ActionResult<ReparacionDto>> RegistrarIngresoManual([FromBody] CreateReparacionManualRequest request)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var operadorId))
+            {
+                return Unauthorized("Token de autenticación no contiene un identificador de usuario válido.");
+            }
+
+            var command = new MiCompuEdu.Application.Reparaciones.Commands.RegistrarIngresoManualCommand(
+                request.TitularDni,
+                request.TitularNombre,
+                request.TitularApellido,
+                request.TitularTelefono,
+                request.TitularEmail,
+                request.EquipoNumeroSerie,
+                request.EquipoMarca,
+                request.EquipoModelo,
+                request.EquipoCredencialesOffice,
+                request.FallaReportada,
+                request.FallaCatalogoId,
+                request.Observaciones,
+                operadorId,
+                request.EscuelaId,
+                request.ProgramaEducativoId,
+                request.UbicacionDepositoId,
+                request.FirmaIngresoBase64
+            );
+
+            var resultado = await _mediator.Send(command);
+            
+            return CreatedAtAction(nameof(RegistrarIngreso), new { id = resultado.Id }, resultado);
+        }
+
         [HttpGet]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
         public async Task<ActionResult<List<ReparacionDto>>> ObtenerTodos(
@@ -209,6 +244,25 @@ namespace MiCompuEdu.WebApi.Controllers
 
     public record CreateReparacionRequest(
         Guid EquipoId,
+        string FallaReportada,
+        int? FallaCatalogoId,
+        string? Observaciones,
+        Guid? EscuelaId = null,
+        Guid? ProgramaEducativoId = null,
+        Guid? UbicacionDepositoId = null,
+        string? FirmaIngresoBase64 = null
+    );
+
+    public record CreateReparacionManualRequest(
+        string TitularDni,
+        string TitularNombre,
+        string TitularApellido,
+        string TitularTelefono,
+        string TitularEmail,
+        string EquipoNumeroSerie,
+        string EquipoMarca,
+        string EquipoModelo,
+        string? EquipoCredencialesOffice,
         string FallaReportada,
         int? FallaCatalogoId,
         string? Observaciones,

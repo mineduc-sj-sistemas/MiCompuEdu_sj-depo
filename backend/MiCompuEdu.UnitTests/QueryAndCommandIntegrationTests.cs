@@ -46,7 +46,7 @@ namespace MiCompuEdu.UnitTests
             using var context = CreateDbContext();
             
             // Seed a program, a beneficiary, and a few equipments
-            var escuela = new Escuela { Id = Guid.NewGuid(), Cue = "123", Nombre = "Escuela Sarmiento", Localidad = "San Juan" };
+            var escuela = new Escuela { Id = Guid.NewGuid(), Nombre = "Escuela Sarmiento" };
             var programa = new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Juana Manso" };
             context.Escuelas.Add(escuela);
             context.ProgramasEducativos.Add(programa);

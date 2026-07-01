@@ -345,16 +345,9 @@ namespace MiCompuEdu.Infrastructure.Persistence
 
                 entity.HasKey(e => e.Id);
 
-                entity.Property(e => e.Cue).HasMaxLength(20).IsRequired();
                 entity.Property(e => e.Nombre).HasMaxLength(250).IsRequired();
-                entity.Property(e => e.Localidad).HasMaxLength(100).IsRequired();
-                entity.Property(e => e.Departamento).HasMaxLength(100);
                 entity.Property(e => e.Activo).HasDefaultValue(true);
                 entity.Property(e => e.CreadoEn).HasDefaultValueSql("NOW()");
-
-                entity.HasIndex(e => e.Cue)
-                    .IsUnique()
-                    .HasDatabaseName("ix_escuelas_cue");
             });
 
             // ════════════════════════════════════════════════════════

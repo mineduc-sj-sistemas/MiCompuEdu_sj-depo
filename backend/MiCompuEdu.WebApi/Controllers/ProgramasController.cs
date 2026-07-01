@@ -20,7 +20,7 @@ namespace MiCompuEdu.WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Operador,Supervisor,Administrador")]
+        [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
         public async Task<ActionResult<List<ProgramaEducativoDto>>> ObtenerTodos()
         {
             var query = new GetProgramasEducativosQuery();

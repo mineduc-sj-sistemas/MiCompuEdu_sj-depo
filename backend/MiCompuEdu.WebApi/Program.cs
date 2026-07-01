@@ -117,6 +117,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/api/v1/health", () => "Healthy").AllowAnonymous();
 app.MapHub<MiCompuEdu.Infrastructure.Hubs.ReparacionHub>("/hubs/reparaciones");
 
 // Seeding DB on startup with retry logic (robust Docker initialization)
@@ -195,10 +196,10 @@ using (var scope = app.Services.CreateScope())
             if (!context.Escuelas.Any())
             {
                 context.Escuelas.AddRange(
-                    new Escuela { Id = Guid.NewGuid(), Cue = "700123401", Nombre = "Escuela Normal Superior Sarmiento", Localidad = "Capital", Departamento = "Capital", Activo = true },
-                    new Escuela { Id = Guid.NewGuid(), Cue = "700567802", Nombre = "Escuela EPET N° 1 Rogelio Boero", Localidad = "Capital", Departamento = "Capital", Activo = true },
-                    new Escuela { Id = Guid.NewGuid(), Cue = "700987603", Nombre = "Colegio Provincial de Concepción", Localidad = "Concepción", Departamento = "Capital", Activo = true },
-                    new Escuela { Id = Guid.NewGuid(), Cue = "700432104", Nombre = "Colegio Nacional Monseñor Pablo Cabrera", Localidad = "Capital", Departamento = "Capital", Activo = true }
+                    new Escuela { Id = Guid.NewGuid(), Nombre = "Escuela Normal Superior Sarmiento", Activo = true },
+                    new Escuela { Id = Guid.NewGuid(), Nombre = "Escuela EPET N° 1 Rogelio Boero", Activo = true },
+                    new Escuela { Id = Guid.NewGuid(), Nombre = "Colegio Provincial de Concepción", Activo = true },
+                    new Escuela { Id = Guid.NewGuid(), Nombre = "Colegio Nacional Monseñor Pablo Cabrera", Activo = true }
                 );
                 context.SaveChanges();
             }
@@ -227,7 +228,7 @@ using (var scope = app.Services.CreateScope())
 
             if (!context.Beneficiarios.Any())
             {
-                var escuela = context.Escuelas.FirstOrDefault(e => e.Cue == "700123401");
+                var escuela = context.Escuelas.FirstOrDefault(e => e.Nombre == "Escuela Normal Superior Sarmiento");
                 var programa = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "Juana Manso");
 
                 var beneficiarioId = Guid.NewGuid();
