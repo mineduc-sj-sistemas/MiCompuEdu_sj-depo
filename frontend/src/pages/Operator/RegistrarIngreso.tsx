@@ -49,10 +49,28 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
   const [manualEquipoCredencialesOffice, setManualEquipoCredencialesOffice] = useState('');
 
   // Catálogos
-  const [escuelas, setEscuelas] = useState<any[]>([]);
   const [programas, setProgramas] = useState<any[]>([]);
+  const [escuelas, setEscuelas] = useState<any[]>([]);
 
   const [selectedEscuelaId, setSelectedEscuelaId] = useState<string>('');
+  const [escuelaSearch, setEscuelaSearch] = useState('');
+  const [isEscuelaDropdownOpen, setIsEscuelaDropdownOpen] = useState(false);
+  
+  useEffect(() => {
+    if (selectedEscuelaId) {
+      const esc = escuelas.find(e => e.id === selectedEscuelaId);
+      if (esc) setEscuelaSearch(esc.nombre);
+    } else {
+      setEscuelaSearch('');
+    }
+  }, [selectedEscuelaId, escuelas]);
+
+  const handleEscuelaSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setEscuelaSearch(val);
+    setIsEscuelaDropdownOpen(true);
+    if (val === '') setSelectedEscuelaId('');
+  };
 
   const [selectedUbicacionId, setSelectedUbicacionId] = useState<string>('');
   
@@ -511,18 +529,36 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                 <div>
                   <label className="block text-slate-700 text-xs font-semibold mb-1.5">Escuela (Opcional)</label>
                   <div className="flex gap-2">
-                    <select
-                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
-                      value={selectedEscuelaId}
-                      onChange={(e) => setSelectedEscuelaId(e.target.value)}
-                    >
-                      <option value="">-- Sin Escuela Asignada --</option>
-                      {escuelas.map((esc) => (
-                        <option key={esc.id} value={esc.id}>
-                          {esc.nombre}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative flex-1">
+                      <input
+                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                        placeholder="-- Buscar Escuela --"
+                        value={escuelaSearch}
+                        onChange={handleEscuelaSearchChange}
+                        onFocus={() => setIsEscuelaDropdownOpen(true)}
+                        onBlur={() => setTimeout(() => setIsEscuelaDropdownOpen(false), 200)}
+                      />
+                      {isEscuelaDropdownOpen && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                          {escuelas.filter(e => e.nombre.toLowerCase().includes(escuelaSearch.toLowerCase())).map(esc => (
+                            <div 
+                              key={esc.id} 
+                              className="px-3 py-2 cursor-pointer hover:bg-slate-100 text-xs text-slate-700"
+                              onClick={() => {
+                                setSelectedEscuelaId(esc.id);
+                                setEscuelaSearch(esc.nombre);
+                                setIsEscuelaDropdownOpen(false);
+                              }}
+                            >
+                              {esc.nombre}
+                            </div>
+                          ))}
+                          {escuelas.filter(e => e.nombre.toLowerCase().includes(escuelaSearch.toLowerCase())).length === 0 && (
+                             <div className="px-3 py-2 text-xs text-slate-400">No se encontraron escuelas...</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => setIsCrearEscuelaModalOpen(true)}
@@ -696,18 +732,36 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                 <div>
                   <label className="block text-slate-700 text-xs font-semibold mb-1.5">Escuela</label>
                   <div className="flex gap-2">
-                    <select
-                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
-                      value={selectedEscuelaId}
-                      onChange={(e) => setSelectedEscuelaId(e.target.value)}
-                    >
-                      <option value="">-- Seleccionar Escuela --</option>
-                      {escuelas.map((esc) => (
-                        <option key={esc.id} value={esc.id}>
-                          {esc.nombre}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative flex-1">
+                      <input
+                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                        placeholder="-- Buscar Escuela --"
+                        value={escuelaSearch}
+                        onChange={handleEscuelaSearchChange}
+                        onFocus={() => setIsEscuelaDropdownOpen(true)}
+                        onBlur={() => setTimeout(() => setIsEscuelaDropdownOpen(false), 200)}
+                      />
+                      {isEscuelaDropdownOpen && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                          {escuelas.filter(e => e.nombre.toLowerCase().includes(escuelaSearch.toLowerCase())).map(esc => (
+                            <div 
+                              key={esc.id} 
+                              className="px-3 py-2 cursor-pointer hover:bg-slate-100 text-xs text-slate-700"
+                              onClick={() => {
+                                setSelectedEscuelaId(esc.id);
+                                setEscuelaSearch(esc.nombre);
+                                setIsEscuelaDropdownOpen(false);
+                              }}
+                            >
+                              {esc.nombre}
+                            </div>
+                          ))}
+                          {escuelas.filter(e => e.nombre.toLowerCase().includes(escuelaSearch.toLowerCase())).length === 0 && (
+                             <div className="px-3 py-2 text-xs text-slate-400">No se encontraron escuelas...</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => setIsCrearEscuelaModalOpen(true)}
