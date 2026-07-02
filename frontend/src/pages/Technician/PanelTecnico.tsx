@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Reparacion } from '../../types';
 import { API_BASE_URL } from '../../config';
+import { imprimirComprobante } from '../../utils/printHelpers';
 
 interface PanelTecnicoProps {
   token: string;
@@ -229,97 +230,22 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
       return;
     }
     
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    
-    const rows = selectedRepairs.map((r, index) => `
-      <tr style="border-bottom: 1px solid #e2e8f0;">
-        <td style="padding: 10px; font-weight: bold; font-family: monospace;">${index + 1}</td>
-        <td style="padding: 10px; font-weight: bold; font-family: monospace;">${r.numeroSerie}</td>
-        <td style="padding: 10px;">${r.marcaModelo}</td>
-        <td style="padding: 10px;">${r.nombreTutor}</td>
-        <td style="padding: 10px;">${r.fallaReportada}</td>
-        <td style="padding: 10px; font-weight: bold;">${bulkProveedorGarantia || r.proveedorGarantia || '-'}</td>
-        <td style="padding: 10px;">${bulkRemitoGarantia || r.remitoGarantia || '-'}</td>
-      </tr>
-    `).join('');
-    
-    printWindow.document.write(
-      '<html>' +
-        '<head>' +
-          '<title>Remito de Derivación a Garantía Externa</title>' +
-          '<style>' +
-            'body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1D252D; margin: 40px; }' +
-            '.header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #FF8200; padding-bottom: 20px; margin-bottom: 30px; }' +
-            '.title { font-size: 24px; font-weight: bold; color: #1D252D; }' +
-            '.subtitle { font-size: 14px; color: #64748b; margin-top: 5px; }' +
-            '.meta { font-size: 14px; margin-bottom: 30px; line-height: 1.6; }' +
-            '.meta span { font-weight: bold; }' +
-            'table { width: 100%; border-collapse: collapse; margin-top: 20px; }' +
-            'th { background-color: #f8fafc; text-align: left; padding: 12px 10px; border-bottom: 2px solid #e2e8f0; font-size: 12px; text-transform: uppercase; color: #64748b; }' +
-            'td { font-size: 13px; }' +
-            '.footer { margin-top: 60px; display: flex; justify-content: space-between; }' +
-            '.signature { border-top: 1px solid #cbd5e1; width: 200px; text-align: center; padding-top: 8px; font-size: 12px; color: #64748b; }' +
-            '@media print { body { margin: 20px; } button { display: none; } }' +
-          '</style>' +
-        '</head>' +
-        '<body>' +
-          '<div style="text-align: right; margin-bottom: 10px;">' +
-            '<button onclick="window.print()" style="background-color: #FF8200; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">🖨️ Imprimir Remito</button>' +
-          '</div>' +
-          '<div class="header">' +
-            '<div>' +
-              '<div class="title">REMITO DE SALIDA / DERIVACIÓN</div>' +
-              '<div class="subtitle">Ministerio de Educación de San Juan - Central de Trazabilidad</div>' +
-            '</div>' +
-            '<div style="text-align: right;">' +
-              '<div style="font-weight: bold; color: #FF8200; font-size: 18px;">Nº ' + (bulkRemitoGarantia || 'TEMP-' + Date.now()) + '</div>' +
-              '<div class="subtitle">Fecha: ' + new Date().toLocaleDateString() + '</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="meta">' +
-            '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">' +
-              '<div>' +
-                '<div><span>Proveedor de Garantía:</span> ' + (bulkProveedorGarantia || 'Varios / Ver tabla') + '</div>' +
-                '<div><span>Operador/Técnico Responsable:</span> ' + nombreTecnico + '</div>' +
-              '</div>' +
-              '<div>' +
-                '<div><span>Estado de Derivación:</span> ' + (bulkEstado || 'Derivado').replace(/_/g, ' ') + '</div>' +
-                '<div><span>Fecha Esperada de Retorno:</span> ' + (bulkFechaEsperadaGarantia ? new Date(bulkFechaEsperadaGarantia).toLocaleDateString() : 'No especificada') + '</div>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-          '<h3>Dispositivos Derivados (' + selectedRepairs.length + ')</h3>' +
-          '<table>' +
-            '<thead>' +
-              '<tr>' +
-                '<th style="width: 5%">#</th>' +
-                '<th style="width: 20%">Nº Serie</th>' +
-                '<th style="width: 20%">Marca/Modelo</th>' +
-                '<th style="width: 15%">Tutor</th>' +
-                '<th style="width: 20%">Falla Reportada</th>' +
-                '<th style="width: 10%">Proveedor</th>' +
-                '<th style="width: 10%">Remito/Guía</th>' +
-              '</tr>' +
-            '</thead>' +
-            '<tbody>' +
-              rows +
-            '</tbody>' +
-          '</table>' +
-          '<div class="footer">' +
-            '<div class="signature" style="margin-top: 80px;">' +
-              '<br/><br/>' +
-              'Firma y Aclaración Responsable' +
-            '</div>' +
-            '<div class="signature" style="margin-top: 80px;">' +
-              '<br/><br/>' +
-              'Firma y Sello Receptor Garantía' +
-            '</div>' +
-          '</div>' +
-        '</body>' +
-      '</html>'
-    );
-    printWindow.document.close();
+    imprimirComprobante({
+      tipo: 'Derivación',
+      numeroMovimiento: bulkRemitoGarantia || 'TEMP-' + Date.now(),
+      fecha: new Date().toISOString(),
+      operador: nombreTecnico,
+      motivo: bulkEstado === 'En_Garantia_Externa' ? 'Derivación a Garantía Externa' : 'Apartado para Garantía',
+      equipos: selectedRepairs.map(r => ({
+        numeroSerie: r.numeroSerie,
+        marcaModelo: r.marcaModelo,
+        estado: r.estado,
+        fallaReportada: r.fallaReportada,
+        diagnostico: bulkDiagnostico || r.diagnostico,
+        proveedor: bulkProveedorGarantia || r.proveedorGarantia,
+        remitoGuia: bulkRemitoGarantia || r.remitoGarantia
+      }))
+    });
   };
 
   const triggerFileInput = () => {

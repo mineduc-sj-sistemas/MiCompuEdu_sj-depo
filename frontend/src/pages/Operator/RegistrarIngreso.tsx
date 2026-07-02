@@ -15,14 +15,16 @@ import {
   FileText,
   Plus
 } from 'lucide-react';
+import { imprimirComprobante } from '../../utils/printHelpers';
 
 
 
 interface RegistrarIngresoProps {
   token: string;
+  nombreOperador: string;
 }
 
-export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => {
+export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombreOperador }) => {
   const [dniInput, setDniInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [beneficiario, setBeneficiario] = useState<Beneficiario | null>(null);
@@ -289,10 +291,33 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token }) => 
         const data = await response.json();
         const numSerie = isManualMode ? manualEquipoNumeroSerie : beneficiario!.equipo!.numeroSerie;
         const nombreBenef = isManualMode ? `${manualTitularNombre} ${manualTitularApellido}` : `${beneficiario!.nombre} ${beneficiario!.apellido}`;
+        const dniBenef = isManualMode ? manualTitularDni : beneficiario!.dni;
+        const telefonoBenef = isManualMode ? manualTitularTelefono : beneficiario!.telefono;
+        const marcaMod = isManualMode ? `${manualEquipoMarca} ${manualEquipoModelo}` : `${beneficiario!.equipo!.marca} ${beneficiario!.equipo!.modelo}`;
         
-        setMensajeExito(`Ingreso de notebook ${numSerie} registrado.`);
+        setMensajeExito(`Ingreso de notebook ${numSerie} registrado exitosamente.`);
+        
+        // Imprimir el comprobante automáticamente o dar aviso
         setTimeout(() => {
-          alert(`Descargando Comprobante Digital:\n\nOrden ID: ${data.id}\nBeneficiario: ${nombreBenef}\nEquipo Serie: ${numSerie}`);
+          imprimirComprobante({
+            tipo: 'Ingreso',
+            numeroMovimiento: data.id.substring(0, 8).toUpperCase(),
+            fecha: new Date().toISOString(),
+            escuela: escuelas.find(e => e.id === selectedEscuelaId)?.nombre || 'Sin Asignar',
+            operador: nombreOperador,
+            motivo: 'Reparación / Diagnóstico',
+            tutor: {
+              nombre: nombreBenef,
+              dni: dniBenef,
+              telefono: telefonoBenef
+            },
+            equipos: [{
+              numeroSerie: numSerie,
+              marcaModelo: marcaMod,
+              estado: 'Ingresado',
+              fallaReportada: fallaReportada || (fallaCatalogoId === 6 ? 'Otra' : 'Falla catalogada')
+            }]
+          });
         }, 500);
 
         setBeneficiario(null);

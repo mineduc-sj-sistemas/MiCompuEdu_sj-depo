@@ -4,11 +4,15 @@ import { API_BASE_URL } from '../../config';
 import { Search, RefreshCw, Laptop, User, MapPin, AlertTriangle, Check, Loader2, X } from 'lucide-react';
 
 
+import { imprimirComprobante } from '../../utils/printHelpers';
+
+
 interface EntregaNotebookProps {
   token: string;
+  nombreOperador: string;
 }
 
-export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
+export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token, nombreOperador }) => {
   const [repairs, setRepairs] = useState<Reparacion[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -60,6 +64,31 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token }) => {
       });
       if (response.ok) {
         setMensaje({ tipo: 'exito', texto: `Equipo ${numeroSerie} entregado correctamente.` });
+        
+        // Imprimir el comprobante de entrega
+        if (selectedRepair) {
+          imprimirComprobante({
+            tipo: 'Egreso',
+            numeroMovimiento: selectedRepair.id.substring(0, 8).toUpperCase(),
+            fecha: new Date().toISOString(),
+            escuela: selectedRepair.ubicacionDepositoCodigo || 'Depósito',
+            operador: nombreOperador,
+            motivo: selectedRepair.estado === 'Listo_Para_Retirar' ? 'Entrega de equipo reparado' : 'Devolución de equipo no reparable',
+            tutor: {
+              nombre: selectedRepair.nombreTutor,
+              dni: '-', // The repair object might not have the DNI readily available without fetching, using placeholder
+              telefono: selectedRepair.telefonoTutor
+            },
+            equipos: [{
+              numeroSerie: selectedRepair.numeroSerie,
+              marcaModelo: selectedRepair.marcaModelo,
+              estado: 'Entregado',
+              fallaReportada: selectedRepair.fallaReportada,
+              diagnostico: selectedRepair.diagnostico
+            }]
+          });
+        }
+        
         setSelectedRepair(null);
         fetchRepairsToDeliver();
       } else {

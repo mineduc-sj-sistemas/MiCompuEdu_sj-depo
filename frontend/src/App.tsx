@@ -186,8 +186,8 @@ function App() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-8 overflow-y-auto max-h-[calc(100vh-48px)] bg-slate-50">
-          {currentPage === 'ingreso' && <RegistrarIngreso token={user.token} />}
-          {currentPage === 'entrega' && <EntregaNotebook token={user.token} />}
+          {currentPage === 'ingreso' && <RegistrarIngreso token={user.token} nombreOperador={user.nombreCompleto} />}
+          {currentPage === 'entrega' && <EntregaNotebook token={user.token} nombreOperador={user.nombreCompleto} />}
           {currentPage === 'diagnostico' && <PanelTecnico token={user.token} nombreTecnico={user.nombreCompleto} />}
           {currentPage === 'dashboard' && <Dashboard token={user.token} />}
           {currentPage === 'importar' && <ImportarPadron token={user.token} />}
