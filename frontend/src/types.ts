@@ -23,6 +23,7 @@ export interface Beneficiario {
   apellido: string;
   telefono: string;
   email: string;
+  tipoBeneficiario?: number;
   escuelaId?: string;
   escuelaNombre?: string;
   dniTutor?: string;

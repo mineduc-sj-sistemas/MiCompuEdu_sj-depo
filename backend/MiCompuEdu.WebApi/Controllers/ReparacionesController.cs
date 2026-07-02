@@ -42,6 +42,8 @@ namespace MiCompuEdu.WebApi.Controllers
 
             var command = new RegistrarIngresoCommand(
                 request.EquipoId,
+                request.EquipoMarca,
+                request.EquipoModelo,
                 request.FallaReportada,
                 request.FallaCatalogoId,
                 request.Observaciones,
@@ -73,6 +75,7 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.TitularApellido,
                 request.TitularTelefono,
                 request.TitularEmail,
+                request.TipoBeneficiario,
                 request.EquipoNumeroSerie,
                 request.EquipoMarca,
                 request.EquipoModelo,
@@ -244,6 +247,8 @@ namespace MiCompuEdu.WebApi.Controllers
 
     public record CreateReparacionRequest(
         Guid EquipoId,
+        string? EquipoMarca,
+        string? EquipoModelo,
         string FallaReportada,
         int? FallaCatalogoId,
         string? Observaciones,
@@ -259,6 +264,7 @@ namespace MiCompuEdu.WebApi.Controllers
         string TitularApellido,
         string TitularTelefono,
         string TitularEmail,
+        MiCompuEdu.Domain.Enums.TipoBeneficiario TipoBeneficiario,
         string EquipoNumeroSerie,
         string EquipoMarca,
         string EquipoModelo,

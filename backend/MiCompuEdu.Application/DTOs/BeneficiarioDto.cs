@@ -10,6 +10,7 @@ namespace MiCompuEdu.Application.DTOs
         public string Apellido { get; set; } = string.Empty;
         public string Telefono { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public int TipoBeneficiario { get; set; }
         
         public Guid? EscuelaId { get; set; }
         public string? EscuelaNombre { get; set; }

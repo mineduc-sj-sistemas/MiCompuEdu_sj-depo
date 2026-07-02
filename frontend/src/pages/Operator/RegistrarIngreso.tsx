@@ -36,8 +36,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
 
   const [isCrearEscuelaModalOpen, setIsCrearEscuelaModalOpen] = useState(false);
 
-  // Nuevo estado para el programa inicial y modo manual
   const [selectedProgramaInicialId, setSelectedProgramaInicialId] = useState<string>('');
+  const [manualTipoBeneficiario, setManualTipoBeneficiario] = useState<number>(1);
   const [manualTitularDni, setManualTitularDni] = useState('');
   const [manualTitularNombre, setManualTitularNombre] = useState('');
   const [manualTitularApellido, setManualTitularApellido] = useState('');
@@ -256,6 +256,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         titularApellido: manualTitularApellido,
         titularTelefono: manualTitularTelefono,
         titularEmail: manualTitularEmail,
+        tipoBeneficiario: manualTipoBeneficiario,
         equipoNumeroSerie: manualEquipoNumeroSerie,
         equipoMarca: manualEquipoMarca,
         equipoModelo: manualEquipoModelo,
@@ -269,6 +270,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
 
       } : {
         equipoId: beneficiario!.equipo!.id,
+        equipoMarca: beneficiario!.equipo!.marca,
+        equipoModelo: beneficiario!.equipo!.modelo,
         fallaReportada,
         fallaCatalogoId,
         observaciones,
@@ -330,6 +333,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
           setManualTitularDni('');
           setManualTitularNombre('');
           setManualTitularApellido('');
+          setManualTipoBeneficiario(1);
           setManualTitularTelefono('');
           setManualTitularEmail('');
           setManualEquipoNumeroSerie('');
@@ -464,6 +468,16 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                 <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
                   <User className="w-4.5 h-4.5" />
                   <h3 className="text-sm font-semibold text-slate-800">Datos del Titular / Tutor</h3>
+                </div>
+                <div className="flex gap-4 pb-2 border-b border-slate-100">
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-slate-700 cursor-pointer">
+                    <input type="radio" name="tipoBenef" value={1} checked={manualTipoBeneficiario === 1} onChange={() => setManualTipoBeneficiario(1)} className="text-[#FF8200] focus:ring-[#FF8200]" />
+                    Alumno
+                  </label>
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-slate-700 cursor-pointer">
+                    <input type="radio" name="tipoBenef" value={2} checked={manualTipoBeneficiario === 2} onChange={() => setManualTipoBeneficiario(2)} className="text-[#FF8200] focus:ring-[#FF8200]" />
+                    Docente
+                  </label>
                 </div>
                 <div className="space-y-3 text-xs">
                   <div><label className="block text-slate-500 mb-1">DNI</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularDni} onChange={e => setManualTitularDni(e.target.value)} /></div>
@@ -609,7 +623,10 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                 <div className="space-y-1.5 text-xs text-slate-600">
                   <div className="flex justify-between">
                     <span className="text-slate-400">DNI</span>
-                    <span className="font-medium text-slate-900">{beneficiario.dni}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-slate-200 text-slate-700 text-[10px] font-bold rounded-full uppercase">{beneficiario.tipoBeneficiario === 2 ? 'Docente' : 'Alumno'}</span>
+                      <span className="font-medium text-slate-900">{beneficiario.dni}</span>
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Nombre</span>
@@ -638,13 +655,23 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                       <span className="text-slate-400">Nro Serie</span>
                       <span className="font-mono font-bold text-slate-900">{beneficiario.equipo.numeroSerie}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center gap-2">
                       <span className="text-slate-400">Marca</span>
-                      <span className="font-medium text-slate-900">{beneficiario.equipo.marca}</span>
+                      <input 
+                        type="text" 
+                        value={beneficiario.equipo.marca} 
+                        onChange={(e) => setBeneficiario({...beneficiario, equipo: {...beneficiario.equipo!, marca: e.target.value}})}
+                        className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#FF8200] w-2/3 text-right"
+                      />
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center gap-2">
                       <span className="text-slate-400">Modelo</span>
-                      <span className="font-medium text-slate-900">{beneficiario.equipo.modelo}</span>
+                      <input 
+                        type="text" 
+                        value={beneficiario.equipo.modelo} 
+                        onChange={(e) => setBeneficiario({...beneficiario, equipo: {...beneficiario.equipo!, modelo: e.target.value}})}
+                        className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#FF8200] w-2/3 text-right"
+                      />
                     </div>
                     {beneficiario.equipo.credencialesOffice && (
                       <div className="flex justify-between">

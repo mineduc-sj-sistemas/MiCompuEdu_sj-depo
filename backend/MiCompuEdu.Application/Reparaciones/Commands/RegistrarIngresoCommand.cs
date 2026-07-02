@@ -13,6 +13,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
 {
     public record RegistrarIngresoCommand(
         Guid EquipoId,
+        string? EquipoMarca,
+        string? EquipoModelo,
         string FallaReportada,
         int? FallaCatalogoId,
         string? Observaciones,
@@ -51,6 +53,16 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             if (request.EscuelaId.HasValue && equipo.Beneficiario.EscuelaId != request.EscuelaId.Value)
             {
                 equipo.Beneficiario.EscuelaId = request.EscuelaId.Value;
+            }
+
+            // Actualizar Marca/Modelo en caliente si se envió explícitamente desde la UI
+            if (!string.IsNullOrWhiteSpace(request.EquipoMarca) && equipo.Marca != request.EquipoMarca)
+            {
+                equipo.Marca = request.EquipoMarca;
+            }
+            if (!string.IsNullOrWhiteSpace(request.EquipoModelo) && equipo.Modelo != request.EquipoModelo)
+            {
+                equipo.Modelo = request.EquipoModelo;
             }
 
             // Actualizar Programa del Equipo en caliente si viene en la request y no estaba cargado

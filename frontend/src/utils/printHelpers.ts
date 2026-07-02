@@ -72,11 +72,11 @@ export const imprimirComprobante = (data: PrintData) => {
 
   const rows = data.equipos.map((eq, index) => {
     if (isDerivacion) {
-      return \`
+      return `
         <tr>
-          <td style="font-family: monospace;">\${index + 1}</td>
-          <td style="font-family: monospace; font-weight: bold;">\${eq.numeroSerie}</td>
-          <td>\${eq.marcaModelo}</td>
+          <td style="font-family: monospace;">${index + 1}</td>
+          <td style="font-family: monospace; font-weight: bold;">${eq.numeroSerie}</td>
+          <td>${eq.marcaModelo}</td>
           <td>
             <div style="font-size: 11px;">
               <strong>Falla:</strong> \${eq.fallaReportada || '-'}<br/>
@@ -84,31 +84,31 @@ export const imprimirComprobante = (data: PrintData) => {
             </div>
           </td>
           <td style="font-weight: bold;">\${eq.proveedor || '-'}</td>
-          <td>\${eq.remitoGuia || '-'}</td>
+          <td>${eq.remitoGuia || '-'}</td>
         </tr>
-      \`;
+      `;
     } else {
-      return \`
+      return `
         <tr>
-          <td style="font-family: monospace;">\${index + 1}</td>
-          <td style="font-family: monospace; font-weight: bold;">\${eq.numeroSerie}</td>
-          <td>\${eq.marcaModelo}</td>
-          <td>\${eq.estado.replace(/_/g, ' ')}</td>
-          <td>\${eq.fallaReportada || '-'}</td>
+          <td style="font-family: monospace;">${index + 1}</td>
+          <td style="font-family: monospace; font-weight: bold;">${eq.numeroSerie}</td>
+          <td>${eq.marcaModelo}</td>
+          <td>${eq.estado.replace(/_/g, ' ')}</td>
+          <td>${eq.fallaReportada || '-'}</td>
         </tr>
-      \`;
+      `;
     }
   }).join('');
 
   const today = new Date(data.fecha);
   const formattedDate = today.toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
 
-  const html = \`
+  const html = `
     <!DOCTYPE html>
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Comprobante de Movimiento - \${data.numeroMovimiento}</title>
+      <title>Comprobante de Movimiento - ${data.numeroMovimiento}</title>
       <style>
         body { 
           font-family: 'Segoe UI', Arial, sans-serif; 
@@ -228,62 +228,62 @@ export const imprimirComprobante = (data: PrintData) => {
       
       <div class="header">
         <div class="logo">
-          \${logoSVG}
+          ${logoSVG}
         </div>
         <div class="header-right">
           <div class="title">Comprobante de Movimiento</div>
-          <div class="subtitle">Tipo: <strong>\${data.tipo}</strong> | #\${data.numeroMovimiento}</div>
-          <div style="font-size: 12px; color: #94a3b8; margin-top: 5px;">\${formattedDate}</div>
+          <div class="subtitle">Tipo: <strong>${data.tipo}</strong> | #${data.numeroMovimiento}</div>
+          <div style="font-size: 12px; color: #94a3b8; margin-top: 5px;">${formattedDate}</div>
         </div>
       </div>
       
       <div class="meta-grid">
-        \${data.escuela ? \`<div class="meta-item"><strong>Institución:</strong> <span>\${data.escuela}</span></div>\` : ''}
-        <div class="meta-item"><strong>Registrado por:</strong> <span>\${data.operador}</span></div>
-        <div class="meta-item"><strong>Motivo:</strong> <span>\${data.motivo}</span></div>
-        <div class="meta-item"><strong>Fecha:</strong> <span>\${formattedDate}</span></div>
+        ${data.escuela ? `<div class="meta-item"><strong>Institución:</strong> <span>${data.escuela}</span></div>` : ''}
+        <div class="meta-item"><strong>Registrado por:</strong> <span>${data.operador}</span></div>
+        <div class="meta-item"><strong>Motivo:</strong> <span>${data.motivo}</span></div>
+        <div class="meta-item"><strong>Fecha:</strong> <span>${formattedDate}</span></div>
       </div>
       
-      \${data.tutor ? \`
+      ${data.tutor ? `
         <div class="tutor-info">
           <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Datos del Tutor/Beneficiario</h4>
           <div class="meta-grid" style="margin-bottom: 0;">
-            <div class="meta-item"><strong>Nombre:</strong> <span>\${data.tutor.nombre}</span></div>
-            <div class="meta-item"><strong>DNI:</strong> <span>\${data.tutor.dni}</span></div>
-            \${data.tutor.telefono ? \`<div class="meta-item"><strong>Teléfono:</strong> <span>\${data.tutor.telefono}</span></div>\` : ''}
+            <div class="meta-item"><strong>Nombre:</strong> <span>${data.tutor.nombre}</span></div>
+            <div class="meta-item"><strong>DNI:</strong> <span>${data.tutor.dni}</span></div>
+            ${data.tutor.telefono ? `<div class="meta-item"><strong>Teléfono:</strong> <span>${data.tutor.telefono}</span></div>` : ''}
           </div>
         </div>
-      \` : ''}
+      ` : ''}
       
       <h3 style="margin-bottom: 10px; color: #334155;">Equipos Involucrados</h3>
       <table>
         <thead>
           <tr>
-            \${tableHeaders}
+            ${tableHeaders}
           </tr>
         </thead>
         <tbody>
-          \${rows}
+          ${rows}
         </tbody>
       </table>
       
       <div class="footer">
         <div class="signature-box">
           <br/><br/>
-          \${data.tipo === 'Ingreso' ? 'Firma de quien entrega (Tutor)' : 
+          ${data.tipo === 'Ingreso' ? 'Firma de quien entrega (Tutor)' : 
              data.tipo === 'Egreso' ? 'Firma de quien recibe (Tutor)' : 
              'Firma y sello de quien entrega'}
         </div>
         <div class="signature-box">
           <br/><br/>
-          \${data.tipo === 'Ingreso' ? 'Firma y sello del receptor (Operador)' : 
+          ${data.tipo === 'Ingreso' ? 'Firma y sello del receptor (Operador)' : 
              data.tipo === 'Egreso' ? 'Firma y sello del directivo/operador' : 
              'Firma y sello del receptor (Garantía)'}
         </div>
       </div>
     </body>
     </html>
-  \`;
+  `;
 
   printWindow.document.open();
   printWindow.document.write(html);

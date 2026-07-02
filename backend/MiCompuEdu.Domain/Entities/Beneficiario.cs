@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MiCompuEdu.Domain.Common;
+using MiCompuEdu.Domain.Enums;
 
 namespace MiCompuEdu.Domain.Entities
 {
@@ -11,6 +12,8 @@ namespace MiCompuEdu.Domain.Entities
         public string Apellido { get; set; } = string.Empty;
         public string Telefono { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        
+        public TipoBeneficiario TipoBeneficiario { get; set; } = TipoBeneficiario.Alumno;
 
         // Datos del tutor / responsable
         public string? DniTutor { get; set; }

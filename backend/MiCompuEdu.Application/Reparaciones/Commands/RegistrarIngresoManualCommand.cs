@@ -19,6 +19,7 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string TitularApellido,
         string TitularTelefono,
         string TitularEmail,
+        TipoBeneficiario TipoBeneficiario,
         
         // Datos del Equipo
         string EquipoNumeroSerie,
@@ -66,7 +67,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                     Apellido = request.TitularApellido,
                     Telefono = request.TitularTelefono,
                     Email = request.TitularEmail,
-                    EscuelaId = request.EscuelaId
+                    EscuelaId = request.EscuelaId,
+                    TipoBeneficiario = request.TipoBeneficiario
                 };
                 _context.Beneficiarios.Add(beneficiario);
             }
