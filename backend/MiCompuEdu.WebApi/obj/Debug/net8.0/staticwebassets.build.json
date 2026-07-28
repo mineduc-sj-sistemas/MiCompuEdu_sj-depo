@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "kXxmIAxicnTR38xTeIZ44ZI2D5GE2lnJMeJ5j6DWWHU=",
+  "Hash": "UhDMcBCK4NDzWgqOtCvxP8mnfLugguLZc1k6I2adl2g=",
   "Source": "MiCompuEdu.WebApi",
   "BasePath": "_content/MiCompuEdu.WebApi",
   "Mode": "Default",
@@ -414,6 +414,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\uploads\\evidencias\\3e845186-0802-469c-9f7f-6e5e6d99f7f4.png"
+    },
+    {
+      "Identity": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\uploads\\evidencias\\662da148-b2c5-4fe3-9d23-c41dbfd6bf0d.png",
+      "SourceId": "MiCompuEdu.WebApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\",
+      "BasePath": "_content/MiCompuEdu.WebApi",
+      "RelativePath": "uploads/evidencias/662da148-b2c5-4fe3-9d23-c41dbfd6bf0d.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\evidencias\\662da148-b2c5-4fe3-9d23-c41dbfd6bf0d.png"
     },
     {
       "Identity": "C:\\Users\\Docente\\Desktop\\MiCompuEdu_sj-depo\\backend\\MiCompuEdu.WebApi\\wwwroot\\uploads\\evidencias\\7cf3afcb-053d-436b-bd9d-6540997c282b.png",

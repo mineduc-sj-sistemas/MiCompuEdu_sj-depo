@@ -336,6 +336,22 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\evidencias\3e845186-0802-469c-9f7f-6e5e6d99f7f4.png))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\evidencias\662da148-b2c5-4fe3-9d23-c41dbfd6bf0d.png))">
+      <SourceType>Package</SourceType>
+      <SourceId>MiCompuEdu.WebApi</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/MiCompuEdu.WebApi</BasePath>
+      <RelativePath>uploads/evidencias/662da148-b2c5-4fe3-9d23-c41dbfd6bf0d.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\evidencias\662da148-b2c5-4fe3-9d23-c41dbfd6bf0d.png))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\evidencias\7cf3afcb-053d-436b-bd9d-6540997c282b.png))">
       <SourceType>Package</SourceType>
       <SourceId>MiCompuEdu.WebApi</SourceId>
