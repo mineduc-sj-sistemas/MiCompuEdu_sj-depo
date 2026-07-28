@@ -69,7 +69,7 @@ function App() {
         <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-5 shrink-0 z-10">
           <div className="space-y-8">
             {/* Logo Oficial San Juan */}
-            <LogoSanJuan showMinistry={false} className="max-w-[180px]" />
+            <LogoSanJuan showMinistry={false} height={120} heightMobile={80} />
 
             {/* Navigation Links */}
             <nav className="space-y-1">

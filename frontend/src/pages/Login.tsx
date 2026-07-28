@@ -78,9 +78,11 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+      <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+
+        {/* Logo dentro de la tarjeta, centrado */}
         <div className="flex justify-center mb-8">
-          <LogoSanJuan className="max-w-[320px]" />
+          <LogoSanJuan height={160} heightMobile={100} />
         </div>
 
         <div className="text-center mb-6">
