@@ -226,6 +226,24 @@ using (var scope = app.Services.CreateScope())
                 context.SaveChanges();
             }
 
+            // Asegurar programas HP Directivos y Dell Directivos
+            if (!context.ProgramasEducativos.Any(p => p.Nombre == "HP Directivos"))
+            {
+                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "HP Directivos", Descripcion = "Programa de notebooks HP para personal directivo de escuelas.", Activo = true });
+            }
+            if (!context.ProgramasEducativos.Any(p => p.Nombre == "Dell Directivos"))
+            {
+                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Dell Directivos", Descripcion = "Programa de notebooks Dell para personal directivo de escuelas.", Activo = true });
+            }
+
+            // Renombrar la falla del catálogo
+            var fallaJuanaManso = context.FallasCatalogo.FirstOrDefault(f => f.Nombre == "Bloqueo de Seguridad Juana Manso");
+            if (fallaJuanaManso != null)
+            {
+                fallaJuanaManso.Nombre = "Bloqueo de Seguridad";
+            }
+            context.SaveChanges();
+
             if (!context.Beneficiarios.Any())
             {
                 var escuela = context.Escuelas.FirstOrDefault(e => e.Nombre == "Escuela Normal Superior Sarmiento");

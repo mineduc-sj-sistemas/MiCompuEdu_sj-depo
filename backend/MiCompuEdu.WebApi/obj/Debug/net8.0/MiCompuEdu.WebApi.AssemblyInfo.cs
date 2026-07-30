@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiCompuEdu.WebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9a4186cefb22f6989e16e0a38b767ec8e548e3dc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d51eefd794b3c1a3b5d35e1edc29ffaaa1619791")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiCompuEdu.WebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiCompuEdu.WebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -35,7 +35,12 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         Guid? EscuelaId = null,
         Guid? ProgramaEducativoId = null,
         Guid? UbicacionDepositoId = null,
-        string? FirmaIngresoBase64 = null
+        string? FirmaIngresoBase64 = null,
+        DateTime? FechaIngreso = null,
+        bool SoloCargador = false,
+        string? TutorNombre = null,
+        string? TutorDni = null,
+        string? TutorTelefono = null
     ) : IRequest<ReparacionDto>;
 
     public class RegistrarIngresoManualCommandHandler : IRequestHandler<RegistrarIngresoManualCommand, ReparacionDto>
@@ -68,7 +73,10 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                     Telefono = request.TitularTelefono,
                     Email = request.TitularEmail,
                     EscuelaId = request.EscuelaId,
-                    TipoBeneficiario = request.TipoBeneficiario
+                    TipoBeneficiario = request.TipoBeneficiario,
+                    NombreTutor = request.TutorNombre,
+                    DniTutor = request.TutorDni,
+                    TelefonoTutor = request.TutorTelefono
                 };
                 _context.Beneficiarios.Add(beneficiario);
             }
@@ -80,6 +88,9 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 beneficiario.Telefono = request.TitularTelefono ?? beneficiario.Telefono;
                 beneficiario.Email = request.TitularEmail ?? beneficiario.Email;
                 if (request.EscuelaId.HasValue) beneficiario.EscuelaId = request.EscuelaId.Value;
+                if (!string.IsNullOrEmpty(request.TutorNombre)) beneficiario.NombreTutor = request.TutorNombre;
+                if (!string.IsNullOrEmpty(request.TutorDni)) beneficiario.DniTutor = request.TutorDni;
+                if (!string.IsNullOrEmpty(request.TutorTelefono)) beneficiario.TelefonoTutor = request.TutorTelefono;
             }
 
             // 2. Buscar o Crear Equipo
@@ -133,7 +144,7 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 }
             }
 
-            var fechaIngreso = DateTime.UtcNow;
+            var fechaIngreso = request.FechaIngreso ?? DateTime.UtcNow;
             var fechaLimite = fechaIngreso.AddDays(promedioDias);
 
             var reparacion = new Reparacion
@@ -149,7 +160,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 FirmaIngresoBase64 = request.FirmaIngresoBase64,
                 FechaIngreso = fechaIngreso,
                 FechaLimite = fechaLimite,
-                Equipo = equipo
+                Equipo = equipo,
+                SoloCargador = request.SoloCargador
             };
 
             // Asegurarnos de que la navegación Beneficiario esté asignada para el generador de PDF
@@ -217,7 +229,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 UbicacionDepositoCodigo = reparacion.UbicacionDeposito?.Codigo,
                 FirmaIngresoBase64 = reparacion.FirmaIngresoBase64,
                 FirmaEntregaBase64 = reparacion.FirmaEntregaBase64,
-                FechaLimite = reparacion.FechaLimite
+                FechaLimite = reparacion.FechaLimite,
+                SoloCargador = reparacion.SoloCargador
             };
         }
     }

@@ -22,7 +22,14 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         Guid? EscuelaId = null,
         Guid? ProgramaEducativoId = null,
         Guid? UbicacionDepositoId = null,
-        string? FirmaIngresoBase64 = null
+        string? FirmaIngresoBase64 = null,
+        DateTime? FechaIngreso = null,
+        bool SoloCargador = false,
+        TipoBeneficiario? TipoBeneficiario = null,
+        string? NuevoEquipoNumeroSerie = null,
+        string? NuevoEquipoMarca = null,
+        string? NuevoEquipoModelo = null,
+        string? NuevoEquipoCredencialesOffice = null
     ) : IRequest<ReparacionDto>;
 
     public class RegistrarIngresoCommandHandler : IRequestHandler<RegistrarIngresoCommand, ReparacionDto>
@@ -55,20 +62,61 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 equipo.Beneficiario.EscuelaId = request.EscuelaId.Value;
             }
 
-            // Actualizar Marca/Modelo en caliente si se envió explícitamente desde la UI
-            if (!string.IsNullOrWhiteSpace(request.EquipoMarca) && equipo.Marca != request.EquipoMarca)
+            // Actualizar TipoBeneficiario en caliente si viene en la request y es diferente
+            if (request.TipoBeneficiario.HasValue && equipo.Beneficiario.TipoBeneficiario != request.TipoBeneficiario.Value)
             {
-                equipo.Marca = request.EquipoMarca;
-            }
-            if (!string.IsNullOrWhiteSpace(request.EquipoModelo) && equipo.Modelo != request.EquipoModelo)
-            {
-                equipo.Modelo = request.EquipoModelo;
+                equipo.Beneficiario.TipoBeneficiario = request.TipoBeneficiario.Value;
             }
 
-            // Actualizar Programa del Equipo en caliente si viene en la request y no estaba cargado
-            if (request.ProgramaEducativoId.HasValue && equipo.ProgramaEducativoId != request.ProgramaEducativoId.Value)
+            // Registrar un nuevo equipo si se especificó NuevoEquipoNumeroSerie
+            if (!string.IsNullOrWhiteSpace(request.NuevoEquipoNumeroSerie))
             {
-                equipo.ProgramaEducativoId = request.ProgramaEducativoId.Value;
+                var existingEquipo = await _context.Equipos
+                    .Include(e => e.Beneficiario)
+                    .FirstOrDefaultAsync(e => e.NumeroSerie.ToUpper() == request.NuevoEquipoNumeroSerie.Trim().ToUpper(), cancellationToken);
+
+                if (existingEquipo == null)
+                {
+                    var nuevoEquipo = new Equipo
+                    {
+                        Id = Guid.NewGuid(),
+                        NumeroSerie = request.NuevoEquipoNumeroSerie.Trim(),
+                        Marca = request.NuevoEquipoMarca ?? "Desconocida",
+                        Modelo = request.NuevoEquipoModelo ?? "Desconocido",
+                        CredencialesOffice = request.NuevoEquipoCredencialesOffice,
+                        BeneficiarioId = equipo.BeneficiarioId,
+                        ProgramaEducativoId = request.ProgramaEducativoId ?? equipo.ProgramaEducativoId
+                    };
+                    _context.Equipos.Add(nuevoEquipo);
+                    equipo = nuevoEquipo;
+                }
+                else
+                {
+                    equipo = existingEquipo;
+                    equipo.BeneficiarioId = equipo.BeneficiarioId;
+                    if (!string.IsNullOrWhiteSpace(request.NuevoEquipoMarca)) equipo.Marca = request.NuevoEquipoMarca;
+                    if (!string.IsNullOrWhiteSpace(request.NuevoEquipoModelo)) equipo.Modelo = request.NuevoEquipoModelo;
+                    if (request.ProgramaEducativoId.HasValue) equipo.ProgramaEducativoId = request.ProgramaEducativoId.Value;
+                }
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            else
+            {
+                // Actualizar Marca/Modelo en caliente si se envió explícitamente desde la UI
+                if (!string.IsNullOrWhiteSpace(request.EquipoMarca) && equipo.Marca != request.EquipoMarca)
+                {
+                    equipo.Marca = request.EquipoMarca;
+                }
+                if (!string.IsNullOrWhiteSpace(request.EquipoModelo) && equipo.Modelo != request.EquipoModelo)
+                {
+                    equipo.Modelo = request.EquipoModelo;
+                }
+
+                // Actualizar Programa del Equipo en caliente si viene en la request y no estaba cargado
+                if (request.ProgramaEducativoId.HasValue && equipo.ProgramaEducativoId != request.ProgramaEducativoId.Value)
+                {
+                    equipo.ProgramaEducativoId = request.ProgramaEducativoId.Value;
+                }
             }
 
             double promedioDias = 7.0;
@@ -91,13 +139,13 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 }
             }
 
-            var fechaIngreso = DateTime.UtcNow;
+            var fechaIngreso = request.FechaIngreso ?? DateTime.UtcNow;
             var fechaLimite = fechaIngreso.AddDays(promedioDias);
 
             var reparacion = new Reparacion
             {
                 Id = Guid.NewGuid(),
-                EquipoId = request.EquipoId,
+                EquipoId = equipo.Id,
                 OperadorIngresoId = request.OperadorId,
                 Estado = EstadoEquipo.Ingresado,
                 FallaReportada = request.FallaReportada,
@@ -106,7 +154,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 UbicacionDepositoId = request.UbicacionDepositoId,
                 FirmaIngresoBase64 = request.FirmaIngresoBase64,
                 FechaIngreso = fechaIngreso,
-                FechaLimite = fechaLimite
+                FechaLimite = fechaLimite,
+                SoloCargador = request.SoloCargador
             };
 
             reparacion.Equipo = equipo;
@@ -174,7 +223,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 UbicacionDepositoCodigo = reparacion.UbicacionDeposito?.Codigo,
                 FirmaIngresoBase64 = reparacion.FirmaIngresoBase64,
                 FirmaEntregaBase64 = reparacion.FirmaEntregaBase64,
-                FechaLimite = reparacion.FechaLimite
+                FechaLimite = reparacion.FechaLimite,
+                SoloCargador = reparacion.SoloCargador
             };
         }
     }

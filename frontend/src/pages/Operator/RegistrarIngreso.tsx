@@ -33,6 +33,21 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
   const [observaciones, setObservaciones] = useState('');
   const [mensajeError, setMensajeError] = useState('');
   const [mensajeExito, setMensajeExito] = useState('');
+  
+  const [fechaIngreso, setFechaIngreso] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [soloCargador, setSoloCargador] = useState(false);
+
+  // Campos del tutor manual
+  const [manualTutorNombre, setManualTutorNombre] = useState('');
+  const [manualTutorDni, setManualTutorDni] = useState('');
+  const [manualTutorTelefono, setManualTutorTelefono] = useState('');
+
+  // Registro de nuevo equipo en modo nominal
+  const [registrarNuevoEquipo, setRegistrarNuevoEquipo] = useState(false);
+  const [customSerial, setCustomSerial] = useState('');
+  const [customMarca, setCustomMarca] = useState('');
+  const [customModelo, setCustomModelo] = useState('');
+  const [customCredencialesOffice, setCustomCredencialesOffice] = useState('');
 
   const [isCrearEscuelaModalOpen, setIsCrearEscuelaModalOpen] = useState(false);
 
@@ -261,7 +276,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
 
   const handleIngresarNotebook = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isManualMode && (!beneficiario || !beneficiario.equipo)) return;
+    if (!isManualMode && !beneficiario) return;
 
     setLoading(true);
     setMensajeError('');
@@ -285,18 +300,28 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         escuelaId: selectedEscuelaId || null,
         programaEducativoId: selectedProgramaInicialId || null,
         ubicacionDepositoId: selectedUbicacionId || null,
-
+        fechaIngreso: fechaIngreso ? new Date(fechaIngreso + 'T12:00:00Z').toISOString() : null,
+        soloCargador,
+        tutorNombre: manualTipoBeneficiario === 1 ? manualTutorNombre : null,
+        tutorDni: manualTipoBeneficiario === 1 ? manualTutorDni : null,
+        tutorTelefono: manualTipoBeneficiario === 1 ? manualTutorTelefono : null
       } : {
-        equipoId: beneficiario!.equipo!.id,
-        equipoMarca: beneficiario!.equipo!.marca,
-        equipoModelo: beneficiario!.equipo!.modelo,
+        equipoId: registrarNuevoEquipo ? '00000000-0000-0000-0000-000000000000' : (beneficiario!.equipo?.id || '00000000-0000-0000-0000-000000000000'),
+        equipoMarca: registrarNuevoEquipo ? customMarca : (beneficiario!.equipo?.marca || null),
+        equipoModelo: registrarNuevoEquipo ? customModelo : (beneficiario!.equipo?.modelo || null),
         fallaReportada,
         fallaCatalogoId,
         observaciones,
         escuelaId: selectedEscuelaId || null,
         programaEducativoId: selectedProgramaInicialId || null,
         ubicacionDepositoId: selectedUbicacionId || null,
-
+        fechaIngreso: fechaIngreso ? new Date(fechaIngreso + 'T12:00:00Z').toISOString() : null,
+        soloCargador,
+        tipoBeneficiario: beneficiario!.tipoBeneficiario,
+        nuevoEquipoNumeroSerie: registrarNuevoEquipo ? customSerial : null,
+        nuevoEquipoMarca: registrarNuevoEquipo ? customMarca : null,
+        nuevoEquipoModelo: registrarNuevoEquipo ? customModelo : null,
+        nuevoEquipoCredencialesOffice: registrarNuevoEquipo ? customCredencialesOffice : null
       };
 
       const response = await fetch(endpoint, {
@@ -310,11 +335,19 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
 
       if (response.ok) {
         const data = await response.json();
-        const numSerie = isManualMode ? manualEquipoNumeroSerie : beneficiario!.equipo!.numeroSerie;
+        const numSerie = isManualMode 
+          ? manualEquipoNumeroSerie 
+          : registrarNuevoEquipo 
+            ? customSerial 
+            : (beneficiario!.equipo?.numeroSerie || 'S/N');
         const nombreBenef = isManualMode ? `${manualTitularNombre} ${manualTitularApellido}` : `${beneficiario!.nombre} ${beneficiario!.apellido}`;
         const dniBenef = isManualMode ? manualTitularDni : beneficiario!.dni;
         const telefonoBenef = isManualMode ? manualTitularTelefono : beneficiario!.telefono;
-        const marcaMod = isManualMode ? `${manualEquipoMarca} ${manualEquipoModelo}` : `${beneficiario!.equipo!.marca} ${beneficiario!.equipo!.modelo}`;
+        const marcaMod = isManualMode 
+          ? `${manualEquipoMarca} ${manualEquipoModelo}` 
+          : registrarNuevoEquipo 
+            ? `${customMarca} ${customModelo}` 
+            : `${beneficiario!.equipo?.marca || ''} ${beneficiario!.equipo?.modelo || ''}`;
         
         setMensajeExito(`Ingreso de notebook ${numSerie} registrado exitosamente.`);
         
@@ -323,18 +356,30 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
           imprimirComprobante({
             tipo: 'Ingreso',
             numeroMovimiento: data.id.substring(0, 8).toUpperCase(),
-            fecha: new Date().toISOString(),
+            fecha: new Date(fechaIngreso + 'T12:00:00Z').toISOString(),
             escuela: escuelas.find(e => e.id === selectedEscuelaId)?.nombre || 'Sin Asignar',
             operador: nombreOperador,
             motivo: 'Reparación / Diagnóstico',
             tutor: {
-              nombre: nombreBenef,
-              dni: dniBenef,
-              telefono: telefonoBenef
+              nombre: isManualMode && manualTipoBeneficiario === 1 && manualTutorNombre 
+                ? `${manualTutorNombre} (Tutor de ${nombreBenef})` 
+                : !isManualMode && beneficiario!.tipoBeneficiario === 1 && beneficiario!.nombreTutor 
+                  ? `${beneficiario!.nombreTutor} (Tutor de ${nombreBenef})`
+                  : nombreBenef,
+              dni: isManualMode && manualTipoBeneficiario === 1 && manualTutorDni 
+                ? manualTutorDni 
+                : !isManualMode && beneficiario!.tipoBeneficiario === 1 && beneficiario!.dniTutor 
+                  ? beneficiario!.dniTutor 
+                  : dniBenef,
+              telefono: isManualMode && manualTipoBeneficiario === 1 && manualTutorTelefono 
+                ? manualTutorTelefono 
+                : !isManualMode && beneficiario!.tipoBeneficiario === 1 && beneficiario!.telefonoTutor 
+                  ? beneficiario!.telefonoTutor 
+                  : telefonoBenef
             },
             equipos: [{
               numeroSerie: numSerie,
-              marcaModelo: marcaMod,
+              marcaModelo: marcaMod + (soloCargador ? ' (SOLO CARGADOR)' : ''),
               estado: 'Ingresado',
               fallaReportada: fallaReportada || (fallaCatalogoId === 6 ? 'Otra' : 'Falla catalogada')
             }]
@@ -346,6 +391,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         setFallaReportada('');
         setObservaciones('');
         setSelectedUbicacionId('');
+        setFechaIngreso(new Date().toISOString().split('T')[0]);
+        setSoloCargador(false);
+        setRegistrarNuevoEquipo(false);
+        setCustomSerial('');
+        setCustomMarca('');
+        setCustomModelo('');
+        setCustomCredencialesOffice('');
 
         if (isManualMode) {
           setManualTitularDni('');
@@ -358,6 +410,9 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
           setManualEquipoMarca('');
           setManualEquipoModelo('');
           setManualEquipoCredencialesOffice('');
+          setManualTutorNombre('');
+          setManualTutorDni('');
+          setManualTutorTelefono('');
         }
         if (!isManualMode) dniInputRef.current?.focus();
       } else {
@@ -496,6 +551,10 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                     <input type="radio" name="tipoBenef" value={2} checked={manualTipoBeneficiario === 2} onChange={() => setManualTipoBeneficiario(2)} className="text-[#FF8200] focus:ring-[#FF8200]" />
                     Docente
                   </label>
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-slate-700 cursor-pointer">
+                    <input type="radio" name="tipoBenef" value={3} checked={manualTipoBeneficiario === 3} onChange={() => setManualTipoBeneficiario(3)} className="text-[#FF8200] focus:ring-[#FF8200]" />
+                    Directivo
+                  </label>
                 </div>
                 <div className="space-y-3 text-xs">
                   <div><label className="block text-slate-500 mb-1">DNI</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularDni} onChange={e => setManualTitularDni(e.target.value)} /></div>
@@ -503,6 +562,15 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   <div><label className="block text-slate-500 mb-1">Apellido</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularApellido} onChange={e => setManualTitularApellido(e.target.value)} /></div>
                   <div><label className="block text-slate-500 mb-1">Teléfono</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularTelefono} onChange={e => setManualTitularTelefono(e.target.value)} /></div>
                   <div><label className="block text-slate-500 mb-1">Email</label><input required type="email" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularEmail} onChange={e => setManualTitularEmail(e.target.value)} /></div>
+                  
+                  {manualTipoBeneficiario === 1 && (
+                    <div className="border-t border-slate-200 pt-3 mt-3 space-y-3 animate-fade-in">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Datos del Tutor Responsable</p>
+                      <div><label className="block text-slate-500 mb-1">Nombre del Tutor *</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTutorNombre} onChange={e => setManualTutorNombre(e.target.value)} /></div>
+                      <div><label className="block text-slate-500 mb-1">DNI del Tutor *</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTutorDni} onChange={e => setManualTutorDni(e.target.value)} /></div>
+                      <div><label className="block text-slate-500 mb-1">Teléfono del Tutor (Opcional)</label><input type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTutorTelefono} onChange={e => setManualTutorTelefono(e.target.value)} /></div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -594,7 +662,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   >
                     <option value={1}>No Enciende</option>
                     <option value={2}>Pantalla Rota / Sin Imagen</option>
-                    <option value={3}>Bloqueo de Seguridad Juana Manso</option>
+                    <option value={3}>Bloqueo de Seguridad</option>
                     <option value={4}>Falla de Teclado</option>
                     <option value={5}>Problemas de Sistema Operativo</option>
                     <option value={6}>Otro</option>
@@ -621,6 +689,29 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   value={observaciones}
                   onChange={(e) => setObservaciones(e.target.value)}
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Fecha de Ingreso (Carga Retroactiva)</label>
+                  <input
+                    type="date"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                    value={fechaIngreso}
+                    onChange={(e) => setFechaIngreso(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center pt-5">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-slate-750 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={soloCargador}
+                      onChange={(e) => setSoloCargador(e.target.checked)}
+                      className="text-[#FF8200] focus:ring-[#FF8200] rounded"
+                    />
+                    Ingreso de Solo Cargador (Hardware)
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -660,7 +751,15 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   <div className="flex justify-between">
                     <span className="text-slate-400">DNI</span>
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-slate-200 text-slate-700 text-[10px] font-bold rounded-full uppercase">{beneficiario.tipoBeneficiario === 2 ? 'Docente' : 'Alumno'}</span>
+                      <select
+                        value={beneficiario.tipoBeneficiario}
+                        onChange={(e) => setBeneficiario({...beneficiario, tipoBeneficiario: Number(e.target.value) as any})}
+                        className="bg-white border border-slate-250 rounded px-1.5 py-0.5 text-[10px] font-bold text-slate-750 focus:outline-none focus:border-[#FF8200]"
+                      >
+                        <option value={1}>Alumno</option>
+                        <option value={2}>Docente</option>
+                        <option value={3}>Directivo</option>
+                      </select>
                       <span className="font-medium text-slate-900">{beneficiario.dni}</span>
                     </div>
                   </div>
@@ -681,11 +780,68 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
 
               {/* Notebook Column */}
               <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
-                  <Laptop className="w-4.5 h-4.5" />
-                  <h3 className="text-sm font-semibold text-slate-800">Equipo Asignado</h3>
+                <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                  <div className="flex items-center gap-2 text-[#FF8200]">
+                    <Laptop className="w-4.5 h-4.5" />
+                    <h3 className="text-sm font-semibold text-slate-800">Equipo Asignado</h3>
+                  </div>
+                  <label className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={registrarNuevoEquipo}
+                      onChange={(e) => setRegistrarNuevoEquipo(e.target.checked)}
+                      className="text-[#FF8200] focus:ring-[#FF8200] rounded w-3 h-3"
+                    />
+                    Registrar nueva notebook
+                  </label>
                 </div>
-                {beneficiario.equipo ? (
+                
+                {registrarNuevoEquipo ? (
+                  <div className="space-y-3 text-xs">
+                    <div>
+                      <label className="block text-slate-500 mb-1">Nro de Serie *</label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="SJMA025-..."
+                        value={customSerial}
+                        onChange={(e) => setCustomSerial(e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded px-2 py-1 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 mb-1">Marca *</label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Ej: HP, Dell, Exo..."
+                        value={customMarca}
+                        onChange={(e) => setCustomMarca(e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded px-2 py-1 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 mb-1">Modelo *</label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Modelo del equipo"
+                        value={customModelo}
+                        onChange={(e) => setCustomModelo(e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded px-2 py-1 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 mb-1">Credenciales Office (Opcional)</label>
+                      <input
+                        type="text"
+                        value={customCredencialesOffice}
+                        onChange={(e) => setCustomCredencialesOffice(e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded px-2 py-1 text-xs"
+                      />
+                    </div>
+                  </div>
+                ) : beneficiario.equipo ? (
                   <div className="space-y-1.5 text-xs text-slate-600">
                     <div className="flex justify-between">
                       <span className="text-slate-400">Nro Serie</span>
@@ -799,7 +955,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   >
                     <option value={1}>No Enciende</option>
                     <option value={2}>Pantalla Rota / Sin Imagen</option>
-                    <option value={3}>Bloqueo de Seguridad Juana Manso</option>
+                    <option value={3}>Bloqueo de Seguridad</option>
                     <option value={4}>Falla de Teclado</option>
                     <option value={5}>Problemas de Sistema Operativo</option>
                     <option value={6}>Otro</option>
@@ -828,6 +984,29 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   value={observaciones}
                   onChange={(e) => setObservaciones(e.target.value)}
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">Fecha de Ingreso (Carga Retroactiva)</label>
+                  <input
+                    type="date"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-[#FF8200] text-xs transition-colors"
+                    value={fechaIngreso}
+                    onChange={(e) => setFechaIngreso(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center pt-5">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-slate-750 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={soloCargador}
+                      onChange={(e) => setSoloCargador(e.target.checked)}
+                      className="text-[#FF8200] focus:ring-[#FF8200] rounded"
+                    />
+                    Ingreso de Solo Cargador (Hardware)
+                  </label>
+                </div>
               </div>
             </div>
 

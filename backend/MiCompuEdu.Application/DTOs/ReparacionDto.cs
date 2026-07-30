@@ -34,6 +34,7 @@ namespace MiCompuEdu.Application.DTOs
         public string? FirmaIngresoBase64 { get; set; }
         public string? FirmaEntregaBase64 { get; set; }
         public DateTime? FechaLimite { get; set; }
+        public bool SoloCargador { get; set; }
         public System.Collections.Generic.List<EvidenciaDto> Evidencias { get; set; } = new();
     }
 

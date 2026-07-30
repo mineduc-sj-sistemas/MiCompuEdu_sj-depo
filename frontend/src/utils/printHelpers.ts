@@ -237,6 +237,12 @@ export const imprimirComprobante = (data: PrintData) => {
         </div>
       </div>
       
+      ${data.equipos.some(e => e.marcaModelo.toLowerCase().includes('cargador')) ? `
+        <div style="background-color: #fffbeb; border: 1px solid #fef3c7; color: #b45309; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; font-weight: bold; text-align: center; border-left: 5px solid #d97706;">
+          ⚠️ ATENCIÓN: ESTE INGRESO CORRESPONDE ÚNICAMENTE A CARGADOR (HARDWARE). NO SE RECIBE COMPUTADORA.
+        </div>
+      ` : ''}
+      
       <div class="meta-grid">
         ${data.escuela ? `<div class="meta-item"><strong>Institución:</strong> <span>${data.escuela}</span></div>` : ''}
         <div class="meta-item"><strong>Registrado por:</strong> <span>${data.operador}</span></div>

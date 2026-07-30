@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { User as UserType } from '../types';
 import { LogoSanJuan } from '../components/Shared/LogoSanJuan';
 import { API_BASE_URL } from '../config';
-import { User, KeyRound, Loader2 } from 'lucide-react';
+import { User, KeyRound, Loader2, Eye, EyeOff } from 'lucide-react';
 
 interface LoginProps {
   onLoginSuccess: (user: UserType) => void;
@@ -11,6 +11,7 @@ interface LoginProps {
 export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -129,13 +130,20 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               </div>
               <input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
-                className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
+                className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-10 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-650"
+              >
+                {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+              </button>
             </div>
           </div>
 

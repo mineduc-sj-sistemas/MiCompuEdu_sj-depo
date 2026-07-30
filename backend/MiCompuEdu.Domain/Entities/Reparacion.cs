@@ -40,6 +40,7 @@ namespace MiCompuEdu.Domain.Entities
         public DateTime FechaIngreso { get; set; } = DateTime.UtcNow;
         public DateTime? FechaLimite { get; set; }
         public DateTime? FechaEntrega { get; set; }
+        public bool SoloCargador { get; set; } = false;
 
         // Propiedades de navegación
         public ICollection<HistorialMovimiento> HistorialMovimientos { get; set; } = new List<HistorialMovimiento>();

@@ -27,7 +27,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
   // Estados para modo masivo
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [selectedRepairIds, setSelectedRepairIds] = useState<string[]>([]);
-  const [bulkEstado, setBulkEstado] = useState('En_Garantia_Externa');
+  const [bulkEstado] = useState('En_Garantia_Externa');
   const [bulkProveedorGarantia, setBulkProveedorGarantia] = useState('');
   const [bulkRemitoGarantia, setBulkRemitoGarantia] = useState('');
   const [bulkFechaEsperadaGarantia, setBulkFechaEsperadaGarantia] = useState('');
@@ -99,7 +99,9 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
     }
   };
 
-  const handleSelectRepair = (repair: Reparacion) => {
+  const [historial, setHistorial] = useState<any[]>([]);
+
+  const handleSelectRepair = async (repair: Reparacion) => {
     setSelectedRepair(repair);
     setDiagnostico(repair.diagnostico || '');
     setAccionesRealizadas(repair.accionesRealizadas || '');
@@ -110,6 +112,19 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
     setRemitoGarantia(repair.remitoGarantia || '');
     setFechaEsperadaGarantia(repair.fechaEsperadaGarantia ? repair.fechaEsperadaGarantia.split('T')[0] : '');
     setMensaje({ tipo: '', texto: '' });
+
+    try {
+      const resHistorial = await fetch(`${API_BASE_URL}/Reparaciones/${repair.id}/historial`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (resHistorial.ok) {
+        setHistorial(await resHistorial.json());
+      } else {
+        setHistorial([]);
+      }
+    } catch {
+      setHistorial([]);
+    }
   };
 
   const handleSaveDiagnosis = async (e: React.FormEvent) => {
@@ -140,6 +155,17 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
       if (response.ok) {
         setMensaje({ tipo: 'exito', texto: 'Orden de trabajo actualizada correctamente.' });
         fetchRepairs();
+        
+        // Refresh history
+        try {
+          const resHistorial = await fetch(`${API_BASE_URL}/Reparaciones/${selectedRepair.id}/historial`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (resHistorial.ok) {
+            setHistorial(await resHistorial.json());
+          }
+        } catch {}
+
         setSelectedRepair(prev => prev ? {
           ...prev,
           estado: nuevoEstado,
@@ -417,7 +443,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                     <option value="">Todas</option>
                     <option value="1">No Enciende</option>
                     <option value="2">Pantalla Rota / Sin Imagen</option>
-                    <option value="3">Bloqueo de Seguridad Juana Manso</option>
+                    <option value="3">Bloqueo de Seguridad</option>
                     <option value="4">Falla de Teclado</option>
                     <option value="5">Problemas de Sistema Operativo</option>
                   </select>
@@ -603,19 +629,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-slate-700 text-sm font-semibold mb-2">Estado de Destino</label>
-                    <select
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200]"
-                      value={bulkEstado}
-                      onChange={(e) => setBulkEstado(e.target.value)}
-                    >
-                      <option value="En_Garantia_Externa">En Garantía Externa</option>
-                      <option value="Apartado_Para_Garantia">Apartado para Garantía</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-700 text-sm font-semibold mb-2">Fecha Esperada de Retorno</label>
+                    <label className="block text-slate-700 text-sm font-semibold mb-2">Fecha Esperada de Retorno (Opcional)</label>
                     <input
                       type="date"
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] focus:outline-none focus:border-[#FF8200]"
@@ -723,7 +737,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                   <div>
                     <label className="block text-slate-700 text-sm font-semibold mb-2">Diagnóstico Técnico</label>
                     <textarea
-                      required
+                      required={nuevoEstado === 'Reparado' || nuevoEstado === 'Listo_Para_Retirar' || nuevoEstado === 'No_Reparable'}
                       rows={3}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200]"
                       placeholder="Detallar la falla real detectada..."
@@ -735,7 +749,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                   <div>
                     <label className="block text-slate-700 text-sm font-semibold mb-2">Acciones Realizadas</label>
                     <textarea
-                      required
+                      required={nuevoEstado === 'Reparado' || nuevoEstado === 'Listo_Para_Retirar' || nuevoEstado === 'No_Reparable'}
                       rows={3}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-[#1D252D] placeholder-slate-400 focus:outline-none focus:border-[#FF8200]"
                       placeholder="Describir las reparaciones o reparaciones efectuadas..."
@@ -756,7 +770,6 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                       <option value="En_Diagnostico">En Diagnóstico</option>
                       <option value="En_Reparacion">En Reparación / Soporte Local</option>
                       <option value="Esperando_Repuestos">Esperando Repuestos</option>
-                      <option value="Apartado_Para_Garantia">Apartado para Garantía</option>
                       <option value="En_Garantia_Externa">En Garantía Externa</option>
                       <option value="Reparado">Reparado</option>
                       <option value="Listo_Para_Retirar">Listo para retirar (Notificar WhatsApp)</option>
@@ -776,7 +789,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                   </div>
                 </div>
 
-                {(nuevoEstado === 'Apartado_Para_Garantia' || nuevoEstado === 'En_Garantia_Externa') && (
+                {(nuevoEstado === 'En_Garantia_Externa') && (
                   <div className="bg-orange-50/50 border border-orange-200 rounded-xl p-4 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fadeIn">
                     <div>
                       <label className="block text-slate-700 text-xs font-semibold mb-1">Proveedor de Garantía *</label>
@@ -855,6 +868,52 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                           </div>
                         );
                       })}
+                    </div>
+                  )}
+                </div>
+                {/* Historial de Movimientos */}
+                <div className="border-t border-slate-200 pt-6 space-y-4">
+                  <div className="flex items-center gap-2 pb-2">
+                    <span className="text-[#FF8200] font-bold text-sm">🕰️ Historial de Movimientos</span>
+                    <span className="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500 font-medium">
+                      {historial.length} actualizaciones
+                    </span>
+                  </div>
+                  {historial.length === 0 ? (
+                    <p className="text-xs text-slate-400">No hay movimientos registrados para esta orden.</p>
+                  ) : (
+                    <div className="relative border-l-2 border-slate-100 pl-4 ml-2 space-y-4">
+                      {historial.map((item, idx) => (
+                        <div key={item.id || idx} className="relative text-xs">
+                          {/* Dot indicator */}
+                          <div className="absolute -left-[23px] top-1.5 w-3 h-3 rounded-full bg-[#FF8200] border-2 border-white" />
+                          <div className="flex items-center justify-between text-slate-400 text-[10px] mb-1">
+                            <span className="font-semibold text-slate-700">{item.operadorNombre}</span>
+                            <span>{new Date(item.fechaMovimiento).toLocaleString()}</span>
+                          </div>
+                          <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200/60 text-slate-700">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className="px-2 py-0.5 bg-orange-100 text-orange-850 text-[9px] font-bold rounded uppercase">
+                                {item.estadoOrigen.replace(/_/g, ' ')}
+                              </span>
+                              <span className="text-slate-400 text-[10px]">➜</span>
+                              <span className="px-2 py-0.5 bg-green-100 text-green-850 text-[9px] font-bold rounded uppercase">
+                                {item.estadoDestino.replace(/_/g, ' ')}
+                              </span>
+                            </div>
+                            {item.observaciones && (
+                              <p className="text-slate-650 font-medium mt-1">
+                                <strong className="text-slate-400">Obs:</strong> {item.observaciones}
+                              </p>
+                            )}
+                            {item.accionesRealizadas && (
+                              <p className="text-slate-650 mt-0.5">
+                                <strong className="text-slate-400">Acciones:</strong> {item.accionesRealizadas}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

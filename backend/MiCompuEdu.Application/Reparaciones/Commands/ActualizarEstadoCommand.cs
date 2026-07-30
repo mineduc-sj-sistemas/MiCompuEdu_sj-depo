@@ -152,12 +152,14 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                     nuevo == EstadoEquipo.En_Reparacion || 
                     nuevo == EstadoEquipo.Esperando_Repuestos || 
                     nuevo == EstadoEquipo.Apartado_Para_Garantia || 
+                    nuevo == EstadoEquipo.En_Garantia_Externa || 
                     nuevo == EstadoEquipo.Listo_Para_Retirar || 
                     nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.En_Reparacion => 
                     nuevo == EstadoEquipo.Esperando_Repuestos || 
                     nuevo == EstadoEquipo.Apartado_Para_Garantia || 
+                    nuevo == EstadoEquipo.En_Garantia_Externa || 
                     nuevo == EstadoEquipo.Reparado || 
                     nuevo == EstadoEquipo.Listo_Para_Retirar || 
                     nuevo == EstadoEquipo.No_Reparable,

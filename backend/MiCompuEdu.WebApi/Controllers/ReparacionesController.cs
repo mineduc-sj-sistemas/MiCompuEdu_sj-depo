@@ -51,7 +51,14 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.EscuelaId,
                 request.ProgramaEducativoId,
                 request.UbicacionDepositoId,
-                request.FirmaIngresoBase64
+                request.FirmaIngresoBase64,
+                request.FechaIngreso,
+                request.SoloCargador,
+                request.TipoBeneficiario,
+                request.NuevoEquipoNumeroSerie,
+                request.NuevoEquipoMarca,
+                request.NuevoEquipoModelo,
+                request.NuevoEquipoCredencialesOffice
             );
 
             var resultado = await _mediator.Send(command);
@@ -87,12 +94,26 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.EscuelaId,
                 request.ProgramaEducativoId,
                 request.UbicacionDepositoId,
-                request.FirmaIngresoBase64
+                request.FirmaIngresoBase64,
+                request.FechaIngreso,
+                request.SoloCargador,
+                request.TutorNombre,
+                request.TutorDni,
+                request.TutorTelefono
             );
 
             var resultado = await _mediator.Send(command);
             
             return CreatedAtAction(nameof(RegistrarIngreso), new { id = resultado.Id }, resultado);
+        }
+
+        [HttpGet("{id}/historial")]
+        [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
+        public async Task<ActionResult<List<HistorialMovimientoDto>>> ObtenerHistorial(Guid id)
+        {
+            var query = new GetHistorialMovimientosQuery(id);
+            var resultado = await _mediator.Send(query);
+            return Ok(resultado);
         }
 
         [HttpGet]
@@ -255,7 +276,14 @@ namespace MiCompuEdu.WebApi.Controllers
         Guid? EscuelaId = null,
         Guid? ProgramaEducativoId = null,
         Guid? UbicacionDepositoId = null,
-        string? FirmaIngresoBase64 = null
+        string? FirmaIngresoBase64 = null,
+        DateTime? FechaIngreso = null,
+        bool SoloCargador = false,
+        MiCompuEdu.Domain.Enums.TipoBeneficiario? TipoBeneficiario = null,
+        string? NuevoEquipoNumeroSerie = null,
+        string? NuevoEquipoMarca = null,
+        string? NuevoEquipoModelo = null,
+        string? NuevoEquipoCredencialesOffice = null
     );
 
     public record CreateReparacionManualRequest(
@@ -275,7 +303,12 @@ namespace MiCompuEdu.WebApi.Controllers
         Guid? EscuelaId = null,
         Guid? ProgramaEducativoId = null,
         Guid? UbicacionDepositoId = null,
-        string? FirmaIngresoBase64 = null
+        string? FirmaIngresoBase64 = null,
+        DateTime? FechaIngreso = null,
+        bool SoloCargador = false,
+        string? TutorNombre = null,
+        string? TutorDni = null,
+        string? TutorTelefono = null
     );
 
     public record UpdateEstadoRequest(

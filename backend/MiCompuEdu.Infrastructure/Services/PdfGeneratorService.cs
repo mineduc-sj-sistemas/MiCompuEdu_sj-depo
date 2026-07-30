@@ -98,12 +98,22 @@ namespace MiCompuEdu.Infrastructure.Services
                         col.Item().Text($"Comprobante de Ingreso #{reparacion.Id.ToString().Substring(0, 8).ToUpper()}").Bold().FontSize(11).FontColor(Colors.Grey.Darken4);
                         col.Item().PaddingTop(5);
 
+                        if (reparacion.SoloCargador)
+                        {
+                            col.Item().Background(Colors.Red.Lighten5).Border(1).BorderColor(Colors.Red.Lighten2).Padding(4).AlignCenter().Text("*** INGRESO DE SOLO CARGADOR (HARDWARE) ***").Bold().FontSize(10).FontColor(Colors.Red.Darken3);
+                            col.Item().PaddingTop(5);
+                        }
+
                         // Fila de datos del Tutor
                         col.Item().Background(Colors.Grey.Lighten4).Padding(5).Column(tutorCol =>
                         {
                             tutorCol.Item().Text("DATOS DEL TUTOR / BENEFICIARIO").Bold().FontSize(8).FontColor(Colors.Grey.Darken3);
                             tutorCol.Item().Text($"Nombre: {beneficiario.Nombre} {beneficiario.Apellido}");
                             tutorCol.Item().Text($"DNI: {beneficiario.Dni}    |    Teléfono: {beneficiario.Telefono}");
+                            if (!string.IsNullOrEmpty(beneficiario.NombreTutor))
+                            {
+                                tutorCol.Item().Text($"Tutor/Responsable: {beneficiario.NombreTutor} (DNI: {beneficiario.DniTutor ?? "-"})");
+                            }
                             tutorCol.Item().Text($"Email: {beneficiario.Email}");
                         });
 
