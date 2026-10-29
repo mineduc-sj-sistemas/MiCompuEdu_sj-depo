@@ -47,10 +47,22 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
+var rawConnectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(rawConnectionString))
 {
-    connectionString = "Host=localhost;Database=micompuedu_db;Username=postgres;Password=postgres";
+    rawConnectionString = "Host=localhost;Database=micompuedu_db;Username=postgres;Password=postgres";
+}
+
+string connectionString = rawConnectionString;
+if (rawConnectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+    rawConnectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+{
+    var dbUri = new Uri(rawConnectionString);
+    var userInfo = dbUri.UserInfo.Split(':', 2);
+    var dbPort = dbUri.Port > 0 ? dbUri.Port : 5432;
+    connectionString = $"Host={dbUri.Host};Port={dbPort};Database={dbUri.AbsolutePath.TrimStart('/')};Username={Uri.UnescapeDataString(userInfo[0])};Password={Uri.UnescapeDataString(userInfo.Length > 1 ? userInfo[1] : "")};SSL Mode=Prefer;Trust Server Certificate=true";
 }
 
 // Usar Npgsql. Si hay problemas conectando, en runtime controlamos la falla
@@ -71,15 +83,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.SetIsOriginAllowed(origin =>
-              {
-                  if (string.IsNullOrEmpty(origin)) return false;
-                  if (Uri.TryCreate(origin, UriKind.Absolute, out var uri))
-                  {
-                      return uri.Host == "localhost" || uri.Host == "127.0.0.1";
-                  }
-                  return false;
-              })
+        policy.SetIsOriginAllowed(origin => true)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
