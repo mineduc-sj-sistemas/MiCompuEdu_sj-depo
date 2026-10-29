@@ -32,7 +32,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string? NuevoEquipoCredencialesOffice = null,
         string? TutorNombre = null,
         string? TutorDni = null,
-        string? TutorTelefono = null
+        string? TutorTelefono = null,
+        string? TitularTelefono = null
     ) : IRequest<ReparacionDto>;
 
     public class RegistrarIngresoCommandHandler : IRequestHandler<RegistrarIngresoCommand, ReparacionDto>
@@ -69,6 +70,12 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             if (request.TipoBeneficiario.HasValue && equipo.Beneficiario.TipoBeneficiario != request.TipoBeneficiario.Value)
             {
                 equipo.Beneficiario.TipoBeneficiario = request.TipoBeneficiario.Value;
+            }
+
+            // Actualizar teléfono del titular si se modificó en el ingreso
+            if (!string.IsNullOrWhiteSpace(request.TitularTelefono))
+            {
+                equipo.Beneficiario.Telefono = request.TitularTelefono.Trim();
             }
 
             // Actualizar datos del Tutor si el beneficiario es Alumno y se enviaron en la solicitud

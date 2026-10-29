@@ -324,7 +324,8 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         nuevoEquipoCredencialesOffice: registrarNuevoEquipo ? customCredencialesOffice : null,
         tutorNombre: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.nombreTutor || '') : null,
         tutorDni: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.dniTutor || '') : null,
-        tutorTelefono: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.telefonoTutor || beneficiario!.telefono || '') : null
+        tutorTelefono: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.telefonoTutor || beneficiario!.telefono || '') : null,
+        titularTelefono: beneficiario!.telefono || null
       };
 
       const response = await fetch(endpoint, {
@@ -770,9 +771,15 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                     <span className="text-slate-400">Nombre</span>
                     <span className="font-medium text-slate-900">{beneficiario.nombre} {beneficiario.apellido}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Teléfono</span>
-                    <span className="font-medium text-slate-900 flex items-center gap-1"><Phone className="w-3 h-3 text-slate-400" />{beneficiario.telefono}</span>
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-slate-400 flex items-center gap-1"><Phone className="w-3 h-3 text-slate-400" />Teléfono</span>
+                    <input
+                      type="text"
+                      placeholder="Ingrese teléfono"
+                      value={beneficiario.telefono || ''}
+                      onChange={(e) => setBeneficiario({ ...beneficiario, telefono: e.target.value })}
+                      className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#FF8200] w-2/3 text-right"
+                    />
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Email</span>

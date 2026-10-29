@@ -61,7 +61,8 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.NuevoEquipoCredencialesOffice,
                 request.TutorNombre,
                 request.TutorDni,
-                request.TutorTelefono
+                request.TutorTelefono,
+                request.TitularTelefono
             );
 
             var resultado = await _mediator.Send(command);
@@ -289,7 +290,8 @@ namespace MiCompuEdu.WebApi.Controllers
         string? NuevoEquipoCredencialesOffice = null,
         string? TutorNombre = null,
         string? TutorDni = null,
-        string? TutorTelefono = null
+        string? TutorTelefono = null,
+        string? TitularTelefono = null
     );
 
     public record CreateReparacionManualRequest(
