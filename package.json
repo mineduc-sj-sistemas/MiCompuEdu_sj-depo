@@ -1,5 +1,9 @@
 {
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build && cp -r dist ../dist"
+  },
   "dependencies": {
     "xlsx": "^0.18.5"
   }
 }
+
