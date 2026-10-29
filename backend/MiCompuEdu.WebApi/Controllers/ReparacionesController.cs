@@ -171,7 +171,10 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.ProveedorGarantia,
                 request.RemitoGarantia,
                 request.FechaEsperadaGarantia,
-                request.FirmaEntregaBase64
+                request.FirmaEntregaBase64,
+                request.TelefonoContacto,
+                request.TutorNombre,
+                request.TutorDni
             );
 
             var resultado = await _mediator.Send(command);
@@ -327,6 +330,9 @@ namespace MiCompuEdu.WebApi.Controllers
         string? ProveedorGarantia = null,
         string? RemitoGarantia = null,
         DateTime? FechaEsperadaGarantia = null,
-        string? FirmaEntregaBase64 = null
+        string? FirmaEntregaBase64 = null,
+        string? TelefonoContacto = null,
+        string? TutorNombre = null,
+        string? TutorDni = null
     );
 }

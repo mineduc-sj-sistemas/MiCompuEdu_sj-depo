@@ -10,6 +10,12 @@ namespace MiCompuEdu.Application.DTOs
         public string MarcaModelo { get; set; } = string.Empty;
         public string NombreTutor { get; set; } = string.Empty;
         public string TelefonoTutor { get; set; } = string.Empty;
+        public string TitularDni { get; set; } = string.Empty;
+        public string? TitularEmail { get; set; }
+        public int TipoBeneficiario { get; set; } = 1;
+        public string? TutorResponsableNombre { get; set; }
+        public string? TutorResponsableDni { get; set; }
+        public string? TutorResponsableTelefono { get; set; }
         public string Estado { get; set; } = string.Empty;
         public string FallaReportada { get; set; } = string.Empty;
         public string? Diagnostico { get; set; }
