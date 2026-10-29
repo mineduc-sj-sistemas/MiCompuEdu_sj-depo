@@ -542,7 +542,7 @@
     <!-- KPIs -->
     <div class="kpi-row">
       <div class="kpi-card kpi-orange">
-        <div class="kpi-number" id="kpiTotal">74</div>
+        <div class="kpi-number" id="kpiTotal">79</div>
         <div class="kpi-label">Puntos de Control</div>
       </div>
       <div class="kpi-card kpi-green">
@@ -801,8 +801,8 @@
 
     <!-- Filtros de Navegación -->
     <div class="filter-bar">
-      <button class="filter-btn active" onclick="applyFilter('all')">Todos (74)</button>
-      <button class="filter-btn" onclick="applyFilter('pending')">Pendientes (74)</button>
+      <button class="filter-btn active" onclick="applyFilter('all')">Todos (79)</button>
+      <button class="filter-btn" onclick="applyFilter('pending')">Pendientes (79)</button>
       <button class="filter-btn" onclick="applyFilter('checked')">Cumplidos (0)</button>
     </div>
 
@@ -813,17 +813,17 @@
     <div class="card-header">
       <div class="card-title-group">
         <span class="card-badge-num">01</span>
-        <h2 class="card-title">01 — Seguridad y Control de Accesos (RBAC)</h2>
+        <h2 class="card-title">01 — Seguridad y Control de Accesos (OWASP 2025 & Sentry)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_0">0 / 10</span>
+        <span class="card-counter" id="counter_0">0 / 14</span>
         <div class="mini-progress-bar">
           <div class="mini-progress-fill" id="progress_0" style="width: 0%"></div>
         </div>
       </div>
     </div>
 
-    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`security-review` (OWASP Top 10, CWE).</code></div>
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`security-review` (Sentry) y `owasp-top-10-testing` (OWASP Top 10:2025).</code></div>
     
 
     <div class="checklist-items">
@@ -831,80 +831,112 @@
       <label class="checklist-item " id="label_chk_0_0">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_0"  onchange="toggleItem('chk_0_0', 0)">
         <div class="item-content">
-          <span class="item-bold">Autenticación y Roles</span>
-          <span class="item-text">Toda ruta operativa (`/api/v1/*`) exige autenticación Bearer JWT y filtro por rol explícito (`[Authorize(Roles = "...")]`). Solo `/api/v1/health`, `/api/v1/auth/login` y `/api/v1/reparaciones/consulta-publica/{id}` son públicas.</span>
+          <span class="item-bold">Control Horizontal (BOLA / IDOR)</span>
+          <span class="item-text">El identificador del usuario que opera se extrae obligatoriamente del `ClaimsPrincipal` autenticado (`ICurrentUserService`), nunca de parámetros manipulables del request body o query params.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_1">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_1"  onchange="toggleItem('chk_0_1', 0)">
         <div class="item-content">
-          <span class="item-bold">Control horizontal (IDOR)</span>
-          <span class="item-text">El identificador del operador o técnico que ejecuta acciones se toma del `ClaimsPrincipal` autenticado (`ICurrentUserService`), nunca de parámetros manipulables del request body o query.</span>
+          <span class="item-bold">Control Vertical por Rol (RBAC)</span>
+          <span class="item-text">Toda ruta operativa (`/api/v1/*`) exige directiva `[Authorize(Roles = "...")]`. Las acciones privilegiadas (gestión de personal, asignación de roles, activación/desactivación en `UsuariosController.cs`) están restringidas exclusivamente al rol `Administrador`.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_2">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_2"  onchange="toggleItem('chk_0_2', 0)">
         <div class="item-content">
-          <span class="item-bold">Control vertical</span>
-          <span class="item-text">Las acciones administrativas (gestión de personal, asignación de roles, activación/desactivación en `UsuariosController.cs`) están restringidas exclusivamente al rol `Administrador`.</span>
+          <span class="item-bold">Rutas Públicas Mínimas y Declaradas</span>
+          <span class="item-text">Únicamente `/api/v1/health`, `/api/v1/auth/login` y `/api/v1/reparaciones/consulta-publica/{id}` están exentas de autenticación.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_3">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_3"  onchange="toggleItem('chk_0_3', 0)">
         <div class="item-content">
-          <span class="item-bold">Almacenamiento de credenciales</span>
-          <span class="item-text">Contraseñas de usuario encriptadas con `BCrypt.Net` con factor de costo adecuado; sin hashes o contraseñas en texto plano en la base de datos o en commits.</span>
+          <span class="item-bold">CORS Acotado a Orígenes Confiables</span>
+          <span class="item-text">CORS explícitamente limitado al dominio del frontend institucional en producción; prohibido el uso de `AllowAnyOrigin()` o `SetIsOriginAllowed(x => true)` en despliegue definitivo.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_4">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_4"  onchange="toggleItem('chk_0_4', 0)">
         <div class="item-content">
-          <span class="item-bold">Gestión de Secretos</span>
-          <span class="item-text">La clave JWT (`Jwt:Key`) y tokens de integraciones (`WhatsApp:Token`) se leen de variables de entorno seguras, sin fallbacks inseguros ni hardcoding en `appsettings.json` o `Program.cs`.</span>
+          <span class="item-bold">Encabezados HTTP Seguros</span>
+          <span class="item-text">Configuración de cabeceras de protección (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`).</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_5">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_5"  onchange="toggleItem('chk_0_5', 0)">
         <div class="item-content">
-          <span class="item-bold">CORS y Encabezados de Red</span>
-          <span class="item-text">CORS restringido a los orígenes autorizados del frontend en producción (evitar `AllowAnyOrigin()` o `SetIsOriginAllowed(x => true)` en despliegue definitivo).</span>
+          <span class="item-bold">Swagger Protegido en Producción</span>
+          <span class="item-text">La interfaz gráfica de Swagger UI (`app.UseSwaggerUI()`) está restringida al entorno de desarrollo o protegida bajo autenticación administrativa.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_6">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_6"  onchange="toggleItem('chk_0_6', 0)">
         <div class="item-content">
-          <span class="item-bold">Carga de Archivos / Evidencias Fotográficas</span>
-          <span class="item-text">Verificación de extensiones permitidas (JPG, PNG, WEBP), validación de tipo MIME por firma (magic bytes), limitación de tamaño máximo por archivo, y nombres UUID generados por el servidor sin path traversal (`wwwroot/uploads/evidencias`).</span>
+          <span class="item-bold">Almacenamiento de Contraseñas con BCrypt</span>
+          <span class="item-text">Las claves de acceso de los usuarios se almacenan con hash `BCrypt.Net` con factor de costo adecuado; sin hashes ni contraseñas en texto plano en la base de datos o en commits.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_7">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_7"  onchange="toggleItem('chk_0_7', 0)">
         <div class="item-content">
-          <span class="item-bold">Manejo de Errores y Logs</span>
-          <span class="item-text">Excepciones internas capturadas sin exponer stack traces de .NET al frontend (`UseDeveloperExceptionPage` deshabilitado en producción); logs sin volcar datos personales sensibles (DNI, teléfonos, contraseñas o tokens).</span>
+          <span class="item-bold">Secreto JWT Robusto sin Fallbacks Inseguros</span>
+          <span class="item-text">La clave de firma (`Jwt:Key`) se inyecta obligatoriamente por variable de entorno de al menos 32 caracteres; el backend debe fallar al iniciar si la clave no está configurada o usa valores por defecto.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_8">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_8"  onchange="toggleItem('chk_0_8', 0)">
         <div class="item-content">
-          <span class="item-bold">Sanitización y XSS en Frontend</span>
-          <span class="item-text">En React 19, evitar el uso de `dangerouslySetInnerHTML` o evaluar inputs de usuario sin escape; los datos del DNI y remitos se renderizan de forma segura.</span>
+          <span class="item-bold">Validación Estricta de Tokens JWT</span>
+          <span class="item-text">Se valida firma, `Issuer`, `Audience`, tiempo de expiración (`ValidateLifetime = true`) y `ClockSkew = TimeSpan.Zero`.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_0_9">
         <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_9"  onchange="toggleItem('chk_0_9', 0)">
         <div class="item-content">
-          <span class="item-bold">Auditoría de Dependencias</span>
-          <span class="item-text">Paquetes NuGet de .NET (`dotnet list package --vulnerable`) y paquetes npm del frontend (`npm audit`) libres de vulnerabilidades críticas o altas.</span>
+          <span class="item-bold">Prevención de Inyección SQL</span>
+          <span class="item-text">Todas las consultas a PostgreSQL se ejecutan mediante EF Core parametrizado o `FromSqlInterpolated()`; prohibida la concatenación cruda de cadenas en sentencias SQL.</span>
+        </div>
+      </label>
+    
+      <label class="checklist-item " id="label_chk_0_10">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_10"  onchange="toggleItem('chk_0_10', 0)">
+        <div class="item-content">
+          <span class="item-bold">Carga Segura de Evidencias Fotográficas</span>
+          <span class="item-text">Verificación de extensiones permitidas (JPG, PNG, WEBP), validación del magic bytes (firma binaria del archivo), cuota máxima de tamaño y renombramiento con UUIDs únicos generados por el servidor para evitar Path Traversal.</span>
+        </div>
+      </label>
+    
+      <label class="checklist-item " id="label_chk_0_11">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_11"  onchange="toggleItem('chk_0_11', 0)">
+        <div class="item-content">
+          <span class="item-bold">Sanitización contra XSS en Frontend</span>
+          <span class="item-text">Los inputs de usuario (nombre de tutor, DNI, observaciones técnicas) se renderizan mediante escape nativo de React; sin uso de `dangerouslySetInnerHTML`.</span>
+        </div>
+      </label>
+    
+      <label class="checklist-item " id="label_chk_0_12">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_12"  onchange="toggleItem('chk_0_12', 0)">
+        <div class="item-content">
+          <span class="item-bold">Supresión de Stack Traces</span>
+          <span class="item-text">En entorno de producción (`ASPNETCORE_ENVIRONMENT=Production`), los errores devuelven un formato genérico `ProblemDetails` sin exponer trazas de la base de datos, rutas internas ni dependencias.</span>
+        </div>
+      </label>
+    
+      <label class="checklist-item " id="label_chk_0_13">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_13"  onchange="toggleItem('chk_0_13', 0)">
+        <div class="item-content">
+          <span class="item-bold">Logs Seguros y Auditables</span>
+          <span class="item-text">La bitácora (`ILogger`) registra eventos de auditoría pero excluye datos sensibles (números de serie con DNI titular, contraseñas, tokens JWT).</span>
         </div>
       </label>
     
@@ -925,7 +957,7 @@
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`dotnet-backend-patterns` (Wshobson / Microsoft standard).</code></div>
     
       <div class="card-warning-banner">
         ⚠️ <strong>Alerta de Auditoría Activa:</strong> 
@@ -939,80 +971,80 @@
       <label class="checklist-item " id="label_chk_1_0">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_0"  onchange="toggleItem('chk_1_0', 1)">
         <div class="item-content">
-          <span class="item-bold">Desacoplamiento de Capas (Clean Architecture)</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Aislamiento del Dominio (`MiCompuEdu.Domain`)</span>
+          <span class="item-text">Las entidades (`Usuario`, `Reparacion`, `Beneficiario`, `Equipo`, etc.) y enums no tienen referencias a Entity Framework Core, ASP.NET Core ni librerías de infraestructura.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_1">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_1"  onchange="toggleItem('chk_1_1', 1)">
         <div class="item-content">
-          <span class="item-bold">Controladores Delgados (Thin Controllers) y Límite de Tamaño</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Casos de Uso en Aplicación (`MiCompuEdu.Application`)</span>
+          <span class="item-text">Cada operación de negocio está encapsulada en su propio Command o Query de MediatR con su Handler correspondiente.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_2">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_2"  onchange="toggleItem('chk_1_2', 1)">
         <div class="item-content">
-          <span class="item-bold">Patrón CQRS y MediatR</span>
-          <span class="item-text">Cada caso de uso está encapsulado en su respectivo Command/Query y Handler (`RegistrarIngresoCommand`, `ActualizarEstadoCommand`, `GetDashboardStatsQuery`, etc.).</span>
+          <span class="item-bold">Controladores Delgados (Thin Controllers < 200 lín)</span>
+          <span class="item-text">Los controladores de `MiCompuEdu.WebApi/Controllers` actúan como meros adaptadores HTTP: validan el request, invocan `_mediator.Send(...)` y retornan el código de estado correspondiente.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_3">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_3"  onchange="toggleItem('chk_1_3', 1)">
         <div class="item-content">
-          <span class="item-bold">Validación de Datos de Entrada</span>
-          <span class="item-text">Validación de parámetros requeridos (DNI válido, tutor obligatorio si el beneficiario es menor, número de serie de equipo, estado de reparación válido) antes de persistir.</span>
+          <span class="item-bold">Prohibición de DbContext en Controllers</span>
+          <span class="item-text">Ningún controlador inyecta directamente `IApplicationDbContext` o `ApplicationDbContext`. Toda consulta o mutación a la base de datos se delega a MediatR o Application Services.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_4">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_4"  onchange="toggleItem('chk_1_4', 1)">
         <div class="item-content">
-          <span class="item-bold">Manejo Centralizado de Excepciones</span>
-          <span class="item-text">Middleware global de excepciones o filtros para devolver respuestas HTTP con estructura consistente (`ProblemDetails` o formato estándar JSON) y códigos de estado adecuados (400 Bad Request, 404 Not Found, 409 Conflict, 500 Internal Server Error).</span>
+          <span class="item-bold">Propagación de `CancellationToken`</span>
+          <span class="item-text">Todos los métodos asíncronos en Handlers, controladores y llamadas a base de datos reciben y propagan el `CancellationToken` para cancelar operaciones si el cliente desconecta.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_5">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_5"  onchange="toggleItem('chk_1_5', 1)">
         <div class="item-content">
-          <span class="item-bold">Inyección de Dependencias y Ciclos de Vida</span>
-          <span class="item-text">Servicios registrados con su ciclo de vida correcto (`Scoped` para DbContext y servicios por solicitud, `HostedService` para background workers como `NotificationWorkerService`).</span>
+          <span class="item-bold">Cliente HTTP Tipado y Resiliencia en WhatsApp API</span>
+          <span class="item-text">La comunicación con Meta Graph API en `WhatsAppService.cs` utiliza `IHttpClientFactory` con políticas de timeout y reintentos configuradas (Polly / `Microsoft.Extensions.Resilience`).</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_6">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_6"  onchange="toggleItem('chk_1_6', 1)">
         <div class="item-content">
-          <span class="item-bold">Resiliencia e Integraciones Asíncronas</span>
-          <span class="item-text">Las llamadas a la API de WhatsApp Business tienen control de reintentos, timeout definido y manejo de contingencia en caso de falta de conexión a Meta.</span>
+          <span class="item-bold">Procesamiento en Segundo Plano (`NotificationWorkerService`)</span>
+          <span class="item-text">El worker `BackgroundService` procesa la cola de notificaciones pendientes con control de excepciones, pausas configurables y sin bloquear peticiones HTTP de usuarios.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_7">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_7"  onchange="toggleItem('chk_1_7', 1)">
         <div class="item-content">
-          <span class="item-bold">Worker de Notificaciones en Segundo Plano</span>
-          <span class="item-text">`NotificationWorkerService` procesa la cola de notificaciones pendientes de forma controlada sin saturar la base de datos ni bloquear peticiones web.</span>
+          <span class="item-bold">Patrón `IOptions<T>` para Configuración Tipada</span>
+          <span class="item-text">Las configuraciones de JWT, conexión a base de datos y WhatsApp se leen mediante clases de opciones fuertemente tipadas en lugar de llamadas sueltas a `Configuration["..."]`.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_8">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_8"  onchange="toggleItem('chk_1_8', 1)">
         <div class="item-content">
-          <span class="item-bold">Versionado y Rutas REST</span>
-          <span class="item-text">Rutas de controladores prefijadas consistentemente con `/api/v1/[controller]`.</span>
+          <span class="item-bold">Manejo Centralizado de Excepciones</span>
+          <span class="item-text">Middleware global de excepciones que captura fallos no controlados y responde con la especificación estándar RFC 7807 (`ProblemDetails`).</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_1_9">
         <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_9"  onchange="toggleItem('chk_1_9', 1)">
         <div class="item-content">
-          <span class="item-bold">Health Check</span>
-          <span class="item-text">Endpoint `/api/v1/health` disponible y respondiendo `200 OK` para monitoreo de orquestadores Docker/Render sin efectos secundarios.</span>
+          <span class="item-bold">Logging Semántico y Estructurado</span>
+          <span class="item-text">Uso de plantillas de mensajes en `ILogger` (ej. `_logger.LogInformation("Reparación {ReparacionId} actualizada a {NuevoEstado}", id, estado)`) evitando la interpolación de strings (`$"..."`) que degrada el rendimiento del garbage collector.</span>
         </div>
       </label>
     
@@ -1033,7 +1065,7 @@
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`vercel-react-best-practices` (Vercel Engineering).</code></div>
     
       <div class="card-warning-banner">
         ⚠️ <strong>Alerta de Auditoría Activa:</strong> Se detectaron <strong>4 vistas monolíticas</strong> que superan el límite de 500 líneas:
@@ -1046,80 +1078,80 @@
       <label class="checklist-item " id="label_chk_2_0">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_0"  onchange="toggleItem('chk_2_0', 2)">
         <div class="item-content">
-          <span class="item-bold">Enrutamiento y Control de Roles</span>
-          <span class="item-text">Renderizado condicional en `App.tsx` respetando estrictamente los roles del usuario logueado (`Operador`, `Tecnico`, `Supervisor`, `Administrador`) y ruta `/consulta` pública accesible sin sesión.</span>
+          <span class="item-bold">Límite de Tamaño de Vistas (< 500 lín)</span>
+          <span class="item-text">Ningún archivo de componente de página en `src/pages/` debe superar las 500 líneas de código.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_1">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_1"  onchange="toggleItem('chk_2_1', 2)">
         <div class="item-content">
-          <span class="item-bold">Modularidad y Límite de Tamaño de Vistas</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Extracción a Subcomponentes / Partials</span>
+          <span class="item-text">Las pantallas con flujos densos (`RegistrarIngreso.tsx`, `PanelTecnico.tsx`, `Dashboard.tsx`, `EntregaNotebook.tsx`) delegan sus subsecciones a componentes en subcarpetas `components/` (ej. scanner DNI, modales de diagnóstico, galerías de fotos y filtros).</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_2">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_2"  onchange="toggleItem('chk_2_2', 2)">
         <div class="item-content">
-          <span class="item-bold">Persistencia y Manejo de Sesión</span>
-          <span class="item-text">La sesión (`micompuedu_session` en `localStorage`) almacena token JWT y rol; si el token expira o es inválido (401), se redirige de forma limpia a la pantalla de Login sin loops infinitos.</span>
+          <span class="item-bold">Extracción de Lógica de Negocio a Custom Hooks</span>
+          <span class="item-text">La lógica de manejo de estado compleja (llamadas a API, filtros, lectura de scanner) se extrae a hooks personalizados (`useReparaciones`, `useDniScanner`, etc.) para dejar la vista puramente declarativa.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_3">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_3"  onchange="toggleItem('chk_2_3', 2)">
         <div class="item-content">
-          <span class="item-bold">Tipado Estricto TypeScript</span>
-          <span class="item-text">Uso de interfaces y tipos centralizados en `types.ts` (`User`, `Reparacion`, `Beneficiario`, etc.); sin uso indiscriminado de `any`.</span>
+          <span class="item-bold">Eliminación de Waterfalls en Peticiones (`async-parallel`)</span>
+          <span class="item-text">Llamadas independientes a la API (ej. traer catálogos de fallas y escuelas al iniciar) se ejecutan concurrentemente con `Promise.all()` en lugar de secuencialmente con múltiples `await` anidados.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_4">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_4"  onchange="toggleItem('chk_2_4', 2)">
         <div class="item-content">
-          <span class="item-bold">Estilos y Diseño Responsive</span>
-          <span class="item-text">Uso consistente de clases de Tailwind CSS v4 con la paleta institucional (naranja `#FF8200`, gris grafito `#1D252D`, slate); diseño adaptable a pantallas de escritorio de depósito y dispositivos móviles.</span>
+          <span class="item-bold">Prevención de Re-renders Excesivos (`rerender-memo`)</span>
+          <span class="item-text">Uso de `useMemo` en cálculos pesados de filtrado de tablas y `useCallback` en funciones pasadas como props a componentes hijos para evitar renders innecesarios en listas largas.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_5">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_5"  onchange="toggleItem('chk_2_5', 2)">
         <div class="item-content">
-          <span class="item-bold">Manejo de Formularios y Estados</span>
-          <span class="item-text">Formularios con feedback visual claro (spinners de carga, mensajes de éxito y alertas de error en rojo); botones de acción deshabilitados durante envíos asincrónicos para prevenir dobles submits.</span>
+          <span class="item-bold">Optimización de Importaciones de Librerías (`bundle-barrel-imports`)</span>
+          <span class="item-text">Importaciones directas de íconos de `lucide-react` para permitir el Tree Shaking efectivo de Vite y mantener el bundle inicial liviano.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_6">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_6"  onchange="toggleItem('chk_2_6', 2)">
         <div class="item-content">
-          <span class="item-bold">Lector y Parser de DNI</span>
-          <span class="item-text">`dniParser.ts` procesa correctamente el formato de código de barras PDF417 de los DNIs argentinos (versiones nueva y vieja), extrayendo DNI, apellido, nombre, sexo y fecha de nacimiento sin excepciones no controladas.</span>
+          <span class="item-bold">Tipado Estricto TypeScript (Sin `any`)</span>
+          <span class="item-text">Todas las entidades, DTOs de respuesta y props de componentes cuentan con interfaces definidas en `types.ts`.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_7">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_7"  onchange="toggleItem('chk_2_7', 2)">
         <div class="item-content">
-          <span class="item-bold">Generación e Impresión de Remitos y Comprobantes</span>
-          <span class="item-text">`printHelpers.ts` y las ventanas emergentes de impresión se renderizan correctamente sin recortar encabezados, tablas de equipos ni bloques de firmas.</span>
+          <span class="item-bold">Control de Envíos Duplicados en Formularios</span>
+          <span class="item-text">Botones de acción ("Registrar Ingreso", "Confirmar Entrega", "Guardar Diagnóstico") se deshabilitan inmediatamente durante la petición HTTP (`isSubmitting / loading`) para impedir registros duplicados.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_8">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_8"  onchange="toggleItem('chk_2_8', 2)">
         <div class="item-content">
-          <span class="item-bold">Configuración de Variables de Entorno</span>
-          <span class="item-text">`config.ts` lee `VITE_API_URL` correctamente con fallback local para desarrollo; sin URLs fijas de localhost en build de producción.</span>
+          <span class="item-bold">Gestión Robusta de Sesión y Redirección 401</span>
+          <span class="item-text">Si el token JWT en `localStorage` expira o el backend responde `401 Unauthorized`, el interceptor redirige limpiamente a la pantalla de Login sin parpadeos ni bucles infinitos.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_2_9">
         <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_9"  onchange="toggleItem('chk_2_9', 2)">
         <div class="item-content">
-          <span class="item-bold">Build y Verificación de Tipos</span>
-          <span class="item-text">`npm run build` (`tsc -b && vite build`) compila sin errores ni warnings críticos de TypeScript.</span>
+          <span class="item-bold">Compilación Limpia</span>
+          <span class="item-text">`npm run build` (`tsc -b && vite build`) compila con 0 errores y sin warnings bloqueantes.</span>
         </div>
       </label>
     
@@ -1130,17 +1162,17 @@
     <div class="card-header">
       <div class="card-title-group">
         <span class="card-badge-num">04</span>
-        <h2 class="card-title">04 — Base de Datos (PostgreSQL / Entity Framework Core)</h2>
+        <h2 class="card-title">04 — Base de Datos (PostgreSQL / EF Core Queries)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_3">0 / 8</span>
+        <span class="card-counter" id="counter_3">0 / 9</span>
         <div class="mini-progress-bar">
           <div class="mini-progress-fill" id="progress_3" style="width: 0%"></div>
         </div>
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`optimizing-ef-core-queries` (.NET Foundation / Microsoft).</code></div>
     
 
     <div class="checklist-items">
@@ -1148,39 +1180,39 @@
       <label class="checklist-item " id="label_chk_3_0">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_0"  onchange="toggleItem('chk_3_0', 3)">
         <div class="item-content">
-          <span class="item-bold">Migraciones Versionadas con EF Core</span>
-          <span class="item-text">Todas las modificaciones del esquema (`reparaciones`, `beneficiarios`, `equipos`, `notificaciones`, etc.) se gestionan mediante migraciones ordenadas en `MiCompuEdu.Infrastructure/Migrations`; sin uso de `EnsureCreated()` en producción.</span>
+          <span class="item-bold">Uso Sistemático de `AsNoTracking()`</span>
+          <span class="item-text">Todas las consultas de solo lectura (listados en `GetReparacionesQuery`, `GetBeneficiarioByDniQuery`, `GetDashboardStatsQuery`) utilizan `.AsNoTracking()` para no sobrecargar la memoria con tracking de entidades.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_3_1">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_1"  onchange="toggleItem('chk_3_1', 3)">
         <div class="item-content">
-          <span class="item-bold">Índices Estratégicos de Rendimiento</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Proyecciones Directas (`Select`) vs Entidades Completas</span>
+          <span class="item-text">Se proyecta directamente a DTOs (`.Select(r => new ReparacionDto { ... })`) cargando exclusivamente las columnas necesarias en lugar de traer la fila entera con todas sus relaciones.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_3_2">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_2"  onchange="toggleItem('chk_3_2', 3)">
         <div class="item-content">
-          <span class="item-bold">Integridad Referencial y Cascadas</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Prevención de Problemas N+1 y Explosión Cartesiana</span>
+          <span class="item-text">Inclusiones de relaciones con `Include()` acotadas; uso de `.AsSplitQuery()` en caso de incluir múltiples colecciones hijas para evitar duplicación de filas en memoria.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_3_3">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_3"  onchange="toggleItem('chk_3_3', 3)">
         <div class="item-content">
-          <span class="item-bold">Auditoría Global Inmutable (`audit_log`)</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Sin `SaveChanges` en Bucles</span>
+          <span class="item-text">En procesos de importación masiva (`import-padron.js` o comandos de importación), las entidades se agregan en lote (`AddRange`) y se ejecuta un único `SaveChangesAsync()` al final.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_3_4">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_4"  onchange="toggleItem('chk_3_4', 3)">
         <div class="item-content">
-          <span class="item-bold">Paginación y Filtros en Listados Masivos</span>
+          <span class="item-bold">Cobertura de Índices para Filtros Críticos</span>
           <span class="item-text"></span>
         </div>
       </label>
@@ -1188,24 +1220,32 @@
       <label class="checklist-item " id="label_chk_3_5">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_5"  onchange="toggleItem('chk_3_5', 3)">
         <div class="item-content">
-          <span class="item-bold">Consultas EF Core Optimizadas (N+1)</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Etiquetado de Consultas con `.TagWith()`</span>
+          <span class="item-text">Consultas complejas etiquetadas en código (ej. `.TagWith("BandejaTecnica_ListadoActivo")`) para facilitar el diagnóstico en los logs de PostgreSQL.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_3_6">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_6"  onchange="toggleItem('chk_3_6', 3)">
         <div class="item-content">
-          <span class="item-bold">Sembrado de Datos (Seeding)</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Migraciones Versionadas con EF Core</span>
+          <span class="item-text">Todas las alteraciones de tablas se realizan mediante migraciones en `MiCompuEdu.Infrastructure/Migrations`; prohibido `EnsureCreated()` en producción.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_3_7">
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_7"  onchange="toggleItem('chk_3_7', 3)">
         <div class="item-content">
-          <span class="item-bold">Conexión y Pool Npgsql</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Integridad Referencial Estricta</span>
+          <span class="item-text">Relaciones con `ON DELETE RESTRICT` en entidades principales (`Beneficiario` con `Equipos`, `Equipo` con `Reparaciones`) para prevenir eliminaciones accidentales de historial.</span>
+        </div>
+      </label>
+    
+      <label class="checklist-item " id="label_chk_3_8">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_8"  onchange="toggleItem('chk_3_8', 3)">
+        <div class="item-content">
+          <span class="item-bold">Auditoría Transaccional (`audit_log`)</span>
+          <span class="item-text">Inserción atómica dentro de la misma transacción de los snapshots `JSONB` de cambios críticos.</span>
         </div>
       </label>
     
@@ -1216,17 +1256,17 @@
     <div class="card-header">
       <div class="card-title-group">
         <span class="card-badge-num">05</span>
-        <h2 class="card-title">05 — API RESTful, Controladores y Swagger</h2>
+        <h2 class="card-title">05 — API RESTful, Controladores y Swagger (OWASP API Security)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_4">0 / 6</span>
+        <span class="card-counter" id="counter_4">0 / 5</span>
         <div class="mini-progress-bar">
           <div class="mini-progress-fill" id="progress_4" style="width: 0%"></div>
         </div>
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`owasp-top-10-testing` (API Security 2023: BOLA, Mass Assignment, BFLA).</code></div>
     
 
     <div class="checklist-items">
@@ -1234,7 +1274,7 @@
       <label class="checklist-item " id="label_chk_4_0">
         <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_0"  onchange="toggleItem('chk_4_0', 4)">
         <div class="item-content">
-          <span class="item-bold">Rutas y Verbos HTTP Coherentes</span>
+          <span class="item-bold">Contratos REST Consistentes</span>
           <span class="item-text"></span>
         </div>
       </label>
@@ -1242,7 +1282,7 @@
       <label class="checklist-item " id="label_chk_4_1">
         <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_1"  onchange="toggleItem('chk_4_1', 4)">
         <div class="item-content">
-          <span class="item-bold">Sincronización Frontend ↔ Backend</span>
+          <span class="item-bold">Validación Estricta de Payloads (Anti Mass-Assignment)</span>
           <span class="item-text"></span>
         </div>
       </label>
@@ -1250,32 +1290,24 @@
       <label class="checklist-item " id="label_chk_4_2">
         <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_2"  onchange="toggleItem('chk_4_2', 4)">
         <div class="item-content">
-          <span class="item-bold">Documentación OpenAPI / Swagger</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Sincronización Exacta Frontend ↔ Backend</span>
+          <span class="item-text">Cada llamada HTTP en el cliente React (`config.ts`, `RegistrarIngreso.tsx`, `PanelTecnico.tsx`, etc.) coincide exactamente en verbo, ruta y nombres de propiedades con los endpoints de ASP.NET Core.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_4_3">
         <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_3"  onchange="toggleItem('chk_4_3', 4)">
         <div class="item-content">
-          <span class="item-bold">Contratos de Respuesta Uniformes</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Documentación OpenAPI Vigente</span>
+          <span class="item-text">La especificación Swagger documenta los esquemas de request/response y los esquemas de seguridad Bearer JWT.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_4_4">
         <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_4"  onchange="toggleItem('chk_4_4', 4)">
         <div class="item-content">
-          <span class="item-bold">DTOs de Entrada y Salida</span>
-          <span class="item-text"></span>
-        </div>
-      </label>
-    
-      <label class="checklist-item " id="label_chk_4_5">
-        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_5"  onchange="toggleItem('chk_4_5', 4)">
-        <div class="item-content">
-          <span class="item-bold">Hub de Notificaciones en Tiempo Real (SignalR)</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Protección de Swagger en Producción</span>
+          <span class="item-text">Acceso restringido o deshabilitado en entornos públicos de producción (`!app.Environment.IsDevelopment()`).</span>
         </div>
       </label>
     
@@ -1286,17 +1318,17 @@
     <div class="card-header">
       <div class="card-title-group">
         <span class="card-badge-num">06</span>
-        <h2 class="card-title">06 — Testing y Verificación Automatizada</h2>
+        <h2 class="card-title">06 — Testing y Verificación Automatizada (xUnit)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_5">0 / 5</span>
+        <span class="card-counter" id="counter_5">0 / 6</span>
         <div class="mini-progress-bar">
           <div class="mini-progress-fill" id="progress_5" style="width: 0%"></div>
         </div>
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`dotnet-backend-patterns` (Testing con xUnit & WebApplicationFactory).</code></div>
     
 
     <div class="checklist-items">
@@ -1304,40 +1336,48 @@
       <label class="checklist-item " id="label_chk_5_0">
         <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_0"  onchange="toggleItem('chk_5_0', 5)">
         <div class="item-content">
-          <span class="item-bold">Suite de Pruebas Unitarias (.NET xUnit)</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Tests de Dominio y Lógica Pura</span>
+          <span class="item-text">Pruebas unitarias sobre la lógica de parsing de DNI (`DniParserTests.cs`) con casos borde (formatos nuevos, formatos viejos, caracteres inválidos).</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_5_1">
         <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_1"  onchange="toggleItem('chk_5_1', 5)">
         <div class="item-content">
-          <span class="item-bold">Tests de Integración y Validación de Endpoints</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Tests de Máquina de Estados de Reparaciones</span>
+          <span class="item-text">Pruebas sobre `ReparacionStateTransitionsTests.cs` validando que no se permitan saltos ilegales (ej. de "Ingresado" directo a "Entregado" sin pasar por diagnóstico o resolución).</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_5_2">
         <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_2"  onchange="toggleItem('chk_5_2', 5)">
         <div class="item-content">
-          <span class="item-bold">Aislamiento de Pruebas</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Tests de Permisos y Roles (RBAC)</span>
+          <span class="item-text">Pruebas en `RolePermissionTests.cs` comprobando que roles no autorizados reciban `403 Forbidden` al invocar acciones restringidas.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_5_3">
         <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_3"  onchange="toggleItem('chk_5_3', 5)">
         <div class="item-content">
-          <span class="item-bold">Datos de Prueba Ficticios</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Aislamiento Total de Producción</span>
+          <span class="item-text">Los tests automatizados **nunca** se ejecutan contra bases de datos reales ni realizan llamadas HTTP reales a la API de WhatsApp de Meta.</span>
         </div>
       </label>
     
       <label class="checklist-item " id="label_chk_5_4">
         <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_4"  onchange="toggleItem('chk_5_4', 5)">
         <div class="item-content">
-          <span class="item-bold">Pruebas Manuales Funcionales</span>
-          <span class="item-text"></span>
+          <span class="item-bold">Uso de Base de Datos Efímera / InMemory</span>
+          <span class="item-text">Pruebas de integración (`QueryAndCommandIntegrationTests.cs`) ejecutadas contra base de datos en memoria o Testcontainers desechables.</span>
+        </div>
+      </label>
+    
+      <label class="checklist-item " id="label_chk_5_5">
+        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_5"  onchange="toggleItem('chk_5_5', 5)">
+        <div class="item-content">
+          <span class="item-bold">Datos Personales Ficticios</span>
+          <span class="item-text">Ningún test almacena DNIs, teléfonos ni nombres de beneficiarios reales.</span>
         </div>
       </label>
     
@@ -1655,7 +1695,7 @@
   </div>
 
   <script>
-    let total = 74;
+    let total = 79;
     let checked = 0;
 
     function toggleItem(id, catIdx) {
