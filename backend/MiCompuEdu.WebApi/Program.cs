@@ -233,19 +233,53 @@ using (var scope = app.Services.CreateScope())
                 context.ProgramasEducativos.AddRange(
                     new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Conectar Igualdad", Descripcion = "Programa nacional de distribución de netbooks para educación secundaria.", Activo = true },
                     new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Juana Manso", Descripcion = "Plan federal Juana Manso de conectividad y equipamiento escolar.", Activo = true },
-                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "San Juan Tec", Descripcion = "Iniciativa provincial para el fortalecimiento de habilidades tecnológicas.", Activo = true }
+                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Maestros de América", Descripcion = "Programa Provincial Maestros de América.", Activo = true },
+                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "HP Docentes/Directivos", Descripcion = "Programa de notebooks HP para personal docente y directivo de escuelas.", Activo = true },
+                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Dell Docentes/Directivos", Descripcion = "Programa de notebooks Dell para personal docente y directivo de escuelas.", Activo = true }
                 );
                 context.SaveChanges();
             }
 
-            // Asegurar programas HP Directivos y Dell Directivos
-            if (!context.ProgramasEducativos.Any(p => p.Nombre == "HP Directivos"))
+            // Desactivar San Juan Tec si existe
+            var progSanJuanTec = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "San Juan Tec");
+            if (progSanJuanTec != null && progSanJuanTec.Activo)
             {
-                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "HP Directivos", Descripcion = "Programa de notebooks HP para personal directivo de escuelas.", Activo = true });
+                progSanJuanTec.Activo = false;
             }
-            if (!context.ProgramasEducativos.Any(p => p.Nombre == "Dell Directivos"))
+
+            // Asegurar Maestros de América
+            var progMaestros = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "Maestros de América" || p.Nombre == "Maestros de America");
+            if (progMaestros == null)
             {
-                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Dell Directivos", Descripcion = "Programa de notebooks Dell para personal directivo de escuelas.", Activo = true });
+                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Maestros de América", Descripcion = "Programa Provincial Maestros de América.", Activo = true });
+            }
+            else
+            {
+                progMaestros.Activo = true;
+            }
+
+            // Actualizar o crear HP Docentes/Directivos
+            var progHp = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "HP Directivos" || p.Nombre == "HP Docentes/Directivos");
+            if (progHp == null)
+            {
+                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "HP Docentes/Directivos", Descripcion = "Programa de notebooks HP para personal docente y directivo de escuelas.", Activo = true });
+            }
+            else
+            {
+                progHp.Nombre = "HP Docentes/Directivos";
+                progHp.Activo = true;
+            }
+
+            // Actualizar o crear Dell Docentes/Directivos
+            var progDell = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "Dell Directivos" || p.Nombre == "Dell Docentes/Directivos");
+            if (progDell == null)
+            {
+                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Dell Docentes/Directivos", Descripcion = "Programa de notebooks Dell para personal docente y directivo de escuelas.", Activo = true });
+            }
+            else
+            {
+                progDell.Nombre = "Dell Docentes/Directivos";
+                progDell.Activo = true;
             }
 
             // Renombrar la falla del catálogo
