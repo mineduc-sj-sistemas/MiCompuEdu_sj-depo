@@ -75,35 +75,22 @@ function App() {
             <nav className="space-y-1">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-3 px-3">Menú de Gestión</p>
               
-              {/* Operator Actions */}
+              {/* 1. Registrar Ingreso */}
               {(user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
-                <>
-                  <button
-                    onClick={() => setCurrentPage('ingreso')}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
-                      currentPage === 'ingreso'
-                        ? 'bg-slate-100 text-[#FF8200] font-semibold'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                    }`}
-                  >
-                    <Download className="w-4 h-4 text-current" />
-                    Registrar Ingreso
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage('entrega')}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
-                      currentPage === 'entrega'
-                        ? 'bg-slate-100 text-[#FF8200] font-semibold'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                    }`}
-                  >
-                    <Upload className="w-4 h-4 text-current" />
-                    Entregar Notebook
-                  </button>
-                </>
+                <button
+                  onClick={() => setCurrentPage('ingreso')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                    currentPage === 'ingreso'
+                      ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                >
+                  <Download className="w-4 h-4 text-current" />
+                  Registrar Ingreso
+                </button>
               )}
 
-              {/* Technician Actions */}
+              {/* 2. Soporte y Garantía */}
               {(user.rol === 'Tecnico' || user.rol === 'Supervisor' || user.rol === 'Administrador' || user.rol === 'Operador') && (
                 <button
                   onClick={() => setCurrentPage('diagnostico')}
@@ -115,6 +102,21 @@ function App() {
                 >
                   <Wrench className="w-4 h-4 text-current" />
                   Soporte y Garantía
+                </button>
+              )}
+
+              {/* 3. Entregar Notebook */}
+              {(user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
+                <button
+                  onClick={() => setCurrentPage('entrega')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                    currentPage === 'entrega'
+                      ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                >
+                  <Upload className="w-4 h-4 text-current" />
+                  Entregar Notebook
                 </button>
               )}
 

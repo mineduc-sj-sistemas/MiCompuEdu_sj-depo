@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Reparacion } from '../../types';
 import { API_BASE_URL } from '../../config';
-import { Search, RefreshCw, Laptop, User, MapPin, AlertTriangle, Check, Loader2, X } from 'lucide-react';
+import { Search, RefreshCw, Laptop, User, MapPin, AlertTriangle, Check, Loader2, X, Calendar } from 'lucide-react';
 
 
 import { imprimirComprobante } from '../../utils/printHelpers';
@@ -12,10 +12,13 @@ interface EntregaNotebookProps {
   nombreOperador: string;
 }
 
+type FiltroTiempo = 'todos' | 'dia' | 'semana' | 'mes';
+
 export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token, nombreOperador }) => {
   const [repairs, setRepairs] = useState<Reparacion[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filtroTiempo, setFiltroTiempo] = useState<FiltroTiempo>('todos');
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
   const [selectedRepair, setSelectedRepair] = useState<Reparacion | null>(null);
 
@@ -105,10 +108,31 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token, nombreO
 
   useEffect(() => { fetchRepairsToDeliver(); }, [token]);
 
-  const filteredRepairs = repairs.filter(r =>
-    r.numeroSerie.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.nombreTutor.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const sevenDaysAgo = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+  const thirtyDaysAgo = now.getTime() - 30 * 24 * 60 * 60 * 1000;
+
+  const countDia = repairs.filter(r => new Date(r.fechaIngreso).getTime() >= startOfToday).length;
+  const countSemana = repairs.filter(r => new Date(r.fechaIngreso).getTime() >= sevenDaysAgo).length;
+  const countMes = repairs.filter(r => new Date(r.fechaIngreso).getTime() >= thirtyDaysAgo).length;
+
+  const filteredRepairs = repairs.filter(r => {
+    const matchesSearch =
+      r.numeroSerie.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.nombreTutor.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!matchesSearch) return false;
+
+    if (filtroTiempo === 'todos') return true;
+    const itemTime = new Date(r.fechaIngreso).getTime();
+    if (isNaN(itemTime)) return true;
+
+    if (filtroTiempo === 'dia') return itemTime >= startOfToday;
+    if (filtroTiempo === 'semana') return itemTime >= sevenDaysAgo;
+    if (filtroTiempo === 'mes') return itemTime >= thirtyDaysAgo;
+
+    return true;
+  });
 
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
@@ -151,6 +175,77 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token, nombreO
           </button>
         </div>
 
+        {/* Filtros por tiempo: Día, Semana, Mes, Todos */}
+        <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-100">
+          <span className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 mr-1">
+            <Calendar className="w-3.5 h-3.5 text-slate-400" /> Tiempo:
+          </span>
+          <button
+            type="button"
+            onClick={() => setFiltroTiempo('todos')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+              filtroTiempo === 'todos'
+                ? 'bg-[#FF8200] text-white shadow-sm font-semibold'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Todos
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+              filtroTiempo === 'todos' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+            }`}>
+              {repairs.length}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroTiempo('dia')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+              filtroTiempo === 'dia'
+                ? 'bg-[#FF8200] text-white shadow-sm font-semibold'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Hoy / Día
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+              filtroTiempo === 'dia' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+            }`}>
+              {countDia}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroTiempo('semana')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+              filtroTiempo === 'semana'
+                ? 'bg-[#FF8200] text-white shadow-sm font-semibold'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Esta Semana
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+              filtroTiempo === 'semana' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+            }`}>
+              {countSemana}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroTiempo('mes')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+              filtroTiempo === 'mes'
+                ? 'bg-[#FF8200] text-white shadow-sm font-semibold'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Este Mes
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+              filtroTiempo === 'mes' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+            }`}>
+              {countMes}
+            </span>
+          </button>
+        </div>
+
         {loading ? (
           <div className="text-center py-12">
             <Loader2 className="w-8 h-8 border-[#FF8200] animate-spin mx-auto text-[#FF8200]" />
@@ -159,7 +254,7 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token, nombreO
         ) : filteredRepairs.length === 0 ? (
           <div className="text-center py-12 bg-slate-50 rounded-lg border border-slate-100">
             <Laptop className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-            <p className="text-slate-400 text-sm">No hay equipos listos para retirar.</p>
+            <p className="text-slate-400 text-sm">No hay equipos que coincidan con los filtros seleccionados.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -174,6 +269,9 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token, nombreO
                         : 'bg-red-50 border-red-100 text-[#E03C31]'
                     }`}>
                       {repair.estado === 'Listo_Para_Retirar' ? 'Reparado — Listo' : 'No Reparable'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                      Ingreso: {new Date(repair.fechaIngreso).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0.5 text-xs text-slate-500">
