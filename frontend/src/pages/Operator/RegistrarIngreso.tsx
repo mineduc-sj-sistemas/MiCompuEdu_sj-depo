@@ -321,7 +321,10 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         nuevoEquipoNumeroSerie: registrarNuevoEquipo ? customSerial : null,
         nuevoEquipoMarca: registrarNuevoEquipo ? customMarca : null,
         nuevoEquipoModelo: registrarNuevoEquipo ? customModelo : null,
-        nuevoEquipoCredencialesOffice: registrarNuevoEquipo ? customCredencialesOffice : null
+        nuevoEquipoCredencialesOffice: registrarNuevoEquipo ? customCredencialesOffice : null,
+        tutorNombre: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.nombreTutor || '') : null,
+        tutorDni: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.dniTutor || '') : null,
+        tutorTelefono: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.telefonoTutor || beneficiario!.telefono || '') : null
       };
 
       const response = await fetch(endpoint, {
@@ -775,6 +778,54 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                     <span className="text-slate-400">Email</span>
                     <span className="font-medium text-slate-900 flex items-center gap-1"><Mail className="w-3 h-3 text-slate-400" />{beneficiario.email}</span>
                   </div>
+
+                  {(beneficiario.tipoBeneficiario ?? 1) === 1 && (
+                    <div className="border-t border-slate-200 pt-3 mt-3 space-y-2.5 animate-fade-in">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Datos del Tutor Responsable</p>
+                        {(!beneficiario.nombreTutor || !beneficiario.dniTutor) && (
+                          <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold">
+                            Obligatorio
+                          </span>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 mb-1">Nombre y Apellido del Tutor *</label>
+                        <input
+                          required
+                          type="text"
+                          placeholder="Ingrese nombre completo del tutor"
+                          value={beneficiario.nombreTutor || ''}
+                          onChange={(e) => setBeneficiario({ ...beneficiario, nombreTutor: e.target.value })}
+                          className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-slate-500 mb-1">DNI del Tutor *</label>
+                          <input
+                            required
+                            type="text"
+                            placeholder="DNI del tutor"
+                            value={beneficiario.dniTutor || ''}
+                            onChange={(e) => setBeneficiario({ ...beneficiario, dniTutor: e.target.value })}
+                            className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-slate-500 mb-1">Teléfono del Tutor *</label>
+                          <input
+                            required
+                            type="text"
+                            placeholder="Teléfono de contacto"
+                            value={beneficiario.telefonoTutor ?? beneficiario.telefono ?? ''}
+                            onChange={(e) => setBeneficiario({ ...beneficiario, telefonoTutor: e.target.value })}
+                            className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
