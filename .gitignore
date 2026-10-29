@@ -1,0 +1,86 @@
+## ====================================================================
+## .NET / C# (Backend)
+## ====================================================================
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+TestResults/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Publish output
+[Pp]ublish/
+
+# Compilados y binarios
+*.exe
+*.dll
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+
+## ====================================================================
+## Node / Frontend (React + Vite + TypeScript)
+## ====================================================================
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+dist-ssr/
+*.local
+.eslintcache
+.stylelintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+## ====================================================================
+## Variables de Entorno y Secretos
+## ====================================================================
+.env
+.env.local
+.env.*.local
+!.env.example
+
+## ====================================================================
+## IDEs y Editores
+## ====================================================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+## ====================================================================
+## Sistema Operativo
+## ====================================================================
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+## ====================================================================
+## Runtime Data, Uploads y Comprobantes generados
+## ====================================================================
+backend/MiCompuEdu.WebApi/App_Data/comprobantes/*.pdf
+backend/MiCompuEdu.WebApi/wwwroot/comprobantes/*.pdf
+backend/MiCompuEdu.WebApi/wwwroot/uploads/evidencias/*
+!backend/MiCompuEdu.WebApi/wwwroot/uploads/evidencias/.gitkeep
