@@ -28,7 +28,7 @@
       padding-bottom: 60px;
     }
 
-    /* Barra Superior de Herramientas */
+    /* Barra Superior */
     .top-action-bar {
       position: sticky;
       top: 0;
@@ -76,20 +76,14 @@
       align-items: center;
       gap: 6px;
     }
-    .btn-primary {
-      background: var(--gov-orange);
-      color: white;
-    }
+    .btn-primary { background: var(--gov-orange); color: white; }
     .btn-primary:hover { background: var(--gov-orange-dark); }
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
-    }
+    .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; }
     .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
 
-    /* Contenedor Principal Hoja A4 */
+    /* Contenedor Principal */
     .sheet-container {
-      max-width: 1000px;
+      max-width: 1060px;
       margin: 30px auto;
       background: white;
       border-radius: 12px;
@@ -160,7 +154,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .kpi-card {
       background: white;
@@ -173,6 +167,7 @@
     .kpi-card.kpi-orange { border-top-color: var(--gov-orange); }
     .kpi-card.kpi-green { border-top-color: var(--gov-success); }
     .kpi-card.kpi-blue { border-top-color: var(--gov-blue); }
+    .kpi-card.kpi-red { border-top-color: var(--gov-danger); }
     
     .kpi-number {
       font-size: 28px;
@@ -187,13 +182,13 @@
       margin-top: 4px;
     }
 
-    /* Barra de Progreso Global */
+    /* Barra de Progreso */
     .progress-section {
       background: var(--gov-light);
       border: 1px solid var(--gov-border);
       border-radius: 8px;
       padding: 16px 20px;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
     }
     .progress-info {
       display: flex;
@@ -214,7 +209,117 @@
       transition: width 0.3s ease;
     }
 
-    /* Filtros Rápidos */
+    /* SECCIÓN DE ALERTA DE COMPLEJIDAD Y LOC (NUEVA) */
+    .complexity-alert-section {
+      background: #FFFDF5;
+      border: 2px solid #FCD34D;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 34px;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);
+      page-break-inside: avoid;
+    }
+    .alert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #FDE68A;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .alert-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .alert-title-wrap h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #92400E;
+    }
+    .alert-badge {
+      background: #FEF3C7;
+      color: #B45309;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .alert-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .mini-alert-card {
+      background: white;
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 5px solid #F59E0B;
+    }
+    .mini-alert-card.alert-danger {
+      border-left-color: #EF4444;
+      background: #FEF2F2;
+      border-color: #FECACA;
+    }
+    .mini-alert-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gov-dark);
+      margin-bottom: 6px;
+    }
+    .mini-alert-card p {
+      font-size: 12px;
+      color: #475569;
+      line-height: 1.4;
+    }
+
+    /* Tablas de Complejidad */
+    .loc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: white;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 10px;
+      border: 1px solid var(--gov-border);
+    }
+    .loc-table th {
+      background: #F8FAFC;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 800;
+      color: #475569;
+      border-bottom: 1px solid var(--gov-border);
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    .loc-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #F1F5F9;
+      vertical-align: middle;
+    }
+    .loc-table tr:last-child td { border-bottom: none; }
+    .table-subtext { font-size: 10px; color: #94A3B8; }
+    .table-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .badge-danger { background: #FEE2E2; color: #991B1B; }
+    .badge-warning { background: #FEF3C7; color: #92400E; }
+    .badge-info { background: #E0E7FF; color: #3730A3; }
+    .badge-success { background: #D1FAE5; color: #065F46; }
+    .table-action-note { font-size: 11px; color: #64748B; font-style: italic; }
+
+    /* Filtros */
     .filter-bar {
       display: flex;
       gap: 10px;
@@ -239,7 +344,7 @@
       border-color: var(--gov-dark);
     }
 
-    /* Tarjetas de Área / Checklists */
+    /* Tarjetas de Área */
     .card-area {
       background: white;
       border: 1px solid var(--gov-border);
@@ -310,11 +415,23 @@
       border-radius: 4px;
       font-weight: 700;
     }
+    .card-warning-banner {
+      padding: 10px 20px;
+      background: #FEF2F2;
+      border-bottom: 1px solid #FECACA;
+      font-size: 12px;
+      color: #991B1B;
+      line-height: 1.4;
+    }
+    .card-warning-banner code {
+      background: #FEE2E2;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
 
     /* Ítems del Checklist */
-    .checklist-items {
-      padding: 8px 0;
-    }
+    .checklist-items { padding: 8px 0; }
     .checklist-item {
       display: flex;
       align-items: flex-start;
@@ -325,9 +442,7 @@
       transition: background 0.15s ease;
     }
     .checklist-item:last-child { border-bottom: none; }
-    .checklist-item:hover {
-      background: #F8FAFC;
-    }
+    .checklist-item:hover { background: #F8FAFC; }
     .chk-item {
       margin-top: 3px;
       width: 17px;
@@ -335,11 +450,7 @@
       cursor: pointer;
       accent-color: var(--gov-orange);
     }
-    .item-content {
-      flex: 1;
-      font-size: 13px;
-      color: #334155;
-    }
+    .item-content { flex: 1; font-size: 13px; color: #334155; }
     .item-bold {
       font-weight: 800;
       color: var(--gov-dark);
@@ -351,12 +462,8 @@
       margin-left: 6px;
       color: var(--gov-orange);
     }
-    .checklist-item.item-checked .item-content {
-      color: #64748B;
-    }
-    .checklist-item.item-checked .item-bold {
-      color: var(--gov-success);
-    }
+    .checklist-item.item-checked .item-content { color: #64748B; }
+    .checklist-item.item-checked .item-bold { color: var(--gov-success); }
 
     /* Firmas */
     .signature-grid {
@@ -368,44 +475,21 @@
       border-top: 1px solid var(--gov-border);
       page-break-inside: avoid;
     }
-    .sig-box {
-      text-align: center;
-    }
+    .sig-box { text-align: center; }
     .sig-line {
       border-top: 1px solid #94A3B8;
       width: 80%;
       margin: 0 auto 8px auto;
     }
-    .sig-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--gov-dark);
-    }
-    .sig-sub {
-      font-size: 11px;
-      color: var(--gov-gray);
-    }
+    .sig-title { font-size: 12px; font-weight: 800; color: var(--gov-dark); }
+    .sig-sub { font-size: 11px; color: var(--gov-gray); }
 
     /* Impresión A4 */
     @media print {
-      body {
-        background: white;
-        padding: 0;
-      }
-      .top-action-bar, .filter-bar {
-        display: none !important;
-      }
-      .sheet-container {
-        box-shadow: none;
-        border: none;
-        padding: 0;
-        margin: 0;
-        max-width: 100%;
-      }
-      .card-area {
-        page-break-inside: avoid;
-        border: 1px solid #CBD5E1;
-      }
+      body { background: white; padding: 0; }
+      .top-action-bar, .filter-bar { display: none !important; }
+      .sheet-container { box-shadow: none; border: none; padding: 0; margin: 0; max-width: 100%; }
+      .card-area, .complexity-alert-section { page-break-inside: avoid; border: 1px solid #CBD5E1; }
     }
   </style>
 </head>
@@ -451,7 +535,7 @@
       </div>
       <div>
         <div class="meta-label">Alcance Evaluado:</div>
-        <div class="meta-val">10 Áreas de Control</div>
+        <div class="meta-val">10 Áreas de Control + LOC</div>
       </div>
     </div>
 
@@ -465,9 +549,9 @@
         <div class="kpi-number" id="kpiChecked">0</div>
         <div class="kpi-label">Cumplidos</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-number" id="kpiPending">74</div>
-        <div class="kpi-label">Pendientes / En Revisión</div>
+      <div class="kpi-card kpi-red">
+        <div class="kpi-number">4</div>
+        <div class="kpi-label">Vistas Monolíticas (>500 lín)</div>
       </div>
       <div class="kpi-card kpi-blue">
         <div class="kpi-number" id="kpiPercent">0.0%</div>
@@ -484,6 +568,235 @@
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="mainProgressBar" style="width: 0.0%;"></div>
       </div>
+    </div>
+
+    <!-- SECCIÓN DE DIAGNÓSTICO EN TIEMPO REAL: COMPLEJIDAD Y LOC -->
+    <div class="complexity-alert-section">
+      <div class="alert-header">
+        <div class="alert-title-wrap">
+          <span style="font-size: 20px;">🔬</span>
+          <h3>Diagnóstico de Código: Complejidad, Líneas (LOC) y Clean Architecture</h3>
+        </div>
+        <span class="alert-badge">Auditoría Estática Automática</span>
+      </div>
+
+      <div class="alert-cards-grid">
+        <div class="mini-alert-card alert-danger">
+          <h4>🎨 Frontend: 4 Vistas Superan el Límite (>500 lín)</h4>
+          <p>
+            Las vistas que exceden las 500 líneas acumulan múltiples responsabilidades (formularios, scanners, modals y firmas).
+            <strong>Acción requerida:</strong> Descomponer en subcomponentes / partials dentro de <code>components/</code> o extraer hooks de estado.
+          </p>
+        </div>
+
+        <div class="mini-alert-card alert-danger">
+          <h4>⚙️ Backend: Controladores Pesados y By-pass de MediatR</h4>
+          <p>
+            <strong>1 controlador(es)</strong> superan las 200 líneas recomendadas (<code>ReparacionesController.cs</code>: 339 lín).
+            Además, <strong>5 controlador(es)</strong> inyectan <code>DbContext</code> directamente violando Clean Architecture.
+          </p>
+        </div>
+      </div>
+
+      <!-- Detalle Frontend -->
+      <details style="margin-bottom: 14px;" open>
+        <summary style="font-size: 13px; font-weight: 800; cursor: pointer; color: var(--gov-dark); padding: 4px 0;">
+          ▶ Ranking de Líneas en Páginas Frontend (Umbral: 500 lín)
+        </summary>
+        <table class="loc-table">
+          <thead>
+            <tr>
+              <th>Página / Componente</th>
+              <th style="text-align: right;">Líneas</th>
+              <th>Diagnóstico</th>
+              <th>Acción Sugerida</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+    <tr>
+      <td><strong>PanelTecnico.tsx</strong><br><span class="table-subtext">frontend/src/pages/Technician/PanelTecnico.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">1100</td>
+      <td><span class="table-badge badge-danger">🔴 Monolito Crítico (>800 lín)</span></td>
+      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
+    </tr>
+  
+    <tr>
+      <td><strong>RegistrarIngreso.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/RegistrarIngreso.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">1095</td>
+      <td><span class="table-badge badge-danger">🔴 Monolito Crítico (>800 lín)</span></td>
+      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
+    </tr>
+  
+    <tr>
+      <td><strong>Dashboard.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/Dashboard.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">624</td>
+      <td><span class="table-badge badge-warning">🟡 Monolito / Pesada (>500 lín)</span></td>
+      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
+    </tr>
+  
+    <tr>
+      <td><strong>EntregaNotebook.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/EntregaNotebook.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">545</td>
+      <td><span class="table-badge badge-warning">🟡 Monolito / Pesada (>500 lín)</span></td>
+      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
+    </tr>
+  
+    <tr>
+      <td><strong>ImportarPadron.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/ImportarPadron.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">395</td>
+      <td><span class="table-badge badge-info">🔵 Moderada (300-500 lín)</span></td>
+      <td class="table-action-note">Estructura dentro de límites óptimos</td>
+    </tr>
+  
+    <tr>
+      <td><strong>GestionUsuarios.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/GestionUsuarios.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">311</td>
+      <td><span class="table-badge badge-info">🔵 Moderada (300-500 lín)</span></td>
+      <td class="table-action-note">Estructura dentro de límites óptimos</td>
+    </tr>
+  
+    <tr>
+      <td><strong>FirmaRemota.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/FirmaRemota.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">203</td>
+      <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
+      <td class="table-action-note">Estructura dentro de límites óptimos</td>
+    </tr>
+  
+    <tr>
+      <td><strong>ConsultaPublica.tsx</strong><br><span class="table-subtext">frontend/src/pages/ConsultaPublica.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">193</td>
+      <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
+      <td class="table-action-note">Estructura dentro de límites óptimos</td>
+    </tr>
+  
+    <tr>
+      <td><strong>Login.tsx</strong><br><span class="table-subtext">frontend/src/pages/Login.tsx</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">175</td>
+      <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
+      <td class="table-action-note">Estructura dentro de límites óptimos</td>
+    </tr>
+  
+          </tbody>
+        </table>
+      </details>
+
+      <!-- Detalle Backend -->
+      <details>
+        <summary style="font-size: 13px; font-weight: 800; cursor: pointer; color: var(--gov-dark); padding: 4px 0;">
+          ▶ Ranking de Controladores WebApi (Umbral: 200 lín / DbContext)
+        </summary>
+        <table class="loc-table">
+          <thead>
+            <tr>
+              <th>Controlador</th>
+              <th style="text-align: right;">Líneas</th>
+              <th style="text-align: center;">Inyecta DbContext</th>
+              <th>Diagnóstico</th>
+              <th>Acción Sugerida</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+    <tr>
+      <td><strong>ReparacionesController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ReparacionesController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">339</td>
+      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
+      <td><span class="table-badge badge-danger">🔴 Controlador Muy Pesado (>300 lín)</span></td>
+      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
+    </tr>
+  
+    <tr>
+      <td><strong>FirmaRemotaController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/FirmaRemotaController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">182</td>
+      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
+    </tr>
+  
+    <tr>
+      <td><strong>AuthController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/AuthController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">101</td>
+      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
+    </tr>
+  
+    <tr>
+      <td><strong>UsuariosController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/UsuariosController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">87</td>
+      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Controlador delgado adecuado</td>
+    </tr>
+  
+    <tr>
+      <td><strong>CleanupEscuelasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/CleanupEscuelasController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">52</td>
+      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
+    </tr>
+  
+    <tr>
+      <td><strong>AuditoriaController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/AuditoriaController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">47</td>
+      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
+    </tr>
+  
+    <tr>
+      <td><strong>ImportacionController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ImportacionController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">46</td>
+      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Controlador delgado adecuado</td>
+    </tr>
+  
+    <tr>
+      <td><strong>EscuelasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/EscuelasController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">40</td>
+      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Controlador delgado adecuado</td>
+    </tr>
+  
+    <tr>
+      <td><strong>BeneficiariosController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/BeneficiariosController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">38</td>
+      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Controlador delgado adecuado</td>
+    </tr>
+  
+    <tr>
+      <td><strong>UbicacionesController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/UbicacionesController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">33</td>
+      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Controlador delgado adecuado</td>
+    </tr>
+  
+    <tr>
+      <td><strong>DashboardController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/DashboardController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">32</td>
+      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Controlador delgado adecuado</td>
+    </tr>
+  
+    <tr>
+      <td><strong>ProgramasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ProgramasController.cs</span></td>
+      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">32</td>
+      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
+      <td class="table-action-note">Controlador delgado adecuado</td>
+    </tr>
+  
+          </tbody>
+        </table>
+      </details>
     </div>
 
     <!-- Filtros de Navegación -->
@@ -511,6 +824,7 @@
     </div>
 
     <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`security-review` (OWASP Top 10, CWE).</code></div>
+    
 
     <div class="checklist-items">
   
@@ -611,6 +925,13 @@
       </div>
     </div>
 
+    
+    
+      <div class="card-warning-banner">
+        ⚠️ <strong>Alerta de Auditoría Activa:</strong> 
+        <strong>ReparacionesController.cs (339 lín)</strong> supera las 200 líneas. 
+        <br>❌ <strong>Infracción Clean Architecture:</strong> 5 controlador(es) inyectan <code>DbContext</code> directamente en lugar de usar MediatR (<code>ReparacionesController.cs, FirmaRemotaController.cs, AuthController.cs, CleanupEscuelasController.cs, AuditoriaController.cs</code>).
+      </div>
     
 
     <div class="checklist-items">
@@ -713,6 +1034,12 @@
     </div>
 
     
+    
+      <div class="card-warning-banner">
+        ⚠️ <strong>Alerta de Auditoría Activa:</strong> Se detectaron <strong>4 vistas monolíticas</strong> que superan el límite de 500 líneas:
+        <code>PanelTecnico.tsx (1100 lín), RegistrarIngreso.tsx (1095 lín), Dashboard.tsx (624 lín), EntregaNotebook.tsx (545 lín)</code>. Requieren extracción a partials en <code>components/</code>.
+      </div>
+    
 
     <div class="checklist-items">
   
@@ -814,6 +1141,7 @@
     </div>
 
     
+    
 
     <div class="checklist-items">
   
@@ -899,6 +1227,7 @@
     </div>
 
     
+    
 
     <div class="checklist-items">
   
@@ -968,6 +1297,7 @@
     </div>
 
     
+    
 
     <div class="checklist-items">
   
@@ -1028,6 +1358,7 @@
       </div>
     </div>
 
+    
     
 
     <div class="checklist-items">
@@ -1097,6 +1428,7 @@
       </div>
     </div>
 
+    
     
 
     <div class="checklist-items">
@@ -1183,6 +1515,7 @@
     </div>
 
     <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`conventional-commit`.</code></div>
+    
 
     <div class="checklist-items">
   
@@ -1243,6 +1576,7 @@
       </div>
     </div>
 
+    
     
 
     <div class="checklist-items">
@@ -1378,6 +1712,8 @@
                    "• Puntos de Control: " + total + "\n" +
                    "• Cumplidos: " + checked + "\n" +
                    "• Pendientes: " + (total - checked) + "\n" +
+                   "• Vistas Monolíticas (>500 lín): 4\n" +
+                   "• Infracciones DbContext en Controllers: 5\n" +
                    "• Nivel de Conformidad: " + pct + "\n" +
                    "Generado: " + new Date().toLocaleDateString();
       navigator.clipboard.writeText(text).then(() => {
