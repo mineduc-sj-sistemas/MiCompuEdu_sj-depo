@@ -84,3 +84,11 @@ backend/MiCompuEdu.WebApi/App_Data/comprobantes/*.pdf
 backend/MiCompuEdu.WebApi/wwwroot/comprobantes/*.pdf
 backend/MiCompuEdu.WebApi/wwwroot/uploads/evidencias/*
 !backend/MiCompuEdu.WebApi/wwwroot/uploads/evidencias/.gitkeep
+
+## ====================================================================
+## QA Interno / Herramientas Privadas del Auditor
+## ====================================================================
+qa/plantillas/
+qa/scripts/
+qa/skills/
+qa-plantilla/

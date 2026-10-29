@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe Ejecutivo de Despliegue, Vistas y Deuda Técnica</title>
+  <style>
+    :root {
+      --primary: #0f3d64;
+      --primary-dark: #0a2942;
+      --primary-light: #e8f1f8;
+      --accent: #d9531e;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --success-border: #86efac;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --warning-border: #fcd34d;
+      --info: #0369a1;
+      --info-bg: #e0f2fe;
+      --info-border: #7dd3fc;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background-color: var(--bg-page);
+      line-height: 1.55;
+      font-size: 13.5px;
+      padding-bottom: 50px;
+    }
+
+    /* Barra superior interactiva */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .toolbar-title {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toolbar-actions { display: flex; gap: 12px; }
+    .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background-color: var(--primary); color: #ffffff; }
+    .btn-primary:hover { background-color: var(--primary-dark); }
+    .btn-secondary { background-color: #ffffff; border-color: var(--border); color: var(--text); }
+    .btn-secondary:hover { background-color: var(--bg-page); }
+
+    /* Contenedor principal de documento */
+    .document-container {
+      max-width: 1000px;
+      margin: 24px auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      padding: 40px 48px;
+    }
+
+    /* Encabezado Oficial */
+    .header-official {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+    .header-logo {
+      max-height: 58px;
+      max-width: 240px;
+      object-fit: contain;
+    }
+    .header-titles { text-align: right; }
+    .header-gov {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .header-subgov { font-size: 13px; font-weight: 800; color: var(--primary); }
+    .header-dept { font-size: 11px; color: var(--text-muted); }
+
+    /* Títulos */
+    .report-title-section { margin-bottom: 20px; }
+    .report-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .report-subtitle { font-size: 13px; color: var(--text-muted); }
+
+    /* Metadatos */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      background: var(--primary-light);
+      border: 1px solid #c7ddec;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 26px;
+    }
+    .meta-item { display: flex; font-size: 12.5px; }
+    .meta-label { font-weight: 700; color: var(--primary); min-width: 130px; }
+    .meta-value { color: var(--text); }
+
+    /* KPIs */
+    .kpi-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #ffffff;
+      text-align: center;
+    }
+    .kpi-card.kpi-highlight {
+      border-color: var(--warning-border);
+      background: var(--warning-bg);
+    }
+    .kpi-card.kpi-success {
+      border-color: var(--success-border);
+      background: var(--success-bg);
+    }
+    .kpi-val {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      color: var(--primary);
+    }
+    .kpi-card.kpi-success .kpi-val { color: var(--success); }
+    .kpi-card.kpi-highlight .kpi-val { color: var(--warning); font-size: 18px; padding-top: 3px; }
+    .kpi-lbl {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Secciones */
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+      border-left: 4px solid var(--primary);
+      padding-left: 10px;
+      margin: 28px 0 14px 0;
+      page-break-after: avoid;
+    }
+    .section-subtitle {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 18px 0 8px 0;
+      page-break-after: avoid;
+    }
+    .paragraph {
+      margin-bottom: 10px;
+      color: #334155;
+    }
+
+    /* Tablas de datos */
+    .table-responsive {
+      margin: 14px 0 20px 0;
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      background: #ffffff;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    .data-table th {
+      background-color: #f1f5f9;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .data-table tr:nth-child(even) { background-color: #f8fafc; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border); }
+    .badge-info { background: var(--info-bg); color: var(--info); border: 1px solid var(--info-border); }
+    .badge-neutral { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+    /* Listas */
+    .bullet-list, .ordered-list {
+      margin: 8px 0 16px 24px;
+      color: #334155;
+    }
+    .bullet-list li, .ordered-list li {
+      margin-bottom: 6px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11.5px;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: #0f172a;
+    }
+
+    /* Firmas */
+    .signatures-section {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 2px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      page-break-inside: avoid;
+    }
+    .sig-block { text-align: center; padding: 0 10px; }
+    .sig-line { border-top: 1px solid #475569; margin-top: 45px; margin-bottom: 6px; }
+    .sig-role { font-weight: 700; font-size: 12px; color: var(--primary); }
+    .sig-dept { font-size: 11px; color: var(--text-muted); }
+
+    /* Reglas para Impresión A4 / PDF */
+    @media print {
+      body { background-color: #ffffff; font-size: 11px; padding-bottom: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .toolbar { display: none !important; }
+      .document-container { border: none; box-shadow: none; max-width: 100%; margin: 0; padding: 0; }
+      @page { size: A4 portrait; margin: 12mm 10mm 12mm 10mm; }
+      .data-table th, .data-table td { padding: 5px 8px; font-size: 10.5px; }
+      .section-title { font-size: 13.5px; margin: 20px 0 10px 0; }
+      .kpi-container { gap: 8px; }
+      .kpi-card { padding: 6px 8px; }
+      .kpi-val { font-size: 18px; }
+      .signatures-section { margin-top: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Herramientas Superior -->
+  <div class="toolbar">
+    <div class="toolbar-title">
+      <span>🚀</span>
+      <span>Informe Ejecutivo de Despliegue y Estado de Vistas</span>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn btn-secondary" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">
+        ✍️ Ir a Firmas
+      </button>
+      <button class="btn btn-primary" onclick="window.print()">
+        🖨️ Imprimir / Guardar en PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="document-container">
+
+    <!-- Encabezado Oficial -->
+    <header class="header-official">
+      <div>
+        <img src="data:image/png;base64,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" alt="Ministerio de Educación - San Juan" class="header-logo">
+      </div>
+      <div class="header-titles">
+        <div class="header-gov">Gobierno de San Juan</div>
+        <div class="header-subgov">Ministerio de Educación - Área de Sistemas</div>
+        <div class="header-dept">Sistema Integral de Asignaciones Familiares</div>
+      </div>
+    </header>
+
+    <!-- Título y Subtítulo -->
+    <div class="report-title-section">
+      <h1 class="report-title">Informe Ejecutivo de Despliegue y Avance de Vistas</h1>
+      <div class="report-subtitle">Resumen de entrega a autoridades: qué se subió, estado del flujo operativo y control de riesgos</div>
+    </div>
+
+    <!-- Metadatos de Despliegue -->
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Para:</span>
+        <span class="meta-value">Autoridades Ministeriales · Encargados y Jefatura de Sistemas</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Fecha de Emisión:</span>
+        <span class="meta-value">2026-10-29</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">De:</span>
+        <span class="meta-value">Equipo de QA / Seguimiento y Desarrollo</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Rama / Commit:</span>
+        <span class="meta-value"><code>correciones</code> (<code>6e9733f</code>)</span>
+      </div>
+      <div class="meta-item" style="grid-column: span 2;">
+        <span class="meta-label">Entorno Desplegado:</span>
+        <span class="meta-value">Servidor de Pruebas Institucional (<code>http://10.2.133.230:8080/dashboard</code>)</span>
+      </div>
+    </div>
+
+    <!-- Dashboard / KPIs Ejecutivos -->
+    <div class="kpi-container">
+      <div class="kpi-card kpi-highlight">
+        <div class="kpi-val">🟡 GO CONTROLADO</div>
+        <div class="kpi-lbl">Veredicto Operativo</div>
+      </div>
+      <div class="kpi-card kpi-success">
+        <div class="kpi-val">100%</div>
+        <div class="kpi-lbl">Flujo Solicitante</div>
+      </div>
+      <div class="kpi-card kpi-success">
+        <div class="kpi-val">6 / 6 Vistas</div>
+        <div class="kpi-lbl">Vistas Aprobadas Fase 1</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val">37 Ítems</div>
+        <div class="kpi-lbl">Feedback Resuelto</div>
+      </div>
+    </div>
+
+    <!-- Cuerpo Parseado del Informe -->
+    <p class="paragraph"><strong>De:</strong> Equipo de QA / Seguimiento y Desarrollo  </p>
+<p class="paragraph"><strong>Fecha:</strong> AAAA-MM-DD  </p>
+<p class="paragraph"><strong>Rama / Versión:</strong> <code>[nombre-rama]</code> (commit <code>[hash]</code>)  </p>
+<p class="paragraph"><strong>Entorno Desplegado:</strong> Servidor Institucional (<code>http://[ip-o-dominio]</code>)  </p>
+<p class="paragraph"><strong>Objetivo:</strong> Informar qué se subió en el último despliegue, el mapa de avance del flujo y vistas aprobadas, el semáforo operativo y la deuda técnica gestionada para control de las autoridades.</p>
+<p class="paragraph">---</p>
+<h2 class="section-title">1. Resumen Ejecutivo: ¿Qué se subió en este despliegue?</h2>
+<p class="paragraph">En este despliegue se consolidaron las siguientes entregas y funcionalidades:</p>
+<ol class="ordered-list">
+<li><strong>[Módulo Principal / Frontend]:</strong></li>
+</ol>
+<ul class="bullet-list">
+<li>[Detalle de funcionalidad o correcciones desplegadas]</li>
+<li>[Segundo detalle]</li>
+</ul>
+<ol class="ordered-list">
+<li><strong>[Backend / Servicios / APIs]:</strong></li>
+</ol>
+<ul class="bullet-list">
+<li>[Integraciones de servicios, APIs o base de datos]</li>
+</ul>
+<p class="paragraph">---</p>
+<h2 class="section-title">2. Mapa Integral del Flujo y Estado de Vistas: ¿Por dónde vamos?</h2>
+<div class="table-responsive"><table class="data-table">
+<thead><tr><th>Fase</th><th>Vista / Módulo</th><th>Ruta / Componente</th><th>Estado</th><th>Situación Operativa</th></tr></thead><tbody>
+<tr><td><strong>Acceso</strong></td><td>Login Institucional</td><td><code>/login</code></td><td><span class="badge badge-warning">⚡ OPERATIVO</span></td><td>[Detalle del estado de autenticación]</td></tr>
+<tr><td><strong>Fase 1: [Nombre]</strong></td><td>[Vista Principal]</td><td><code>/[ruta]</code></td><td><span class="badge badge-success">✓ APROBADO</span></td><td>[Descripción de lo verificado y operativo]</td></tr>
+<tr><td><strong>Fase 1: [Nombre]</strong></td><td>[Vista Secundaria]</td><td><code>/[ruta]</code></td><td><span class="badge badge-success">✓ APROBADO</span></td><td>[Descripción]</td></tr>
+<tr><td><strong>Fase 2: [Nombre]</strong></td><td>[Bandeja de Gestión]</td><td><code>/[ruta]</code></td><td>🔄 <strong>EN HOMOLOGACIÓN</strong></td><td>[En proceso de pruebas o validación operativa]</td></tr>
+<tr><td><strong>Fase 3: [Nombre]</strong></td><td>[Módulo Posterior]</td><td><code>/[ruta]</code></td><td>⏳ <strong>FASE FUTURA</strong></td><td><span class="badge badge-neutral">⏳ FASE FUTURA</span></td></tr>
+</tbody></table></div>
+<p class="paragraph">---</p>
+<h2 class="section-title">3. Semáforo Ejecutivo de Despliegue y Pase a Producción</h2>
+<h3 class="section-subtitle">Veredicto del Entorno Actual: 🟡 GO CON RIESGOS CONTROLADOS (o 🟢 GO / 🔴 NO-GO)</h3>
+<ul class="bullet-list">
+<li><strong>¿Para qué está 100% APTO hoy?:</strong></li>
+<li>[Casos de uso verificados y aptos para operar]</li>
+<li><strong>¿Qué se requiere antes de la APERTURA MASIVA en Producción?:</strong></li>
+<li>[Condiciones de seguridad, integraciones o autorizaciones pendientes]</li>
+</ul>
+<p class="paragraph">---</p>
+<h2 class="section-title">4. Estado de la Deuda Técnica y Gestión de Riesgos (`qa/deuda-tecnica/`)</h2>
+<div class="table-responsive"><table class="data-table">
+<thead><tr><th>Nivel de Severidad</th><th>Total Detectados</th><th>Resueltos / Mitigados</th><th>En Gestión Controlada</th><th>Acción Tomada / Plan de Mitigación</th></tr></thead><tbody>
+<tr><td>🔴 <strong>Crítica</strong></td><td>0</td><td>0</td><td>0</td><td>[Mitigaciones aplicadas]</td></tr>
+<tr><td>🟠 <strong>Alta</strong></td><td>0</td><td>0</td><td>0</td><td>[Plan de resolución]</td></tr>
+<tr><td>🟡 <strong>Media</strong></td><td>0</td><td>0</td><td>0</td><td>[Ajustes y refactorizaciones]</td></tr>
+<tr><td>🟢 <strong>Baja</strong></td><td>0</td><td>0</td><td>0</td><td>[Tooling y mejoras menores]</td></tr>
+</tbody></table></div>
+<p class="paragraph">---</p>
+<h2 class="section-title">5. Próximos Pasos Técnicos Inmediatos</h2>
+<ol class="ordered-list">
+<li>[Paso 1: ej. Merge de ramas o homologación]</li>
+<li>[Paso 2: ej. Capacitación a usuarios]</li>
+</ol>
+
+
+    <!-- Sección de Firmas Oficiales -->
+    <div class="signatures-section">
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-role">Equipo de QA / Auditoría</div>
+        <div class="sig-dept">Seguimiento Técnico y Funcional</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-role">Encargado / Jefe / Directivo</div>
+        <div class="sig-dept">Implementación de Plataforma</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-role">Jefe de Área de Sistema</div>
+        <div class="sig-dept">Ministerio de Educación - San Juan</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

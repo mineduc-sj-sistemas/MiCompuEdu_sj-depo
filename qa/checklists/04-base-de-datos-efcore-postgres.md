@@ -1,0 +1,23 @@
+# 04 — Base de Datos (PostgreSQL / Entity Framework Core)
+
+- [ ] **Migraciones Versionadas con EF Core**: Todas las modificaciones del esquema (`reparaciones`, `beneficiarios`, `equipos`, `notificaciones`, etc.) se gestionan mediante migraciones ordenadas en `MiCompuEdu.Infrastructure/Migrations`; sin uso de `EnsureCreated()` en producción.
+- [ ] **Índices Estratégicos de Rendimiento**:
+  - Índices únicos en `usuarios(nombre_usuario)`, `usuarios(email)`, `equipos(numero_serie)` y `beneficiarios(dni)`.
+  - Índice compuesto en `beneficiarios(apellido, nombre)`.
+  - Índice parcial `ix_reparaciones_estado_activo` en `reparaciones` (`WHERE estado != 'Entregado'`) para acelerar la bandeja técnica y operativa.
+  - Índice parcial `ix_notificaciones_pendientes` (`WHERE estado = 'Pendiente'`) para optimizar el worker de WhatsApp.
+  - Índice cronológico en `historial_movimientos(reparacion_id, fecha_movimiento DESC)`.
+- [ ] **Integridad Referencial y Cascadas**:
+  - Claves foráneas configuradas con `ON DELETE RESTRICT` en entidades críticas (un beneficiario con equipos no puede borrarse accidentalmente).
+  - `ON DELETE CASCADE` solo en hijos dependientes (`historial_movimientos`, `evidencias_reparacion`).
+- [ ] **Auditoría Global Inmutable (`audit_log`)**:
+  - La tabla `audit_log` almacena de forma inmutable la fecha, usuario, acción y snapshots en formato `JSONB` (`datos_anteriores`, `datos_nuevos`).
+- [ ] **Paginación y Filtros en Listados Masivos**:
+  - Las consultas de reparaciones y beneficiarios implementan filtros por estado/período y límites para evitar cargas completas de la tabla en memoria.
+- [ ] **Consultas EF Core Optimizadas (N+1)**:
+  - Uso adecuado de `AsNoTracking()` en consultas de solo lectura.
+  - Inclusión explícita con `Include()` / `ThenInclude()` o proyección directa a DTOs (`Select()`) evitando bucles con llamadas a base de datos.
+- [ ] **Sembrado de Datos (Seeding)**:
+  - En `Program.cs`, el sembrado de usuarios y catálogo de fallas solo se ejecuta si las tablas están vacías (`!context.Usuarios.Any()`), sin duplicar ni pisar registros reales.
+- [ ] **Conexión y Pool Npgsql**:
+  - Cadena de conexión leída de `DATABASE_URL` (formato URI o Key-Value) con soporte SSL y timeout configurado.

@@ -1,0 +1,23 @@
+# 08 — Despliegue, Contenedores y Entornos
+
+- [ ] **Configuración Docker y Docker Compose Válida**:
+  - `docker-compose.yml` sintácticamente correcto (`docker compose config -q`).
+  - Servicios orquestados: base de datos PostgreSQL, backend .NET 8 WebApi y frontend React con Nginx.
+- [ ] **Imágenes Docker Multi-stage**:
+  - `backend/Dockerfile`: compilación con SDK .NET 8 (`mcr.microsoft.com/dotnet/sdk:8.0`) y runtime optimizado (`mcr.microsoft.com/dotnet/aspnet:8.0`).
+  - `frontend/Dockerfile`: compilación con Node y empaquetado final liviano en `nginx:alpine`.
+- [ ] **Configuración de Nginx Reverse Proxy y SPA**:
+  - `frontend/nginx.conf` y `nginx/nginx.conf` configurados con regla de fallback `try_files $uri $uri/ /index.html` para soportar recarga de rutas en la SPA React.
+  - Proxy inverso redirigiendo llamadas `/api/` hacia el contenedor del backend con encabezados `Host`, `X-Real-IP`, `X-Forwarded-For` y `X-Forwarded-Proto`.
+- [ ] **Variables de Entorno Mandatorias**:
+  - `.env.example` contiene todas las variables requeridas: `DATABASE_URL`, `JWT_SECRET` / `Jwt:Key`, `Jwt:Issuer`, `Jwt:Audience`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `VITE_API_URL`.
+  - El servidor de producción cuenta con sus variables cargadas sin exponer valores en el repositorio.
+- [ ] **Volúmenes Persistentes y Permisos**:
+  - Volumen persistente para los datos de PostgreSQL (`postgres_data`).
+  - Volumen persistente para evidencias cargadas y comprobantes PDF si se almacenan en disco local.
+- [ ] **Migraciones Automáticas Controladas en el Despliegue**:
+  - `context.Database.Migrate()` en `Program.cs` con reintentos programados (hasta 10 intentos con pausa de 3s) para esperar a que el contenedor de PostgreSQL esté listo antes de arrancar.
+- [ ] **Configuración de Plataforma en la Nube / Render**:
+  - `render.yaml` alineado con las variables y puertos de los servicios (`backend` y `frontend`).
+- [ ] **Health Checks Operativos**:
+  - Ambos contenedores reportan estado `healthy` tras iniciar.
