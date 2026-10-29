@@ -41,6 +41,17 @@ export interface Reparacion {
   marcaModelo: string;
   nombreTutor: string;
   telefonoTutor: string;
+  titularDni?: string;
+  titularEmail?: string;
+  tipoBeneficiario?: number;
+  tutorResponsableNombre?: string;
+  tutorResponsableDni?: string;
+  tutorResponsableTelefono?: string;
+  escuelaId?: string;
+  escuelaNombre?: string;
+  programaEducativoId?: string;
+  programaEducativoNombre?: string;
+  soloCargador?: boolean;
   estado: string;
   fallaReportada: string;
   diagnostico?: string;
@@ -55,8 +66,6 @@ export interface Reparacion {
   proveedorGarantia?: string;
   remitoGarantia?: string;
   fechaEsperadaGarantia?: string;
-
-
 }
 
 export interface FallaFrecuente {

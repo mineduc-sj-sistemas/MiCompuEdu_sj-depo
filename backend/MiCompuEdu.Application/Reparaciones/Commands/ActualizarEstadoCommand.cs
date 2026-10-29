@@ -20,7 +20,10 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string? ProveedorGarantia = null,
         string? RemitoGarantia = null,
         DateTime? FechaEsperadaGarantia = null,
-        string? FirmaEntregaBase64 = null
+        string? FirmaEntregaBase64 = null,
+        string? TelefonoContacto = null,
+        string? TutorNombre = null,
+        string? TutorDni = null
     ) : IRequest<bool>;
 
     public class ActualizarEstadoCommandHandler : IRequestHandler<ActualizarEstadoCommand, bool>
@@ -75,6 +78,21 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
 
             if (!string.IsNullOrEmpty(request.FirmaEntregaBase64))
                 reparacion.FirmaEntregaBase64 = request.FirmaEntregaBase64;
+
+            if (!string.IsNullOrWhiteSpace(request.TelefonoContacto))
+            {
+                reparacion.Equipo.Beneficiario.Telefono = request.TelefonoContacto.Trim();
+                if (reparacion.Equipo.Beneficiario.TipoBeneficiario == TipoBeneficiario.Alumno)
+                {
+                    reparacion.Equipo.Beneficiario.TelefonoTutor = request.TelefonoContacto.Trim();
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.TutorNombre))
+                reparacion.Equipo.Beneficiario.NombreTutor = request.TutorNombre.Trim();
+
+            if (!string.IsNullOrWhiteSpace(request.TutorDni))
+                reparacion.Equipo.Beneficiario.DniTutor = request.TutorDni.Trim();
 
             reparacion.ActualizadoEn = DateTime.UtcNow;
 

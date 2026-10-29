@@ -29,7 +29,11 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string? NuevoEquipoNumeroSerie = null,
         string? NuevoEquipoMarca = null,
         string? NuevoEquipoModelo = null,
-        string? NuevoEquipoCredencialesOffice = null
+        string? NuevoEquipoCredencialesOffice = null,
+        string? TutorNombre = null,
+        string? TutorDni = null,
+        string? TutorTelefono = null,
+        string? TitularTelefono = null
     ) : IRequest<ReparacionDto>;
 
     public class RegistrarIngresoCommandHandler : IRequestHandler<RegistrarIngresoCommand, ReparacionDto>
@@ -66,6 +70,26 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             if (request.TipoBeneficiario.HasValue && equipo.Beneficiario.TipoBeneficiario != request.TipoBeneficiario.Value)
             {
                 equipo.Beneficiario.TipoBeneficiario = request.TipoBeneficiario.Value;
+            }
+
+            // Actualizar teléfono del titular si se modificó en el ingreso
+            if (!string.IsNullOrWhiteSpace(request.TitularTelefono))
+            {
+                equipo.Beneficiario.Telefono = request.TitularTelefono.Trim();
+            }
+
+            // Actualizar datos del Tutor si el beneficiario es Alumno y se enviaron en la solicitud
+            if (!string.IsNullOrWhiteSpace(request.TutorNombre))
+            {
+                equipo.Beneficiario.NombreTutor = request.TutorNombre.Trim();
+            }
+            if (!string.IsNullOrWhiteSpace(request.TutorDni))
+            {
+                equipo.Beneficiario.DniTutor = request.TutorDni.Trim();
+            }
+            if (!string.IsNullOrWhiteSpace(request.TutorTelefono))
+            {
+                equipo.Beneficiario.TelefonoTutor = request.TutorTelefono.Trim();
             }
 
             // Registrar un nuevo equipo si se especificó NuevoEquipoNumeroSerie

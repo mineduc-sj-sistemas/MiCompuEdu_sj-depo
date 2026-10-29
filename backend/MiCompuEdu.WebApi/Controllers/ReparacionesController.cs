@@ -58,7 +58,11 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.NuevoEquipoNumeroSerie,
                 request.NuevoEquipoMarca,
                 request.NuevoEquipoModelo,
-                request.NuevoEquipoCredencialesOffice
+                request.NuevoEquipoCredencialesOffice,
+                request.TutorNombre,
+                request.TutorDni,
+                request.TutorTelefono,
+                request.TitularTelefono
             );
 
             var resultado = await _mediator.Send(command);
@@ -167,7 +171,10 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.ProveedorGarantia,
                 request.RemitoGarantia,
                 request.FechaEsperadaGarantia,
-                request.FirmaEntregaBase64
+                request.FirmaEntregaBase64,
+                request.TelefonoContacto,
+                request.TutorNombre,
+                request.TutorDni
             );
 
             var resultado = await _mediator.Send(command);
@@ -283,7 +290,11 @@ namespace MiCompuEdu.WebApi.Controllers
         string? NuevoEquipoNumeroSerie = null,
         string? NuevoEquipoMarca = null,
         string? NuevoEquipoModelo = null,
-        string? NuevoEquipoCredencialesOffice = null
+        string? NuevoEquipoCredencialesOffice = null,
+        string? TutorNombre = null,
+        string? TutorDni = null,
+        string? TutorTelefono = null,
+        string? TitularTelefono = null
     );
 
     public record CreateReparacionManualRequest(
@@ -319,6 +330,9 @@ namespace MiCompuEdu.WebApi.Controllers
         string? ProveedorGarantia = null,
         string? RemitoGarantia = null,
         DateTime? FechaEsperadaGarantia = null,
-        string? FirmaEntregaBase64 = null
+        string? FirmaEntregaBase64 = null,
+        string? TelefonoContacto = null,
+        string? TutorNombre = null,
+        string? TutorDni = null
     );
 }

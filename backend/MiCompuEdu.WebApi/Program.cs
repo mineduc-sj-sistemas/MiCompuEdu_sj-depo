@@ -234,17 +234,18 @@ using (var scope = app.Services.CreateScope())
                     new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Conectar Igualdad", Descripcion = "Programa nacional de distribución de netbooks para educación secundaria.", Activo = true },
                     new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Juana Manso", Descripcion = "Plan federal Juana Manso de conectividad y equipamiento escolar.", Activo = true },
                     new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Maestros de América", Descripcion = "Programa Provincial Maestros de América.", Activo = true },
-                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "HP Docentes/Directivos", Descripcion = "Programa de notebooks HP para personal docente y directivo de escuelas.", Activo = true },
-                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Dell Docentes/Directivos", Descripcion = "Programa de notebooks Dell para personal docente y directivo de escuelas.", Activo = true }
+                    new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "HP Docentes/Directivos", Descripcion = "Programa de notebooks HP para personal docente y directivo de escuelas.", Activo = true }
                 );
                 context.SaveChanges();
             }
 
-            // Desactivar San Juan Tec si existe
-            var progSanJuanTec = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "San Juan Tec");
-            if (progSanJuanTec != null && progSanJuanTec.Activo)
+            // Desactivar programas que no deben mostrarse en Paso 1
+            var programasInactivos = context.ProgramasEducativos
+                .Where(p => p.Nombre == "San Juan Tec" || p.Nombre == "MiCompuEdu San Juan" || p.Nombre == "Dell Directivos" || p.Nombre == "Dell Docentes/Directivos")
+                .ToList();
+            foreach (var p in programasInactivos)
             {
-                progSanJuanTec.Activo = false;
+                p.Activo = false;
             }
 
             // Asegurar Maestros de América
@@ -268,18 +269,6 @@ using (var scope = app.Services.CreateScope())
             {
                 progHp.Nombre = "HP Docentes/Directivos";
                 progHp.Activo = true;
-            }
-
-            // Actualizar o crear Dell Docentes/Directivos
-            var progDell = context.ProgramasEducativos.FirstOrDefault(p => p.Nombre == "Dell Directivos" || p.Nombre == "Dell Docentes/Directivos");
-            if (progDell == null)
-            {
-                context.ProgramasEducativos.Add(new ProgramaEducativo { Id = Guid.NewGuid(), Nombre = "Dell Docentes/Directivos", Descripcion = "Programa de notebooks Dell para personal docente y directivo de escuelas.", Activo = true });
-            }
-            else
-            {
-                progDell.Nombre = "Dell Docentes/Directivos";
-                progDell.Activo = true;
             }
 
             // Renombrar la falla del catálogo

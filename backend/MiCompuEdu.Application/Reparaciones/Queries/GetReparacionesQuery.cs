@@ -60,7 +60,9 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
                     r.Equipo.NumeroSerie.ToLower().Contains(term) ||
                     r.Equipo.Beneficiario.Dni.Contains(term) ||
                     r.Equipo.Beneficiario.Nombre.ToLower().Contains(term) ||
-                    r.Equipo.Beneficiario.Apellido.ToLower().Contains(term)
+                    r.Equipo.Beneficiario.Apellido.ToLower().Contains(term) ||
+                    (r.Equipo.Beneficiario.NombreTutor != null && r.Equipo.Beneficiario.NombreTutor.ToLower().Contains(term)) ||
+                    (r.Equipo.Beneficiario.DniTutor != null && r.Equipo.Beneficiario.DniTutor.Contains(term))
                 );
             }
 
@@ -113,6 +115,12 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
                 MarcaModelo = $"{r.Equipo.Marca} {r.Equipo.Modelo}",
                 NombreTutor = $"{r.Equipo.Beneficiario.Nombre} {r.Equipo.Beneficiario.Apellido}",
                 TelefonoTutor = r.Equipo.Beneficiario.Telefono,
+                TitularDni = r.Equipo.Beneficiario.Dni,
+                TitularEmail = r.Equipo.Beneficiario.Email,
+                TipoBeneficiario = (int)r.Equipo.Beneficiario.TipoBeneficiario == 0 ? 1 : (int)r.Equipo.Beneficiario.TipoBeneficiario,
+                TutorResponsableNombre = r.Equipo.Beneficiario.NombreTutor,
+                TutorResponsableDni = r.Equipo.Beneficiario.DniTutor,
+                TutorResponsableTelefono = r.Equipo.Beneficiario.TelefonoTutor,
                 Estado = r.Estado.ToString(),
                 FallaReportada = r.FallaReportada,
                 Diagnostico = r.Diagnostico,
