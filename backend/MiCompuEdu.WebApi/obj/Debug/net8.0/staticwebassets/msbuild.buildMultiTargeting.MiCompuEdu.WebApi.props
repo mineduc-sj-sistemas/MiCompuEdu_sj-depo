@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\MiCompuEdu.WebApi.props" />
-</Project>
