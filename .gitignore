@@ -92,3 +92,6 @@ qa/plantillas/
 qa/scripts/
 qa/skills/
 qa-plantilla/
+qa/alcance.md
+qa/logoMinisterio.png
+qa/protocolo-pre-deploy.md
