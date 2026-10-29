@@ -1,5 +1,4 @@
 import type { Reparacion } from '../types';
-import { API_BASE_URL } from '../config';
 
 export interface EquipoMovimiento {
   numeroSerie: string;
@@ -83,11 +82,11 @@ export const imprimirComprobante = (data: PrintData) => {
           <td>${eq.marcaModelo}</td>
           <td>
             <div style="font-size: 11px;">
-              <strong>Falla:</strong> \${eq.fallaReportada || '-'}<br/>
-              <strong>Diag:</strong> \${eq.diagnostico || '-'}
+              <strong>Falla:</strong> ${eq.fallaReportada || '-'}<br/>
+              <strong>Diag:</strong> ${eq.diagnostico || '-'}
             </div>
           </td>
-          <td style="font-weight: bold;">\${eq.proveedor || '-'}</td>
+          <td style="font-weight: bold;">${eq.proveedor || '-'}</td>
           <td>${eq.remitoGuia || '-'}</td>
         </tr>
       `;
@@ -447,21 +446,13 @@ export const imprimirFichaEstado = (
 };
 
 export const imprimirIngresoComprobante = (repair: Reparacion, operadorNombre: string) => {
-  if (repair.comprobanteUrl) {
-    const fullUrl = repair.comprobanteUrl.startsWith('http') 
-      ? repair.comprobanteUrl 
-      : `${API_BASE_URL.replace('/api/v1', '')}${repair.comprobanteUrl}`;
-    window.open(fullUrl, '_blank');
-    return;
-  }
-
   imprimirComprobante({
     tipo: 'Ingreso',
     numeroMovimiento: repair.id.substring(0, 8).toUpperCase(),
     fecha: repair.fechaIngreso || new Date().toISOString(),
     escuela: repair.ubicacionDepositoCodigo || 'Depósito Central',
     operador: operadorNombre,
-    motivo: `Ingreso a soporte técnico: ${repair.fallaReportada || 'Revisión'}`,
+    motivo: `Ingreso a soporte técnico: ${repair.fallaReportada || 'Revisión inicial'}`,
     tutor: {
       nombre: repair.nombreTutor || 'Tutor registrado',
       dni: '-',
