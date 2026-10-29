@@ -572,14 +572,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
                         {/* Dot indicator */}
                         <div className="absolute -left-[23px] top-1.5 w-3 h-3 rounded-full bg-[#FF8200] border-2 border-white" />
                         <div className="flex items-center justify-between text-slate-400 text-[10px] mb-1">
-                          <span className="font-bold text-slate-700">{item.operadorNombre}</span>
+                          <span className="font-bold text-slate-700">{item.usuarioNombre}</span>
                           <span>{new Date(item.fechaMovimiento).toLocaleString()}</span>
                         </div>
                         <div className="bg-slate-50 border border-slate-200/60 p-2.5 rounded-lg text-slate-750">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="px-1.5 py-0.2 bg-orange-100 text-orange-850 rounded text-[9px] font-bold uppercase">{item.estadoOrigen.replace(/_/g, ' ')}</span>
-                            <span>➜</span>
-                            <span className="px-1.5 py-0.2 bg-green-100 text-green-850 rounded text-[9px] font-bold uppercase">{item.estadoDestino.replace(/_/g, ' ')}</span>
+                            {item.estadoAnterior ? (
+                              <>
+                                <span className="px-1.5 py-0.2 bg-orange-100 text-orange-850 rounded text-[9px] font-bold uppercase">
+                                  {item.estadoAnterior.replace(/_/g, ' ')}
+                                </span>
+                                <span>➜</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="px-1.5 py-0.2 bg-slate-100 text-slate-500 rounded text-[9px] font-bold uppercase">
+                                  CREACIÓN
+                                </span>
+                                <span>➜</span>
+                              </>
+                            )}
+                            <span className="px-1.5 py-0.2 bg-green-100 text-green-850 rounded text-[9px] font-bold uppercase">
+                              {item.estadoNuevo.replace(/_/g, ' ')}
+                            </span>
                           </div>
                           {item.observaciones && <p className="mt-1"><strong className="text-slate-400 text-[10px]">Observaciones:</strong> {item.observaciones}</p>}
                           {item.accionesRealizadas && <p className="mt-0.5"><strong className="text-slate-400 text-[10px]">Acciones:</strong> {item.accionesRealizadas}</p>}

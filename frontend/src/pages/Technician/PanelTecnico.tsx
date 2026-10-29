@@ -888,17 +888,28 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                           {/* Dot indicator */}
                           <div className="absolute -left-[23px] top-1.5 w-3 h-3 rounded-full bg-[#FF8200] border-2 border-white" />
                           <div className="flex items-center justify-between text-slate-400 text-[10px] mb-1">
-                            <span className="font-semibold text-slate-700">{item.operadorNombre}</span>
+                            <span className="font-semibold text-slate-700">{item.usuarioNombre}</span>
                             <span>{new Date(item.fechaMovimiento).toLocaleString()}</span>
                           </div>
                           <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200/60 text-slate-700">
                             <div className="flex items-center gap-2 mb-1.5">
-                              <span className="px-2 py-0.5 bg-orange-100 text-orange-850 text-[9px] font-bold rounded uppercase">
-                                {item.estadoOrigen.replace(/_/g, ' ')}
-                              </span>
-                              <span className="text-slate-400 text-[10px]">➜</span>
+                              {item.estadoAnterior ? (
+                                <>
+                                  <span className="px-2 py-0.5 bg-orange-100 text-orange-850 text-[9px] font-bold rounded uppercase">
+                                    {item.estadoAnterior.replace(/_/g, ' ')}
+                                  </span>
+                                  <span className="text-slate-400 text-[10px]">➜</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[9px] font-bold rounded uppercase">
+                                    CREACIÓN
+                                  </span>
+                                  <span className="text-slate-400 text-[10px]">➜</span>
+                                </>
+                              )}
                               <span className="px-2 py-0.5 bg-green-100 text-green-850 text-[9px] font-bold rounded uppercase">
-                                {item.estadoDestino.replace(/_/g, ' ')}
+                                {item.estadoNuevo.replace(/_/g, ' ')}
                               </span>
                             </div>
                             {item.observaciones && (
