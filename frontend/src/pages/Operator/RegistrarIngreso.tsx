@@ -229,6 +229,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         const data: Beneficiario = await response.json();
         const rawTipo = Number(data.tipoBeneficiario);
         data.tipoBeneficiario = (rawTipo === 2 || rawTipo === 3) ? rawTipo : 1;
+        
+        if (scanInfo) {
+          data.nombre = scanInfo.nombre;
+          data.apellido = scanInfo.apellido;
+        }
+        
+        setForzarModoManual(false);
         setBeneficiario(data);
         setSelectedEscuelaId(data.escuelaId || '');
 
@@ -265,67 +272,43 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
           }
         }
       } else {
+        setBeneficiario(null);
+        setForzarModoManual(true);
+        if (/^\d{6,9}$/.test(cleanDni)) {
+          setManualTitularDni(cleanDni);
+        } else {
+          setManualEquipoNumeroSerie(cleanDni);
+        }
         if (scanInfo) {
-          setBeneficiario({
-            id: 'mock-scanned-id',
-            dni: scanInfo.dni,
-            nombre: scanInfo.nombre,
-            apellido: scanInfo.apellido,
-            telefono: '+542644998877',
-            email: `${scanInfo.nombre.toLowerCase().replace(/ /g, '')}@sanjuan.edu.ar`,
-            equipo: {
-              id: 'mock-equipo-id',
-              numeroSerie: `S-EDU-${scanInfo.dni}-X`,
-              marca: 'Exo',
-              modelo: 'Juana Manso v2',
-              credencialesOffice: `${scanInfo.nombre.toLowerCase().replace(/ /g, '')}.${scanInfo.dni} / passOffice2026`
-            }
-          });
-          setSelectedEscuelaId('');
+          setManualTitularDni(scanInfo.dni || cleanDni);
+          setManualTitularNombre(scanInfo.nombre || '');
+          setManualTitularApellido(scanInfo.apellido || '');
           setPersonaEntregaNombre(`${scanInfo.nombre} ${scanInfo.apellido}`);
           setPersonaEntregaDni(scanInfo.dni);
           setPersonaEntregaTipo('Tercero');
           setPersonaEntregaParentesco('Familiar / Autorizado');
-
-          setMensajeExito(`DNI Escaneado (Carga temporal de la tarjeta): ${scanInfo.nombre} ${scanInfo.apellido}`);
+          setMensajeExito(`DNI Escaneado no encontrado en padrón (${scanInfo.nombre} ${scanInfo.apellido}). Complete los datos manualmente.`);
         } else {
-          setMensajeError('DNI no encontrado en el padrón nominal del Ministerio.');
+          setMensajeError('DNI o Serie no encontrado en el padrón de Maestros de América. Se habilitó la carga manual.');
         }
       }
     } catch (error) {
-      console.warn('API no disponible. Usando fallback de simulación.');
-      const scanOrManual = scanInfo || (cleanDni.length >= 7 && cleanDni.length <= 9 ? { dni: cleanDni, nombre: 'Ana María', apellido: 'González' } : null);
-      
-      if (scanOrManual) {
-        setBeneficiario({
-          id: 'mock-beneficiario-id',
-          dni: scanOrManual.dni,
-          nombre: scanOrManual.nombre,
-          apellido: scanOrManual.apellido,
-          telefono: '+542644998877',
-          email: 'anamaria@sanjuan.edu.ar',
-          equipo: {
-            id: 'mock-equipo-id',
-            numeroSerie: `S-EDU-${scanOrManual.dni}-X`,
-            marca: 'BGH',
-            modelo: 'Conectar Igualdad v3',
-            credencialesOffice: `${scanOrManual.nombre.toLowerCase().replace(/ /g, '')}.${scanOrManual.dni} / passOffice2026`
-          }
-        });
-        setSelectedEscuelaId('1');
-
-        if (scanInfo) {
-          setMensajeExito(`[SIMULACIÓN] DNI escaneado: ${scanInfo.nombre} ${scanInfo.apellido}`);
-        }
+      console.warn('API no disponible. Habilitando carga manual.');
+      setBeneficiario(null);
+      setForzarModoManual(true);
+      if (/^\d{6,9}$/.test(cleanDni)) {
+        setManualTitularDni(cleanDni);
       } else {
-        setMensajeError('Formato de DNI inválido (debe contener 7 u 8 dígitos).');
+        setManualEquipoNumeroSerie(cleanDni);
       }
+      setMensajeError('No se pudo encontrar en el padrón. Puede ingresar los datos manualmente a continuación.');
     }
     setLoading(false);
   };
 
+  const [forzarModoManual, setForzarModoManual] = useState(false);
   const isMaestrosDeAmerica = selectedProgramaInicialId !== '' && (programas.find(p => p.id === selectedProgramaInicialId)?.nombre.toLowerCase().includes('maestros') ?? true);
-  const isManualMode = selectedProgramaInicialId !== '' && !isMaestrosDeAmerica;
+  const isManualMode = selectedProgramaInicialId !== '' && (!isMaestrosDeAmerica || forzarModoManual);
 
   const aplicarPersonaEntrega = (tipo: 'Tutor' | 'Tercero', targetBeneficiario?: Beneficiario | null) => {
     const ben = targetBeneficiario !== undefined ? targetBeneficiario : beneficiario;
@@ -517,6 +500,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         setFirmaIngresoBase64(null);
 
         if (isManualMode) {
+          setForzarModoManual(false);
           setManualTitularDni('');
           setManualTitularNombre('');
           setManualTitularApellido('');
@@ -571,6 +555,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
             value={selectedProgramaInicialId}
             onChange={(e) => {
               setSelectedProgramaInicialId(e.target.value);
+              setForzarModoManual(false);
               setBeneficiario(null);
               setDniInput('');
               setMensajeError('');
@@ -589,7 +574,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         {selectedProgramaInicialId && isMaestrosDeAmerica && (
           <div className="animate-fade-in space-y-2 pt-2">
             <label className="block text-slate-700 text-xs font-semibold mb-2">
-              Paso 2: Identificación de Alumno, Tutor o Netbook
+              Paso 2: Identificación de Alumno, Docente, Tutor o Equipo
             </label>
           <div className="flex gap-3">
             <div className="relative flex-1">
@@ -600,7 +585,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                 ref={dniInputRef}
                 type="text"
                 className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-8 py-2.5 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-[#FF8200] transition-colors"
-                placeholder="Ingrese DNI (alumno/tutor) o número de serie (ej: SJMA025-011176)..."
+                placeholder="Ingrese DNI (alumno/docente) o número de serie (ej: SJMA025-011176)..."
                 value={dniInput}
                 onChange={handleDniInputChange}
                 onKeyDown={handleKeyDown}
@@ -608,7 +593,11 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
               />
               {dniInput && (
                 <button 
-                  onClick={() => setDniInput('')} 
+                  onClick={() => {
+                    setDniInput('');
+                    setForzarModoManual(false);
+                    setMensajeError('');
+                  }} 
                   className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-xs font-bold"
                 >
                   ✕
@@ -628,7 +617,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
             </button>
           </div>
           <p className="text-[10px] text-slate-400 mt-1.5">
-            Tip: La búsqueda se realiza de manera automática al completar un DNI de 7-8 dígitos o un código de netbook.
+            Tip: La búsqueda se realiza de manera automática al completar un DNI de 7-8 dígitos o un código de netbook. Si no figura en el padrón, se habilitará la carga manual.
           </p>
           </div>
         )}
@@ -662,7 +651,9 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         {selectedProgramaInicialId && isManualMode && (
           <form onSubmit={handleIngresarNotebook} className="space-y-6 pt-4 border-t border-slate-100 animate-fade-in">
             <div className="bg-yellow-50 text-yellow-800 p-3 rounded-lg text-xs font-medium border border-yellow-200">
-              Has seleccionado un programa distinto a Maestros de América. Por favor, carga los datos del beneficiario y el equipo manualmente.
+              {forzarModoManual
+                ? 'El DNI o número de serie buscado no se encontró en el padrón de Maestros de América. Por favor, complete los datos del beneficiario y del equipo manualmente.'
+                : 'Has seleccionado un programa distinto a Maestros de América. Por favor, carga los datos del beneficiario y el equipo manualmente.'}
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -686,11 +677,11 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   </label>
                 </div>
                 <div className="space-y-3 text-xs">
-                  <div><label className="block text-slate-500 mb-1">DNI</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularDni} onChange={e => setManualTitularDni(e.target.value)} /></div>
-                  <div><label className="block text-slate-500 mb-1">Nombre</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularNombre} onChange={e => setManualTitularNombre(e.target.value)} /></div>
-                  <div><label className="block text-slate-500 mb-1">Apellido</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularApellido} onChange={e => setManualTitularApellido(e.target.value)} /></div>
-                  <div><label className="block text-slate-500 mb-1">Teléfono</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularTelefono} onChange={e => setManualTitularTelefono(e.target.value)} /></div>
-                  <div><label className="block text-slate-500 mb-1">Email</label><input required type="email" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularEmail} onChange={e => setManualTitularEmail(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">DNI *</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularDni} onChange={e => setManualTitularDni(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Nombre *</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularNombre} onChange={e => setManualTitularNombre(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Apellido *</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularApellido} onChange={e => setManualTitularApellido(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Teléfono *</label><input required type="text" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularTelefono} onChange={e => setManualTitularTelefono(e.target.value)} /></div>
+                  <div><label className="block text-slate-500 mb-1">Email (Opcional)</label><input type="email" className="w-full bg-white border border-slate-200 rounded px-2 py-1.5" value={manualTitularEmail} onChange={e => setManualTitularEmail(e.target.value)} /></div>
                   
                   {manualTipoBeneficiario === 1 && (
                     <div className="border-t border-slate-200 pt-3 mt-3 space-y-3 animate-fade-in">
@@ -961,7 +952,15 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
             <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
               <button
                 type="button"
-                onClick={() => setSelectedProgramaInicialId('')}
+                onClick={() => {
+                  if (forzarModoManual) {
+                    setForzarModoManual(false);
+                    setDniInput('');
+                    setMensajeError('');
+                  } else {
+                    setSelectedProgramaInicialId('');
+                  }
+                }}
                 className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors text-xs cursor-pointer"
               >
                 Cancelar
