@@ -46,6 +46,7 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
                 .Include(r => r.FallaCatalogo)
                 .Include(r => r.UbicacionDeposito)
                 .Include(r => r.EvidenciasReparacion)
+                .Include(r => r.HistorialMovimientos)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Estado) && Enum.TryParse<EstadoEquipo>(request.Estado, out var parsedEstado))
@@ -107,50 +108,101 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
 
             var list = await query.ToListAsync(cancellationToken);
 
-            return list.Select(r => new ReparacionDto
+            return list.Select(r =>
             {
-                Id = r.Id,
-                EquipoId = r.EquipoId,
-                NumeroSerie = r.Equipo.NumeroSerie,
-                MarcaModelo = $"{r.Equipo.Marca} {r.Equipo.Modelo}",
-                NombreTutor = $"{r.Equipo.Beneficiario.Nombre} {r.Equipo.Beneficiario.Apellido}",
-                TelefonoTutor = r.Equipo.Beneficiario.Telefono,
-                TitularDni = r.Equipo.Beneficiario.Dni,
-                TitularEmail = r.Equipo.Beneficiario.Email,
-                TipoBeneficiario = (int)r.Equipo.Beneficiario.TipoBeneficiario == 0 ? 1 : (int)r.Equipo.Beneficiario.TipoBeneficiario,
-                TutorResponsableNombre = r.Equipo.Beneficiario.NombreTutor,
-                TutorResponsableDni = r.Equipo.Beneficiario.DniTutor,
-                TutorResponsableTelefono = r.Equipo.Beneficiario.TelefonoTutor,
-                Estado = r.Estado.ToString(),
-                FallaReportada = r.FallaReportada,
-                Diagnostico = r.Diagnostico,
-                AccionesRealizadas = r.AccionesRealizadas,
-                Observaciones = r.Observaciones,
-                ComprobanteUrl = r.ComprobanteUrl,
-                FechaIngreso = r.FechaIngreso,
-                FechaEntrega = r.FechaEntrega,
-                EscuelaId = r.Equipo.Beneficiario.EscuelaId,
-                EscuelaNombre = r.Equipo.Beneficiario.Escuela?.Nombre,
-                ProgramaEducativoId = r.Equipo.ProgramaEducativoId,
-                ProgramaEducativoNombre = r.Equipo.ProgramaEducativo?.Nombre,
-                TecnicoAsignadoId = r.TecnicoAsignadoId,
-                TecnicoAsignadoNombre = r.TecnicoAsignado?.NombreCompleto,
-                FallaCatalogoId = r.FallaCatalogoId,
-                FallaCatalogoNombre = r.FallaCatalogo?.Nombre,
-                UbicacionDepositoId = r.UbicacionDepositoId,
-                UbicacionDepositoCodigo = r.UbicacionDeposito?.Codigo,
-                ProveedorGarantia = r.ProveedorGarantia,
-                RemitoGarantia = r.RemitoGarantia,
-                FechaEsperadaGarantia = r.FechaEsperadaGarantia,
-                FirmaIngresoBase64 = r.FirmaIngresoBase64,
-                FirmaEntregaBase64 = r.FirmaEntregaBase64,
-                FechaLimite = r.FechaLimite,
-                Evidencias = r.EvidenciasReparacion.Select(ev => new EvidenciaDto
+                bool? fueReparado = null;
+                string? resultadoEntrega = null;
+
+                if (r.Estado == EstadoEquipo.Entregado)
                 {
-                    Id = ev.Id,
-                    UrlArchivo = ev.UrlArchivo,
-                    NombreArchivo = ev.NombreArchivo
-                }).ToList()
+                    var pasoPorNoReparable = r.HistorialMovimientos != null && r.HistorialMovimientos.Any(h => 
+                        h.EstadoNuevo == EstadoEquipo.No_Reparable || 
+                        h.EstadoAnterior == EstadoEquipo.No_Reparable
+                    );
+                    
+                    var diagText = (r.Diagnostico ?? "") + " " + (r.AccionesRealizadas ?? "");
+                    var diceNoReparable = diagText.Contains("No Reparable", StringComparison.OrdinalIgnoreCase) ||
+                                          diagText.Contains("Sin reparación", StringComparison.OrdinalIgnoreCase) ||
+                                          diagText.Contains("Sin reparacion", StringComparison.OrdinalIgnoreCase);
+
+                    fueReparado = !pasoPorNoReparable && !diceNoReparable;
+                    resultadoEntrega = fueReparado.Value ? "Reparada" : "No Reparable";
+                }
+                else if (r.Estado == EstadoEquipo.No_Reparable)
+                {
+                    fueReparado = false;
+                    resultadoEntrega = "No Reparable";
+                }
+                else if (r.Estado == EstadoEquipo.Reparado || r.Estado == EstadoEquipo.Listo_Para_Retirar)
+                {
+                    fueReparado = true;
+                    resultadoEntrega = "Reparada";
+                }
+
+                return new ReparacionDto
+                {
+                    Id = r.Id,
+                    EquipoId = r.EquipoId,
+                    NumeroSerie = r.Equipo.NumeroSerie,
+                    MarcaModelo = $"{r.Equipo.Marca} {r.Equipo.Modelo}",
+                    AlumnoNombreCompleto = $"{r.Equipo.Beneficiario.Nombre} {r.Equipo.Beneficiario.Apellido}",
+                    AlumnoDni = r.Equipo.Beneficiario.Dni,
+                    AlumnoTelefono = r.Equipo.Beneficiario.Telefono,
+                    AlumnoEmail = r.Equipo.Beneficiario.Email,
+                    NombreTutor = $"{r.Equipo.Beneficiario.Nombre} {r.Equipo.Beneficiario.Apellido}",
+                    TelefonoTutor = r.Equipo.Beneficiario.Telefono,
+                    TitularDni = r.Equipo.Beneficiario.Dni,
+                    TitularEmail = r.Equipo.Beneficiario.Email,
+                    TipoBeneficiario = (int)r.Equipo.Beneficiario.TipoBeneficiario == 0 ? 1 : (int)r.Equipo.Beneficiario.TipoBeneficiario,
+                    TutorResponsableNombre = r.Equipo.Beneficiario.NombreTutor,
+                    TutorResponsableDni = r.Equipo.Beneficiario.DniTutor,
+                    TutorResponsableTelefono = r.Equipo.Beneficiario.TelefonoTutor,
+                    PersonaEntregaTipo = r.PersonaEntregaTipo,
+                    PersonaEntregaNombre = r.PersonaEntregaNombre,
+                    PersonaEntregaDni = r.PersonaEntregaDni,
+                    PersonaEntregaTelefono = r.PersonaEntregaTelefono,
+                    PersonaEntregaParentesco = r.PersonaEntregaParentesco,
+                    DocIdentidadIngresoUrl = r.DocIdentidadIngresoUrl,
+                    PersonaRetiroTipo = r.PersonaRetiroTipo,
+                    PersonaRetiroNombre = r.PersonaRetiroNombre,
+                    PersonaRetiroDni = r.PersonaRetiroDni,
+                    PersonaRetiroTelefono = r.PersonaRetiroTelefono,
+                    PersonaRetiroParentesco = r.PersonaRetiroParentesco,
+                    DocIdentidadEntregaUrl = r.DocIdentidadEntregaUrl,
+                    Estado = r.Estado.ToString(),
+                    FallaReportada = r.FallaReportada,
+                    Diagnostico = r.Diagnostico,
+                    AccionesRealizadas = r.AccionesRealizadas,
+                    Observaciones = r.Observaciones,
+                    ComprobanteUrl = r.ComprobanteUrl,
+                    FechaIngreso = r.FechaIngreso,
+                    FechaEntrega = r.FechaEntrega,
+                    EscuelaId = r.Equipo.Beneficiario.EscuelaId,
+                    EscuelaNombre = r.Equipo.Beneficiario.Escuela?.Nombre,
+                    ProgramaEducativoId = r.Equipo.ProgramaEducativoId,
+                    ProgramaEducativoNombre = r.Equipo.ProgramaEducativo?.Nombre,
+                    TecnicoAsignadoId = r.TecnicoAsignadoId,
+                    TecnicoAsignadoNombre = r.TecnicoAsignado?.NombreCompleto,
+                    FallaCatalogoId = r.FallaCatalogoId,
+                    FallaCatalogoNombre = r.FallaCatalogo?.Nombre,
+                    UbicacionDepositoId = r.UbicacionDepositoId,
+                    UbicacionDepositoCodigo = r.UbicacionDeposito?.Codigo,
+                    ProveedorGarantia = r.ProveedorGarantia,
+                    RemitoGarantia = r.RemitoGarantia,
+                    FechaEsperadaGarantia = r.FechaEsperadaGarantia,
+                    FirmaIngresoBase64 = r.FirmaIngresoBase64,
+                    FirmaEntregaBase64 = r.FirmaEntregaBase64,
+                    FechaLimite = r.FechaLimite,
+                    SoloCargador = r.SoloCargador,
+                    FueReparado = fueReparado,
+                    ResultadoEntrega = resultadoEntrega,
+                    Evidencias = r.EvidenciasReparacion.Select(ev => new EvidenciaDto
+                    {
+                        Id = ev.Id,
+                        UrlArchivo = ev.UrlArchivo,
+                        NombreArchivo = ev.NombreArchivo
+                    }).ToList()
+                };
             }).ToList();
         }
     }

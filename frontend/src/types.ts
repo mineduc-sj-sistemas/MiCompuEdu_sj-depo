@@ -39,6 +39,10 @@ export interface Reparacion {
   equipoId: string;
   numeroSerie: string;
   marcaModelo: string;
+  alumnoNombreCompleto?: string;
+  alumnoDni?: string;
+  alumnoTelefono?: string;
+  alumnoEmail?: string;
   nombreTutor: string;
   telefonoTutor: string;
   titularDni?: string;
@@ -47,6 +51,20 @@ export interface Reparacion {
   tutorResponsableNombre?: string;
   tutorResponsableDni?: string;
   tutorResponsableTelefono?: string;
+  personaEntregaTipo?: string;
+  personaEntregaNombre?: string;
+  personaEntregaDni?: string;
+  personaEntregaTelefono?: string;
+  personaEntregaParentesco?: string;
+  docIdentidadIngresoUrl?: string;
+  personaRetiroTipo?: string;
+  personaRetiroNombre?: string;
+  personaRetiroDni?: string;
+  personaRetiroTelefono?: string;
+  personaRetiroParentesco?: string;
+  docIdentidadEntregaUrl?: string;
+  firmaIngresoBase64?: string;
+  firmaEntregaBase64?: string;
   escuelaId?: string;
   escuelaNombre?: string;
   programaEducativoId?: string;
@@ -54,6 +72,8 @@ export interface Reparacion {
   soloCargador?: boolean;
   estado: string;
   fallaReportada: string;
+  fallaCatalogoId?: number;
+  fallaCatalogoNombre?: string;
   diagnostico?: string;
   accionesRealizadas?: string;
   observaciones?: string;
@@ -66,6 +86,8 @@ export interface Reparacion {
   proveedorGarantia?: string;
   remitoGarantia?: string;
   fechaEsperadaGarantia?: string;
+  fueReparado?: boolean;
+  resultadoEntrega?: string;
 }
 
 export interface FallaFrecuente {

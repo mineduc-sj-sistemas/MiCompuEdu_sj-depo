@@ -8,10 +8,11 @@ import { Dashboard } from './pages/Supervisor/Dashboard'
 import { LogoSanJuan } from './components/Shared/LogoSanJuan'
 import { GestionUsuarios } from './pages/Supervisor/GestionUsuarios'
 import { ImportarPadron } from './pages/Supervisor/ImportarPadron'
+import { HistorialEntregas } from './pages/Operator/HistorialEntregas'
 
 import { ConsultaPublica } from './pages/ConsultaPublica'
 import { HealthCheckBanner } from './components/Shared/HealthCheckBanner'
-import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon, Database } from 'lucide-react'
+import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon, Database, History } from 'lucide-react'
 
 function App() {
 
@@ -120,6 +121,21 @@ function App() {
                 </button>
               )}
 
+              {/* 4. Historial de Entregas */}
+              {(user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
+                <button
+                  onClick={() => setCurrentPage('historial')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
+                    currentPage === 'historial'
+                      ? 'bg-slate-100 text-[#FF8200] font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                >
+                  <History className="w-4 h-4 text-current" />
+                  Historial de Entregas
+                </button>
+              )}
+
               {/* Supervisor Actions */}
               {(user.rol === 'Supervisor' || user.rol === 'Administrador') && (
                 <>
@@ -190,6 +206,7 @@ function App() {
         <main className="flex-1 p-8 overflow-y-auto max-h-[calc(100vh-48px)] bg-slate-50">
           {currentPage === 'ingreso' && <RegistrarIngreso token={user.token} nombreOperador={user.nombreCompleto} />}
           {currentPage === 'entrega' && <EntregaNotebook token={user.token} nombreOperador={user.nombreCompleto} />}
+          {currentPage === 'historial' && <HistorialEntregas token={user.token} nombreUsuario={user.nombreCompleto} userRol={user.rol} />}
           {currentPage === 'diagnostico' && <PanelTecnico token={user.token} nombreTecnico={user.nombreCompleto} />}
           {currentPage === 'dashboard' && <Dashboard token={user.token} />}
           {currentPage === 'importar' && <ImportarPadron token={user.token} />}

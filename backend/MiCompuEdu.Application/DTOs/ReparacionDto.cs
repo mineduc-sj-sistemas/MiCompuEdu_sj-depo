@@ -8,6 +8,10 @@ namespace MiCompuEdu.Application.DTOs
         public Guid EquipoId { get; set; }
         public string NumeroSerie { get; set; } = string.Empty;
         public string MarcaModelo { get; set; } = string.Empty;
+        public string AlumnoNombreCompleto { get; set; } = string.Empty;
+        public string AlumnoDni { get; set; } = string.Empty;
+        public string? AlumnoTelefono { get; set; }
+        public string? AlumnoEmail { get; set; }
         public string NombreTutor { get; set; } = string.Empty;
         public string TelefonoTutor { get; set; } = string.Empty;
         public string TitularDni { get; set; } = string.Empty;
@@ -16,6 +20,22 @@ namespace MiCompuEdu.Application.DTOs
         public string? TutorResponsableNombre { get; set; }
         public string? TutorResponsableDni { get; set; }
         public string? TutorResponsableTelefono { get; set; }
+
+        // Persona que entrega en recepción (Ingreso)
+        public string? PersonaEntregaTipo { get; set; }
+        public string? PersonaEntregaNombre { get; set; }
+        public string? PersonaEntregaDni { get; set; }
+        public string? PersonaEntregaTelefono { get; set; }
+        public string? PersonaEntregaParentesco { get; set; }
+        public string? DocIdentidadIngresoUrl { get; set; }
+
+        // Persona que retira en entrega (Egreso)
+        public string? PersonaRetiroTipo { get; set; }
+        public string? PersonaRetiroNombre { get; set; }
+        public string? PersonaRetiroDni { get; set; }
+        public string? PersonaRetiroTelefono { get; set; }
+        public string? PersonaRetiroParentesco { get; set; }
+        public string? DocIdentidadEntregaUrl { get; set; }
         public string Estado { get; set; } = string.Empty;
         public string FallaReportada { get; set; } = string.Empty;
         public string? Diagnostico { get; set; }
@@ -41,6 +61,8 @@ namespace MiCompuEdu.Application.DTOs
         public string? FirmaEntregaBase64 { get; set; }
         public DateTime? FechaLimite { get; set; }
         public bool SoloCargador { get; set; }
+        public bool? FueReparado { get; set; }
+        public string? ResultadoEntrega { get; set; }
         public System.Collections.Generic.List<EvidenciaDto> Evidencias { get; set; } = new();
     }
 
