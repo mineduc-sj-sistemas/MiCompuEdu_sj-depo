@@ -13,9 +13,15 @@ import {
   Check,
   Loader2, 
   FileText,
-  Plus
+  Plus,
+  Printer,
+  ShieldCheck,
+  Info
 } from 'lucide-react';
 import { imprimirComprobante } from '../../utils/printHelpers';
+import { DigitalSignatureCanvas } from '../../components/Signature/DigitalSignatureCanvas';
+import { DocumentoIdentidadSection } from '../../components/Scanner/DocumentoIdentidadSection';
+import type { ScannedDniData } from '../../utils/dniParser';
 
 
 
@@ -41,6 +47,16 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
   const [manualTutorNombre, setManualTutorNombre] = useState('');
   const [manualTutorDni, setManualTutorDni] = useState('');
   const [manualTutorTelefono, setManualTutorTelefono] = useState('');
+
+  // Persona que entrega el equipo en depósito (Ingreso: solo Tutor o Tercero para alumnos)
+  const [personaEntregaTipo, setPersonaEntregaTipo] = useState<'Tutor' | 'Tercero'>('Tutor');
+  const [personaEntregaNombre, setPersonaEntregaNombre] = useState('');
+  const [personaEntregaDni, setPersonaEntregaDni] = useState('');
+  const [personaEntregaTelefono, setPersonaEntregaTelefono] = useState('');
+  const [personaEntregaParentesco, setPersonaEntregaParentesco] = useState('Tutor Responsable');
+  const [docIdentidadIngresoBase64, setDocIdentidadIngresoBase64] = useState<string | null>(null);
+  const [firmaIngresoBase64, setFirmaIngresoBase64] = useState<string | null>(null);
+  const [ultimoComprobante, setUltimoComprobante] = useState<any | null>(null);
 
   // Registro de nuevo equipo en modo nominal
   const [registrarNuevoEquipo, setRegistrarNuevoEquipo] = useState(false);
@@ -189,6 +205,14 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
     }
 
     if (!cleanDni) return;
+
+    if (!cleanDni.includes('@')) {
+      cleanDni = cleanDni.replace(/[^\d]/g, '');
+      if (cleanDni.length < 6 || cleanDni.length > 11) {
+        return;
+      }
+    }
+
     setLoading(true);
     setMensajeError('');
     setMensajeExito('');
@@ -203,17 +227,42 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
 
       if (response.ok) {
         const data: Beneficiario = await response.json();
-        
-        if (scanInfo) {
-          data.nombre = scanInfo.nombre;
-          data.apellido = scanInfo.apellido;
-        }
-        
+        const rawTipo = Number(data.tipoBeneficiario);
+        data.tipoBeneficiario = (rawTipo === 2 || rawTipo === 3) ? rawTipo : 1;
         setBeneficiario(data);
         setSelectedEscuelaId(data.escuelaId || '');
 
+        const isAlumno = data.tipoBeneficiario === 1;
+
         if (scanInfo) {
-          setMensajeExito(`DNI Escaneado: ${scanInfo.nombre} ${scanInfo.apellido}`);
+          setMensajeExito(`DNI Escaneado: ${scanInfo.nombre} ${scanInfo.apellido} (DNI ${scanInfo.dni})`);
+          setPersonaEntregaNombre(`${scanInfo.nombre} ${scanInfo.apellido}`);
+          setPersonaEntregaDni(scanInfo.dni);
+          if (data.dniTutor && data.dniTutor === scanInfo.dni) {
+            setPersonaEntregaTipo('Tutor');
+            setPersonaEntregaParentesco('Tutor Responsable');
+            setPersonaEntregaTelefono(data.telefonoTutor || data.telefono || '');
+          } else if (!isAlumno && data.dni === scanInfo.dni) {
+            setPersonaEntregaTipo('Tutor');
+            setPersonaEntregaParentesco('Titular Responsable');
+            setPersonaEntregaTelefono(data.telefono || '');
+          } else {
+            setPersonaEntregaTipo('Tercero');
+            setPersonaEntregaParentesco(data.dni === scanInfo.dni ? '' : 'Familiar / Autorizado');
+          }
+        } else {
+          setPersonaEntregaTipo('Tutor');
+          if (isAlumno) {
+            setPersonaEntregaNombre(data.nombreTutor || '');
+            setPersonaEntregaDni(data.dniTutor || '');
+            setPersonaEntregaTelefono(data.telefonoTutor || data.telefono || '');
+            setPersonaEntregaParentesco('Tutor Responsable');
+          } else {
+            setPersonaEntregaNombre(`${data.nombre} ${data.apellido}`);
+            setPersonaEntregaDni(data.dni);
+            setPersonaEntregaTelefono(data.telefono || '');
+            setPersonaEntregaParentesco('Titular Responsable');
+          }
         }
       } else {
         if (scanInfo) {
@@ -233,6 +282,10 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
             }
           });
           setSelectedEscuelaId('');
+          setPersonaEntregaNombre(`${scanInfo.nombre} ${scanInfo.apellido}`);
+          setPersonaEntregaDni(scanInfo.dni);
+          setPersonaEntregaTipo('Tercero');
+          setPersonaEntregaParentesco('Familiar / Autorizado');
 
           setMensajeExito(`DNI Escaneado (Carga temporal de la tarjeta): ${scanInfo.nombre} ${scanInfo.apellido}`);
         } else {
@@ -274,6 +327,56 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
   const isMaestrosDeAmerica = selectedProgramaInicialId !== '' && (programas.find(p => p.id === selectedProgramaInicialId)?.nombre.toLowerCase().includes('maestros') ?? true);
   const isManualMode = selectedProgramaInicialId !== '' && !isMaestrosDeAmerica;
 
+  const aplicarPersonaEntrega = (tipo: 'Tutor' | 'Tercero', targetBeneficiario?: Beneficiario | null) => {
+    const ben = targetBeneficiario !== undefined ? targetBeneficiario : beneficiario;
+    const isAlumno = isManualMode ? manualTipoBeneficiario === 1 : (ben?.tipoBeneficiario ?? 1) === 1;
+    setPersonaEntregaTipo(tipo);
+    if (tipo === 'Tutor') {
+      if (isAlumno) {
+        const nom = ben?.nombreTutor || manualTutorNombre || '';
+        const dni = ben?.dniTutor || manualTutorDni || '';
+        const tel = ben?.telefonoTutor || ben?.telefono || manualTutorTelefono || '';
+        setPersonaEntregaNombre(nom);
+        setPersonaEntregaDni(dni);
+        setPersonaEntregaTelefono(tel);
+        setPersonaEntregaParentesco('Tutor Responsable');
+      } else {
+        const nom = ben ? `${ben.nombre} ${ben.apellido}` : `${manualTitularNombre} ${manualTitularApellido}`.trim();
+        const dni = ben ? ben.dni : manualTitularDni;
+        const tel = ben ? ben.telefono : manualTitularTelefono;
+        setPersonaEntregaNombre(nom);
+        setPersonaEntregaDni(dni);
+        setPersonaEntregaTelefono(tel || '');
+        setPersonaEntregaParentesco('Titular Responsable');
+      }
+    } else {
+      // Tercero / Familiar Autorizado: vaciamos los campos para que se puedan cargar
+      setPersonaEntregaNombre('');
+      setPersonaEntregaDni('');
+      setPersonaEntregaTelefono('');
+      setPersonaEntregaParentesco('');
+    }
+  };
+
+  const handleDniEscaneadoQuienEntrega = (scanned: ScannedDniData) => {
+    setPersonaEntregaNombre(`${scanned.nombre} ${scanned.apellido}`);
+    setPersonaEntregaDni(scanned.dni);
+    const tutorDniActual = isManualMode ? manualTutorDni : beneficiario?.dniTutor;
+    const titularDniActual = isManualMode ? manualTitularDni : beneficiario?.dni;
+    const isAlumno = isManualMode ? manualTipoBeneficiario === 1 : (beneficiario?.tipoBeneficiario ?? 1) === 1;
+
+    if (tutorDniActual && tutorDniActual === scanned.dni) {
+      setPersonaEntregaTipo('Tutor');
+      setPersonaEntregaParentesco('Tutor Responsable');
+    } else if (!isAlumno && titularDniActual && titularDniActual === scanned.dni) {
+      setPersonaEntregaTipo('Tutor');
+      setPersonaEntregaParentesco('Titular Responsable');
+    } else {
+      setPersonaEntregaTipo('Tercero');
+      setPersonaEntregaParentesco('Familiar / Autorizado');
+    }
+  };
+
   const handleIngresarNotebook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isManualMode && !beneficiario) return;
@@ -304,7 +407,14 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         soloCargador,
         tutorNombre: manualTipoBeneficiario === 1 ? manualTutorNombre : null,
         tutorDni: manualTipoBeneficiario === 1 ? manualTutorDni : null,
-        tutorTelefono: manualTipoBeneficiario === 1 ? manualTutorTelefono : null
+        tutorTelefono: manualTipoBeneficiario === 1 ? manualTutorTelefono : null,
+        personaEntregaTipo,
+        personaEntregaNombre: personaEntregaNombre.trim() || null,
+        personaEntregaDni: personaEntregaDni.trim() || null,
+        personaEntregaTelefono: personaEntregaTelefono.trim() || null,
+        personaEntregaParentesco: personaEntregaParentesco.trim() || null,
+        docIdentidadIngresoBase64,
+        firmaIngresoBase64
       } : {
         equipoId: registrarNuevoEquipo ? '00000000-0000-0000-0000-000000000000' : (beneficiario!.equipo?.id || '00000000-0000-0000-0000-000000000000'),
         equipoMarca: registrarNuevoEquipo ? customMarca : (beneficiario!.equipo?.marca || null),
@@ -325,7 +435,14 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         tutorNombre: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.nombreTutor || '') : null,
         tutorDni: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.dniTutor || '') : null,
         tutorTelefono: (beneficiario!.tipoBeneficiario ?? 1) === 1 ? (beneficiario!.telefonoTutor || beneficiario!.telefono || '') : null,
-        titularTelefono: beneficiario!.telefono || null
+        titularTelefono: beneficiario!.telefono || null,
+        personaEntregaTipo,
+        personaEntregaNombre: personaEntregaNombre.trim() || null,
+        personaEntregaDni: personaEntregaDni.trim() || null,
+        personaEntregaTelefono: personaEntregaTelefono.trim() || null,
+        personaEntregaParentesco: personaEntregaParentesco.trim() || null,
+        docIdentidadIngresoBase64,
+        firmaIngresoBase64
       };
 
       const response = await fetch(endpoint, {
@@ -353,42 +470,31 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
             ? `${customMarca} ${customModelo}` 
             : `${beneficiario!.equipo?.marca || ''} ${beneficiario!.equipo?.modelo || ''}`;
         
-        setMensajeExito(`Ingreso de notebook ${numSerie} registrado exitosamente.`);
+        setMensajeExito(`Ingreso de notebook ${numSerie} registrado exitosamente. Se archivó la constancia digital y escaneo de DNI.`);
         
-        // Imprimir el comprobante automáticamente o dar aviso
-        setTimeout(() => {
-          imprimirComprobante({
-            tipo: 'Ingreso',
-            numeroMovimiento: data.id.substring(0, 8).toUpperCase(),
-            fecha: new Date(fechaIngreso + 'T12:00:00Z').toISOString(),
-            escuela: escuelas.find(e => e.id === selectedEscuelaId)?.nombre || 'Sin Asignar',
-            operador: nombreOperador,
-            motivo: 'Reparación / Diagnóstico',
-            tutor: {
-              nombre: isManualMode && manualTipoBeneficiario === 1 && manualTutorNombre 
-                ? `${manualTutorNombre} (Tutor de ${nombreBenef})` 
-                : !isManualMode && beneficiario!.tipoBeneficiario === 1 && beneficiario!.nombreTutor 
-                  ? `${beneficiario!.nombreTutor} (Tutor de ${nombreBenef})`
-                  : nombreBenef,
-              dni: isManualMode && manualTipoBeneficiario === 1 && manualTutorDni 
-                ? manualTutorDni 
-                : !isManualMode && beneficiario!.tipoBeneficiario === 1 && beneficiario!.dniTutor 
-                  ? beneficiario!.dniTutor 
-                  : dniBenef,
-              telefono: isManualMode && manualTipoBeneficiario === 1 && manualTutorTelefono 
-                ? manualTutorTelefono 
-                : !isManualMode && beneficiario!.tipoBeneficiario === 1 && beneficiario!.telefonoTutor 
-                  ? beneficiario!.telefonoTutor 
-                  : telefonoBenef
-            },
-            equipos: [{
-              numeroSerie: numSerie,
-              marcaModelo: marcaMod + (soloCargador ? ' (SOLO CARGADOR)' : ''),
-              estado: 'Ingresado',
-              fallaReportada: fallaReportada || (fallaCatalogoId === 6 ? 'Otra' : 'Falla catalogada')
-            }]
-          });
-        }, 500);
+        const comprobanteData = {
+          tipo: 'Ingreso',
+          numeroMovimiento: data.id.substring(0, 8).toUpperCase(),
+          fecha: new Date(fechaIngreso + 'T12:00:00Z').toISOString(),
+          escuela: escuelas.find(e => e.id === selectedEscuelaId)?.nombre || 'Sin Asignar',
+          operador: nombreOperador,
+          motivo: 'Reparación / Diagnóstico',
+          tutor: {
+            nombre: personaEntregaNombre || (isManualMode && manualTipoBeneficiario === 1 && manualTutorNombre ? manualTutorNombre : nombreBenef),
+            dni: personaEntregaDni || (isManualMode && manualTipoBeneficiario === 1 && manualTutorDni ? manualTutorDni : dniBenef),
+            telefono: personaEntregaTelefono || telefonoBenef,
+            alumno: nombreBenef,
+            personaEntregaRetiro: personaEntregaNombre,
+            parentesco: personaEntregaParentesco
+          },
+          equipos: [{
+            numeroSerie: numSerie,
+            marcaModelo: marcaMod + (soloCargador ? ' (SOLO CARGADOR)' : ''),
+            estado: 'Ingresado',
+            fallaReportada: fallaReportada || (fallaCatalogoId === 6 ? 'Otra' : 'Falla catalogada')
+          }]
+        };
+        setUltimoComprobante(comprobanteData);
 
         setBeneficiario(null);
         setDniInput('');
@@ -402,6 +508,13 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         setCustomMarca('');
         setCustomModelo('');
         setCustomCredencialesOffice('');
+        setPersonaEntregaTipo('Tutor');
+        setPersonaEntregaNombre('');
+        setPersonaEntregaDni('');
+        setPersonaEntregaTelefono('');
+        setPersonaEntregaParentesco('Tutor Responsable');
+        setDocIdentidadIngresoBase64(null);
+        setFirmaIngresoBase64(null);
 
         if (isManualMode) {
           setManualTitularDni('');
@@ -528,9 +641,21 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
         )}
 
         {mensajeExito && (
-          <div className="p-3 bg-green-50 border border-green-100 text-green-700 rounded-lg text-xs font-semibold flex items-center gap-2">
-            <Check className="w-4 h-4 shrink-0" />
-            {mensajeExito}
+          <div className="p-3 bg-green-50 border border-green-100 text-green-700 rounded-lg text-xs font-semibold flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 shrink-0 text-green-600" />
+              <span>{mensajeExito}</span>
+            </div>
+            {ultimoComprobante && (
+              <button
+                type="button"
+                onClick={() => imprimirComprobante(ultimoComprobante)}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-sm"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                Imprimir Comprobante (Opcional)
+              </button>
+            )}
           </div>
         )}
 
@@ -719,8 +844,118 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
               </div>
             </div>
 
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+            {/* Persona que Entrega el Equipo en Depósito + Escaneo DNI + Firma Digital */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200/60 pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2 text-slate-800">
+                  <ShieldCheck className="w-5 h-5 text-[#FF8200]" />
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">¿Quién presenta / entrega el equipo en depósito?</h3>
+                    <p className="text-[11px] text-slate-500">
+                      {manualTipoBeneficiario === 1 
+                        ? 'Los alumnos no pueden entregar equipos directamente. Seleccione el tutor o cargue los datos de un tercero autorizado.' 
+                        : 'Registre a la persona física que asiste a dejar el equipo en depósito.'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => aplicarPersonaEntrega('Tutor')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      personaEntregaTipo === 'Tutor' ? 'bg-[#FF8200] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {manualTipoBeneficiario === 1 ? 'Es el Tutor Responsable' : 'Es el Titular'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => aplicarPersonaEntrega('Tercero')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-[#FF8200] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Tercero / Familiar Autorizado
+                  </button>
+                </div>
+              </div>
 
+              {personaEntregaTipo === 'Tercero' && (
+                <div className="bg-blue-50 border border-blue-200 text-blue-900 p-2.5 rounded-lg text-xs font-medium flex items-center gap-2 animate-fade-in">
+                  <Info className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>
+                    El equipo es entregado por un tercero o familiar autorizado. Complete sus datos a continuación:
+                  </span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">Nombre y Apellido *</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Nombre completo"
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaNombre}
+                    onChange={(e) => setPersonaEntregaNombre(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">DNI *</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="DNI de quien entrega"
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaDni}
+                    onChange={(e) => setPersonaEntregaDni(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">Teléfono Contacto</label>
+                  <input
+                    type="text"
+                    placeholder="Teléfono de quien entrega"
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaTelefono}
+                    onChange={(e) => setPersonaEntregaTelefono(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">Parentesco / Relación *</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Ej: Madre, Tío, Hermano mayor, Autorizado..."
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaParentesco}
+                    onChange={(e) => setPersonaEntregaParentesco(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <DocumentoIdentidadSection
+                documentoBase64={docIdentidadIngresoBase64}
+                onDocumentoChange={setDocIdentidadIngresoBase64}
+                onDniParsed={handleDniEscaneadoQuienEntrega}
+                label="Digitalización del DNI de quien entrega"
+                descripcion="Escanee el código de barras PDF417, capture una foto con la cámara web o cargue el archivo del documento."
+              />
+
+              <DigitalSignatureCanvas
+                onSignatureChange={setFirmaIngresoBase64}
+                title="Firma Digital en Pantalla"
+                subtitle="El presentante puede firmar con el dedo (táctil) o ratón para registrar el ingreso sin requerir papel."
+              />
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
@@ -744,97 +979,124 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
 
         {beneficiario && (
           <form onSubmit={handleIngresarNotebook} className="space-y-6 pt-4 border-t border-slate-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Tutor Column */}
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 text-[#FF8200]">
-                  <User className="w-4.5 h-4.5" />
-                  <h3 className="text-sm font-semibold text-slate-800">Titular / Tutor</h3>
-                </div>
-                <div className="space-y-1.5 text-xs text-slate-600">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">DNI</span>
-                    <div className="flex items-center gap-2">
+            {/* Beneficiario / Alumno y Tutor Responsable */}
+            {(() => {
+              const isAlumnoActual = (Number(beneficiario.tipoBeneficiario) || 1) === 1;
+              return (
+                <div className={`grid gap-4 ${isAlumnoActual ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                  {/* Alumno / Titular Column */}
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                      <div className="flex items-center gap-2 text-[#FF8200]">
+                        <User className="w-4.5 h-4.5" />
+                        <h3 className="text-sm font-semibold text-slate-800">
+                          {isAlumnoActual ? 'Datos del Alumno (Titular)' : `Datos del Titular (${beneficiario.tipoBeneficiario === 2 ? 'Docente' : 'Directivo'})`}
+                        </h3>
+                      </div>
                       <select
-                        value={beneficiario.tipoBeneficiario}
-                        onChange={(e) => setBeneficiario({...beneficiario, tipoBeneficiario: Number(e.target.value) as any})}
-                        className="bg-white border border-slate-250 rounded px-1.5 py-0.5 text-[10px] font-bold text-slate-750 focus:outline-none focus:border-[#FF8200]"
+                        value={beneficiario.tipoBeneficiario || 1}
+                        onChange={(e) => {
+                          const nuevoTipo = Number(e.target.value);
+                          const updated = { ...beneficiario, tipoBeneficiario: nuevoTipo };
+                          setBeneficiario(updated);
+                          aplicarPersonaEntrega('Tutor', updated);
+                        }}
+                        className="bg-white border border-slate-200 rounded px-2 py-0.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-[#FF8200]"
                       >
                         <option value={1}>Alumno</option>
                         <option value={2}>Docente</option>
                         <option value={3}>Directivo</option>
                       </select>
-                      <span className="font-medium text-slate-900">{beneficiario.dni}</span>
+                    </div>
+
+                    <div className="space-y-2 text-xs text-slate-600">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">DNI {isAlumnoActual ? 'Alumno' : 'Titular'}:</span>
+                        <span className="font-mono font-bold text-slate-900">{beneficiario.dni}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Nombre Completo:</span>
+                        <span className="font-semibold text-slate-900">{beneficiario.nombre} {beneficiario.apellido}</span>
+                      </div>
+                      <div className="flex justify-between items-center gap-2">
+                        <span className="text-slate-400 flex items-center gap-1">
+                          <Phone className="w-3 h-3 text-slate-400" />
+                          Teléfono {isAlumnoActual ? 'Alumno' : 'Titular'}:
+                        </span>
+                        <input
+                          type="text"
+                          placeholder="Teléfono (opcional)"
+                          value={beneficiario.telefono || ''}
+                          onChange={(e) => setBeneficiario({ ...beneficiario, telefono: e.target.value })}
+                          className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#FF8200] w-1/2 text-right"
+                        />
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Email Escolar:</span>
+                        <span className="font-medium text-slate-900 flex items-center gap-1">
+                          <Mail className="w-3 h-3 text-slate-400" />
+                          {beneficiario.email || '-'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Nombre</span>
-                    <span className="font-medium text-slate-900">{beneficiario.nombre} {beneficiario.apellido}</span>
-                  </div>
-                  <div className="flex justify-between items-center gap-2">
-                    <span className="text-slate-400 flex items-center gap-1"><Phone className="w-3 h-3 text-slate-400" />Teléfono</span>
-                    <input
-                      type="text"
-                      placeholder="Ingrese teléfono"
-                      value={beneficiario.telefono || ''}
-                      onChange={(e) => setBeneficiario({ ...beneficiario, telefono: e.target.value })}
-                      className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#FF8200] w-2/3 text-right"
-                    />
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Email</span>
-                    <span className="font-medium text-slate-900 flex items-center gap-1"><Mail className="w-3 h-3 text-slate-400" />{beneficiario.email}</span>
-                  </div>
 
-                  {(beneficiario.tipoBeneficiario ?? 1) === 1 && (
-                    <div className="border-t border-slate-200 pt-3 mt-3 space-y-2.5 animate-fade-in">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Datos del Tutor Responsable</p>
+                  {/* Tutor Column (solo cuando es Alumno) */}
+                  {isAlumnoActual && (
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 animate-fade-in">
+                      <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                        <div className="flex items-center gap-2 text-[#FF8200]">
+                          <ShieldCheck className="w-4.5 h-4.5" />
+                          <h3 className="text-sm font-semibold text-slate-800">Tutor Responsable (Padrón)</h3>
+                        </div>
                         {(!beneficiario.nombreTutor || !beneficiario.dniTutor) && (
                           <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold">
                             Obligatorio
                           </span>
                         )}
                       </div>
-                      <div>
-                        <label className="block text-slate-500 mb-1">Nombre y Apellido del Tutor *</label>
-                        <input
-                          required
-                          type="text"
-                          placeholder="Ingrese nombre completo del tutor"
-                          value={beneficiario.nombreTutor || ''}
-                          onChange={(e) => setBeneficiario({ ...beneficiario, nombreTutor: e.target.value })}
-                          className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-2 text-xs">
                         <div>
-                          <label className="block text-slate-500 mb-1">DNI del Tutor *</label>
+                          <label className="block text-slate-500 mb-1">Nombre y Apellido del Tutor *</label>
                           <input
                             required
                             type="text"
-                            placeholder="DNI del tutor"
-                            value={beneficiario.dniTutor || ''}
-                            onChange={(e) => setBeneficiario({ ...beneficiario, dniTutor: e.target.value })}
-                            className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
+                            placeholder="Nombre del tutor registrado"
+                            value={beneficiario.nombreTutor || ''}
+                            onChange={(e) => setBeneficiario({ ...beneficiario, nombreTutor: e.target.value })}
+                            className="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
                           />
                         </div>
-                        <div>
-                          <label className="block text-slate-500 mb-1">Teléfono del Tutor *</label>
-                          <input
-                            required
-                            type="text"
-                            placeholder="Teléfono de contacto"
-                            value={beneficiario.telefonoTutor ?? beneficiario.telefono ?? ''}
-                            onChange={(e) => setBeneficiario({ ...beneficiario, telefonoTutor: e.target.value })}
-                            className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
-                          />
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-slate-500 mb-1">DNI Tutor *</label>
+                            <input
+                              required
+                              type="text"
+                              placeholder="DNI del tutor"
+                              value={beneficiario.dniTutor || ''}
+                              onChange={(e) => setBeneficiario({ ...beneficiario, dniTutor: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-500 mb-1">Teléfono Tutor *</label>
+                            <input
+                              required
+                              type="text"
+                              placeholder="Teléfono de contacto"
+                              value={beneficiario.telefonoTutor ?? beneficiario.telefono ?? ''}
+                              onChange={(e) => setBeneficiario({ ...beneficiario, telefonoTutor: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200]"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
-              </div>
+              );
+            })()}
 
               {/* Notebook Column */}
               <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
@@ -934,7 +1196,6 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
                   <p className="text-xs text-yellow-600">Sin notebook registrada en el padrón.</p>
                 )}
               </div>
-            </div>
 
             {/* Catalog Associations (Escuelas y Programas) */}
             <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-3">
@@ -1068,9 +1329,118 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
               </div>
             </div>
 
-            {/* Signature */}
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+            {/* Persona que Entrega el Equipo en Depósito + Escaneo DNI + Firma Digital */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200/60 pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2 text-slate-800">
+                  <ShieldCheck className="w-5 h-5 text-[#FF8200]" />
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">¿Quién presenta / entrega el equipo en depósito?</h3>
+                    <p className="text-[11px] text-slate-500">
+                      {(beneficiario.tipoBeneficiario ?? 1) === 1
+                        ? 'Los alumnos no pueden entregar equipos directamente. Seleccione el tutor registrado o cargue los datos de un tercero autorizado.'
+                        : 'Registre a la persona física que asiste a dejar el equipo en depósito.'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => aplicarPersonaEntrega('Tutor')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      personaEntregaTipo === 'Tutor' ? 'bg-[#FF8200] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {(beneficiario.tipoBeneficiario ?? 1) === 1 ? 'Es el Tutor Responsable' : 'Es el Titular'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => aplicarPersonaEntrega('Tercero')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-[#FF8200] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Tercero / Familiar Autorizado
+                  </button>
+                </div>
+              </div>
 
+              {personaEntregaTipo === 'Tercero' && (
+                <div className="bg-blue-50 border border-blue-200 text-blue-900 p-2.5 rounded-lg text-xs font-medium flex items-center gap-2 animate-fade-in">
+                  <Info className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>
+                    El equipo es entregado por un tercero o familiar autorizado. Complete sus datos a continuación:
+                  </span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">Nombre y Apellido *</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Nombre completo"
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaNombre}
+                    onChange={(e) => setPersonaEntregaNombre(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">DNI *</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="DNI de quien entrega"
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaDni}
+                    onChange={(e) => setPersonaEntregaDni(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">Teléfono Contacto</label>
+                  <input
+                    type="text"
+                    placeholder="Teléfono de quien entrega"
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaTelefono}
+                    onChange={(e) => setPersonaEntregaTelefono(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">Parentesco / Relación *</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Ej: Madre, Tío, Hermano mayor, Autorizado..."
+                    className={`w-full rounded px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#FF8200] transition-colors ${
+                      personaEntregaTipo === 'Tercero' ? 'bg-white border border-blue-300 ring-1 ring-blue-100' : 'bg-white border border-slate-200'
+                    }`}
+                    value={personaEntregaParentesco}
+                    onChange={(e) => setPersonaEntregaParentesco(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <DocumentoIdentidadSection
+                documentoBase64={docIdentidadIngresoBase64}
+                onDocumentoChange={setDocIdentidadIngresoBase64}
+                onDniParsed={handleDniEscaneadoQuienEntrega}
+                label="Digitalización del DNI de quien entrega"
+                descripcion="Escanee el código de barras PDF417, capture una foto con la cámara web o cargue el archivo del documento."
+              />
+
+              <DigitalSignatureCanvas
+                onSignatureChange={setFirmaIngresoBase64}
+                title="Firma Digital en Pantalla"
+                subtitle="El presentante puede firmar con el dedo (táctil) o ratón para registrar el ingreso sin requerir papel."
+              />
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">

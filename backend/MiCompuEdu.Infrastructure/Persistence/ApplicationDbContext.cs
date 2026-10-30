@@ -186,6 +186,21 @@ namespace MiCompuEdu.Infrastructure.Persistence
                 entity.Property(r => r.FechaEsperadaGarantia);
                 entity.Property(r => r.FirmaIngresoBase64).HasColumnType("text");
                 entity.Property(r => r.FirmaEntregaBase64).HasColumnType("text");
+
+                entity.Property(r => r.PersonaEntregaTipo).HasMaxLength(50);
+                entity.Property(r => r.PersonaEntregaNombre).HasMaxLength(200);
+                entity.Property(r => r.PersonaEntregaDni).HasMaxLength(30);
+                entity.Property(r => r.PersonaEntregaTelefono).HasMaxLength(50);
+                entity.Property(r => r.PersonaEntregaParentesco).HasMaxLength(100);
+                entity.Property(r => r.DocIdentidadIngresoUrl).HasMaxLength(500);
+
+                entity.Property(r => r.PersonaRetiroTipo).HasMaxLength(50);
+                entity.Property(r => r.PersonaRetiroNombre).HasMaxLength(200);
+                entity.Property(r => r.PersonaRetiroDni).HasMaxLength(30);
+                entity.Property(r => r.PersonaRetiroTelefono).HasMaxLength(50);
+                entity.Property(r => r.PersonaRetiroParentesco).HasMaxLength(100);
+                entity.Property(r => r.DocIdentidadEntregaUrl).HasMaxLength(500);
+
                 entity.Property(r => r.CreadoEn).HasDefaultValueSql("NOW()");
                 entity.Property(r => r.FechaIngreso).HasDefaultValueSql("NOW()");
 

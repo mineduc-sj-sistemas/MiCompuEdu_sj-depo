@@ -28,7 +28,9 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
                 .Include(b => b.Escuela)
                 .Include(b => b.Equipos)
                     .ThenInclude(e => e.ProgramaEducativo)
-                .FirstOrDefaultAsync(b => b.Dni.ToUpper() == term || b.Equipos.Any(e => e.NumeroSerie.ToUpper() == term), cancellationToken);
+                .FirstOrDefaultAsync(b => b.Dni.ToUpper() == term 
+                    || (b.DniTutor != null && b.DniTutor.ToUpper() == term) 
+                    || b.Equipos.Any(e => e.NumeroSerie.ToUpper() == term), cancellationToken);
 
             if (beneficiario == null) return null;
 
@@ -56,7 +58,7 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
                 Apellido = beneficiario.Apellido,
                 Telefono = beneficiario.Telefono,
                 Email = beneficiario.Email,
-                TipoBeneficiario = (int)beneficiario.TipoBeneficiario,
+                TipoBeneficiario = (int)beneficiario.TipoBeneficiario == 0 ? 1 : (int)beneficiario.TipoBeneficiario,
                 EscuelaId = beneficiario.EscuelaId,
                 EscuelaNombre = beneficiario.Escuela?.Nombre,
                 DniTutor = beneficiario.DniTutor,

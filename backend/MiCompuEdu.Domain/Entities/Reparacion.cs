@@ -37,6 +37,22 @@ namespace MiCompuEdu.Domain.Entities
         public string? FirmaIngresoBase64 { get; set; }
         public string? FirmaEntregaBase64 { get; set; }
 
+        // Datos de la persona que entrega el equipo (Ingreso)
+        public string? PersonaEntregaTipo { get; set; } // 'Tutor', 'Alumno', 'Tercero'
+        public string? PersonaEntregaNombre { get; set; }
+        public string? PersonaEntregaDni { get; set; }
+        public string? PersonaEntregaTelefono { get; set; }
+        public string? PersonaEntregaParentesco { get; set; }
+        public string? DocIdentidadIngresoUrl { get; set; }
+
+        // Datos de la persona que retira el equipo (Egreso / Entrega)
+        public string? PersonaRetiroTipo { get; set; } // 'Tutor', 'Alumno', 'Tercero'
+        public string? PersonaRetiroNombre { get; set; }
+        public string? PersonaRetiroDni { get; set; }
+        public string? PersonaRetiroTelefono { get; set; }
+        public string? PersonaRetiroParentesco { get; set; }
+        public string? DocIdentidadEntregaUrl { get; set; }
+
         public DateTime FechaIngreso { get; set; } = DateTime.UtcNow;
         public DateTime? FechaLimite { get; set; }
         public DateTime? FechaEntrega { get; set; }

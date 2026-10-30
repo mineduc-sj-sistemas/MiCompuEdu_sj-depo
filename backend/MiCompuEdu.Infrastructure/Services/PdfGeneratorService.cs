@@ -104,17 +104,25 @@ namespace MiCompuEdu.Infrastructure.Services
                             col.Item().PaddingTop(5);
                         }
 
-                        // Fila de datos del Tutor
+                        // Fila de datos del Alumno y Tutor
                         col.Item().Background(Colors.Grey.Lighten4).Padding(5).Column(tutorCol =>
                         {
-                            tutorCol.Item().Text("DATOS DEL TUTOR / BENEFICIARIO").Bold().FontSize(8).FontColor(Colors.Grey.Darken3);
-                            tutorCol.Item().Text($"Nombre: {beneficiario.Nombre} {beneficiario.Apellido}");
-                            tutorCol.Item().Text($"DNI: {beneficiario.Dni}    |    Teléfono: {beneficiario.Telefono}");
+                            tutorCol.Item().Text("DATOS DEL ALUMNO / TITULAR").Bold().FontSize(8).FontColor(Colors.Grey.Darken3);
+                            tutorCol.Item().Text($"Alumno: {beneficiario.Nombre} {beneficiario.Apellido} (DNI: {beneficiario.Dni})");
+                            if (beneficiario.Escuela != null)
+                            {
+                                tutorCol.Item().Text($"Escuela: {beneficiario.Escuela.Nombre}");
+                            }
                             if (!string.IsNullOrEmpty(beneficiario.NombreTutor))
                             {
-                                tutorCol.Item().Text($"Tutor/Responsable: {beneficiario.NombreTutor} (DNI: {beneficiario.DniTutor ?? "-"})");
+                                tutorCol.Item().Text($"Tutor Responsable: {beneficiario.NombreTutor} (DNI: {beneficiario.DniTutor ?? "-"}) - Tel: {beneficiario.TelefonoTutor ?? beneficiario.Telefono}");
                             }
-                            tutorCol.Item().Text($"Email: {beneficiario.Email}");
+
+                            if (!string.IsNullOrEmpty(reparacion.PersonaEntregaNombre))
+                            {
+                                tutorCol.Item().PaddingTop(3);
+                                tutorCol.Item().Text($"Presentado / Entregado en depósito por: {reparacion.PersonaEntregaNombre} (DNI: {reparacion.PersonaEntregaDni ?? "-"}) - Vínculo: {reparacion.PersonaEntregaParentesco ?? "Tercero autorizado"}").Bold().FontColor(Colors.Orange.Darken3);
+                            }
                         });
 
                         col.Item().PaddingTop(10);
@@ -163,7 +171,7 @@ namespace MiCompuEdu.Infrastructure.Services
                                 {
                                     tutorFirmaCol.Item().PaddingTop(15);
                                 }
-                                tutorFirmaCol.Item().BorderTop(0.5f).PaddingTop(2).Text("Firma del Tutor").FontSize(7).Bold();
+                                tutorFirmaCol.Item().BorderTop(0.5f).PaddingTop(2).Text($"Firma: {(reparacion.PersonaEntregaNombre ?? "Quien entrega")}").FontSize(7).Bold();
                             });
 
                             row.ConstantItem(15);

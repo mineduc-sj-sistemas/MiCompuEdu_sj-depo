@@ -21,6 +21,9 @@ export interface PrintData {
     nombre: string;
     dni: string;
     telefono?: string;
+    alumno?: string;
+    personaEntregaRetiro?: string;
+    parentesco?: string;
   };
   equipos: EquipoMovimiento[];
 }
@@ -255,10 +258,12 @@ export const imprimirComprobante = (data: PrintData) => {
       
       ${data.tutor ? `
         <div class="tutor-info">
-          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Datos del Tutor/Beneficiario</h4>
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Identificación de Personas Involucradas</h4>
           <div class="meta-grid" style="margin-bottom: 0;">
-            <div class="meta-item"><strong>Nombre:</strong> <span>${data.tutor.nombre}</span></div>
+            ${data.tutor.alumno ? `<div class="meta-item"><strong>Alumno / Titular:</strong> <span>${data.tutor.alumno}</span></div>` : ''}
+            <div class="meta-item"><strong>${data.tipo === 'Ingreso' ? 'Presentado por:' : data.tipo === 'Egreso' ? 'Retirado por:' : 'Responsable:'}</strong> <span>${data.tutor.personaEntregaRetiro || data.tutor.nombre}</span></div>
             <div class="meta-item"><strong>DNI:</strong> <span>${data.tutor.dni}</span></div>
+            ${data.tutor.parentesco ? `<div class="meta-item"><strong>Parentesco/Relación:</strong> <span>${data.tutor.parentesco}</span></div>` : ''}
             ${data.tutor.telefono ? `<div class="meta-item"><strong>Teléfono:</strong> <span>${data.tutor.telefono}</span></div>` : ''}
           </div>
         </div>
@@ -279,9 +284,11 @@ export const imprimirComprobante = (data: PrintData) => {
       <div class="footer">
         <div class="signature-box">
           <br/><br/>
-          ${data.tipo === 'Ingreso' ? 'Firma de quien entrega (Tutor)' : 
-             data.tipo === 'Egreso' ? 'Firma de quien recibe (Tutor)' : 
-             'Firma y sello de quien entrega'}
+          ${data.tipo === 'Ingreso' 
+            ? `Firma de quien entrega (${data.tutor?.personaEntregaRetiro || data.tutor?.nombre || 'Presentante'})` 
+            : data.tipo === 'Egreso' 
+            ? `Firma de quien recibe (${data.tutor?.personaEntregaRetiro || data.tutor?.nombre || 'Retirante'})` 
+            : 'Firma y sello de quien entrega'}
         </div>
         <div class="signature-box">
           <br/><br/>
@@ -388,8 +395,12 @@ export const imprimirFichaEstado = (
         <div class="meta-grid">
           <div class="meta-item"><strong>Nº de Serie:</strong> <span style="font-family: monospace; font-weight: 700;">${repair.numeroSerie}</span></div>
           <div class="meta-item"><strong>Marca / Modelo:</strong> <span>${repair.marcaModelo || '-'}</span></div>
-          <div class="meta-item"><strong>Tutor / Titular:</strong> <span>${repair.nombreTutor || '-'}</span></div>
-          <div class="meta-item"><strong>Teléfono Contacto:</strong> <span>${repair.telefonoTutor || '-'}</span></div>
+          <div class="meta-item"><strong>Alumno / Titular:</strong> <span>${repair.alumnoNombreCompleto || repair.nombreTutor || '-'}</span></div>
+          <div class="meta-item"><strong>DNI Alumno:</strong> <span>${repair.alumnoDni || repair.titularDni || '-'}</span></div>
+          <div class="meta-item"><strong>Tutor Responsable:</strong> <span>${repair.tutorResponsableNombre || repair.nombreTutor || '-'}</span></div>
+          <div class="meta-item"><strong>Teléfono Contacto:</strong> <span>${repair.tutorResponsableTelefono || repair.telefonoTutor || '-'}</span></div>
+          ${repair.personaEntregaNombre ? `<div class="meta-item"><strong>Entregó en Depósito:</strong> <span>${repair.personaEntregaNombre} (${repair.personaEntregaParentesco || 'Entregó'})</span></div>` : ''}
+          ${repair.personaRetiroNombre ? `<div class="meta-item"><strong>Retiró de Depósito:</strong> <span>${repair.personaRetiroNombre} (${repair.personaRetiroParentesco || 'Retiró'})</span></div>` : ''}
           <div class="meta-item"><strong>Depósito / Ubicación:</strong> <span style="font-weight: 700; color: #ea580c;">${repair.ubicacionDepositoCodigo || 'No asignada'}</span></div>
           <div class="meta-item"><strong>Fecha de Ingreso:</strong> <span>${fechaIngresoStr}</span></div>
         </div>
@@ -454,9 +465,12 @@ export const imprimirIngresoComprobante = (repair: Reparacion, operadorNombre: s
     operador: operadorNombre,
     motivo: `Ingreso a soporte técnico: ${repair.fallaReportada || 'Revisión inicial'}`,
     tutor: {
-      nombre: repair.nombreTutor || 'Tutor registrado',
-      dni: '-',
-      telefono: repair.telefonoTutor
+      nombre: repair.personaEntregaNombre || repair.tutorResponsableNombre || repair.nombreTutor || 'Presentante',
+      dni: repair.personaEntregaDni || repair.tutorResponsableDni || repair.alumnoDni || repair.titularDni || '-',
+      telefono: repair.personaEntregaTelefono || repair.tutorResponsableTelefono || repair.telefonoTutor,
+      alumno: repair.alumnoNombreCompleto || repair.nombreTutor,
+      personaEntregaRetiro: repair.personaEntregaNombre || repair.tutorResponsableNombre || repair.nombreTutor,
+      parentesco: repair.personaEntregaParentesco || 'Presentante'
     },
     equipos: [{
       numeroSerie: repair.numeroSerie,

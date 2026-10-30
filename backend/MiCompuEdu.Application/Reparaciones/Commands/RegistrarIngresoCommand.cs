@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using MiCompuEdu.Application.Common;
 using MiCompuEdu.Application.Common.Interfaces;
 using MiCompuEdu.Application.DTOs;
 using MiCompuEdu.Domain.Entities;
@@ -33,7 +34,13 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string? TutorNombre = null,
         string? TutorDni = null,
         string? TutorTelefono = null,
-        string? TitularTelefono = null
+        string? TitularTelefono = null,
+        string? PersonaEntregaTipo = null,
+        string? PersonaEntregaNombre = null,
+        string? PersonaEntregaDni = null,
+        string? PersonaEntregaTelefono = null,
+        string? PersonaEntregaParentesco = null,
+        string? DocIdentidadIngresoBase64 = null
     ) : IRequest<ReparacionDto>;
 
     public class RegistrarIngresoCommandHandler : IRequestHandler<RegistrarIngresoCommand, ReparacionDto>
@@ -166,6 +173,8 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             var fechaIngreso = request.FechaIngreso ?? DateTime.UtcNow;
             var fechaLimite = fechaIngreso.AddDays(promedioDias);
 
+            var docIngresoUrl = DocumentStorageHelper.GuardarDocumentoBase64(request.DocIdentidadIngresoBase64);
+
             var reparacion = new Reparacion
             {
                 Id = Guid.NewGuid(),
@@ -177,6 +186,12 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 Observaciones = request.Observaciones,
                 UbicacionDepositoId = request.UbicacionDepositoId,
                 FirmaIngresoBase64 = request.FirmaIngresoBase64,
+                PersonaEntregaTipo = request.PersonaEntregaTipo,
+                PersonaEntregaNombre = request.PersonaEntregaNombre,
+                PersonaEntregaDni = request.PersonaEntregaDni,
+                PersonaEntregaTelefono = request.PersonaEntregaTelefono,
+                PersonaEntregaParentesco = request.PersonaEntregaParentesco,
+                DocIdentidadIngresoUrl = docIngresoUrl,
                 FechaIngreso = fechaIngreso,
                 FechaLimite = fechaLimite,
                 SoloCargador = request.SoloCargador
@@ -233,8 +248,24 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 EquipoId = equipo.Id,
                 NumeroSerie = equipo.NumeroSerie,
                 MarcaModelo = $"{equipo.Marca} {equipo.Modelo}",
+                AlumnoNombreCompleto = $"{equipo.Beneficiario.Nombre} {equipo.Beneficiario.Apellido}",
+                AlumnoDni = equipo.Beneficiario.Dni,
+                AlumnoTelefono = equipo.Beneficiario.Telefono,
+                AlumnoEmail = equipo.Beneficiario.Email,
                 NombreTutor = $"{equipo.Beneficiario.Nombre} {equipo.Beneficiario.Apellido}",
                 TelefonoTutor = equipo.Beneficiario.Telefono,
+                TitularDni = equipo.Beneficiario.Dni,
+                TitularEmail = equipo.Beneficiario.Email,
+                TipoBeneficiario = (int)equipo.Beneficiario.TipoBeneficiario == 0 ? 1 : (int)equipo.Beneficiario.TipoBeneficiario,
+                TutorResponsableNombre = equipo.Beneficiario.NombreTutor,
+                TutorResponsableDni = equipo.Beneficiario.DniTutor,
+                TutorResponsableTelefono = equipo.Beneficiario.TelefonoTutor,
+                PersonaEntregaTipo = reparacion.PersonaEntregaTipo,
+                PersonaEntregaNombre = reparacion.PersonaEntregaNombre,
+                PersonaEntregaDni = reparacion.PersonaEntregaDni,
+                PersonaEntregaTelefono = reparacion.PersonaEntregaTelefono,
+                PersonaEntregaParentesco = reparacion.PersonaEntregaParentesco,
+                DocIdentidadIngresoUrl = reparacion.DocIdentidadIngresoUrl,
                 Estado = reparacion.Estado.ToString(),
                 FallaReportada = reparacion.FallaReportada,
                 Diagnostico = reparacion.Diagnostico,
