@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using MiCompuEdu.Application.Common;
 using MiCompuEdu.Application.Common.Interfaces;
 using MiCompuEdu.Domain.Entities;
 using MiCompuEdu.Domain.Enums;
@@ -23,7 +24,13 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
         string? FirmaEntregaBase64 = null,
         string? TelefonoContacto = null,
         string? TutorNombre = null,
-        string? TutorDni = null
+        string? TutorDni = null,
+        string? PersonaRetiroTipo = null,
+        string? PersonaRetiroNombre = null,
+        string? PersonaRetiroDni = null,
+        string? PersonaRetiroTelefono = null,
+        string? PersonaRetiroParentesco = null,
+        string? DocIdentidadEntregaBase64 = null
     ) : IRequest<bool>;
 
     public class ActualizarEstadoCommandHandler : IRequestHandler<ActualizarEstadoCommand, bool>
@@ -79,6 +86,30 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
             if (!string.IsNullOrEmpty(request.FirmaEntregaBase64))
                 reparacion.FirmaEntregaBase64 = request.FirmaEntregaBase64;
 
+            if (!string.IsNullOrWhiteSpace(request.PersonaRetiroTipo))
+                reparacion.PersonaRetiroTipo = request.PersonaRetiroTipo;
+
+            if (!string.IsNullOrWhiteSpace(request.PersonaRetiroNombre))
+                reparacion.PersonaRetiroNombre = request.PersonaRetiroNombre.Trim();
+
+            if (!string.IsNullOrWhiteSpace(request.PersonaRetiroDni))
+                reparacion.PersonaRetiroDni = request.PersonaRetiroDni.Trim();
+
+            if (!string.IsNullOrWhiteSpace(request.PersonaRetiroTelefono))
+                reparacion.PersonaRetiroTelefono = request.PersonaRetiroTelefono.Trim();
+
+            if (!string.IsNullOrWhiteSpace(request.PersonaRetiroParentesco))
+                reparacion.PersonaRetiroParentesco = request.PersonaRetiroParentesco.Trim();
+
+            if (!string.IsNullOrWhiteSpace(request.DocIdentidadEntregaBase64))
+            {
+                var docRetiroUrl = DocumentStorageHelper.GuardarDocumentoBase64(request.DocIdentidadEntregaBase64);
+                if (docRetiroUrl != null)
+                {
+                    reparacion.DocIdentidadEntregaUrl = docRetiroUrl;
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(request.TelefonoContacto))
             {
                 reparacion.Equipo.Beneficiario.Telefono = request.TelefonoContacto.Trim();
@@ -88,11 +119,14 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(request.TutorNombre))
-                reparacion.Equipo.Beneficiario.NombreTutor = request.TutorNombre.Trim();
+            if (request.PersonaRetiroTipo == "Tutor" || string.IsNullOrEmpty(request.PersonaRetiroTipo))
+            {
+                if (!string.IsNullOrWhiteSpace(request.TutorNombre))
+                    reparacion.Equipo.Beneficiario.NombreTutor = request.TutorNombre.Trim();
 
-            if (!string.IsNullOrWhiteSpace(request.TutorDni))
-                reparacion.Equipo.Beneficiario.DniTutor = request.TutorDni.Trim();
+                if (!string.IsNullOrWhiteSpace(request.TutorDni))
+                    reparacion.Equipo.Beneficiario.DniTutor = request.TutorDni.Trim();
+            }
 
             reparacion.ActualizadoEn = DateTime.UtcNow;
 
@@ -163,11 +197,16 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                 EstadoEquipo.Ingresado => 
                     nuevo == EstadoEquipo.En_Diagnostico || 
                     nuevo == EstadoEquipo.En_Reparacion || 
-                    nuevo == EstadoEquipo.Listo_Para_Retirar ||
+                    nuevo == EstadoEquipo.Reparado || 
+                    nuevo == EstadoEquipo.Esperando_Repuestos || 
+                    nuevo == EstadoEquipo.Apartado_Para_Garantia || 
+                    nuevo == EstadoEquipo.En_Garantia_Externa || 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar || 
                     nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.En_Diagnostico => 
                     nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.Reparado || 
                     nuevo == EstadoEquipo.Esperando_Repuestos || 
                     nuevo == EstadoEquipo.Apartado_Para_Garantia || 
                     nuevo == EstadoEquipo.En_Garantia_Externa || 
@@ -175,33 +214,48 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                     nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.En_Reparacion => 
+                    nuevo == EstadoEquipo.Reparado || 
                     nuevo == EstadoEquipo.Esperando_Repuestos || 
                     nuevo == EstadoEquipo.Apartado_Para_Garantia || 
                     nuevo == EstadoEquipo.En_Garantia_Externa || 
-                    nuevo == EstadoEquipo.Reparado || 
                     nuevo == EstadoEquipo.Listo_Para_Retirar || 
                     nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.Esperando_Repuestos => 
                     nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.Reparado || 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar || 
+                    nuevo == EstadoEquipo.Apartado_Para_Garantia || 
+                    nuevo == EstadoEquipo.En_Garantia_Externa || 
                     nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.Apartado_Para_Garantia => 
-                    nuevo == EstadoEquipo.En_Garantia_Externa,
-
-                EstadoEquipo.En_Garantia_Externa => 
+                    nuevo == EstadoEquipo.En_Garantia_Externa || 
+                    nuevo == EstadoEquipo.En_Reparacion || 
                     nuevo == EstadoEquipo.Reparado || 
                     nuevo == EstadoEquipo.Listo_Para_Retirar || 
                     nuevo == EstadoEquipo.No_Reparable,
 
+                EstadoEquipo.En_Garantia_Externa => 
+                    nuevo == EstadoEquipo.Reparado || 
+                    nuevo == EstadoEquipo.Listo_Para_Retirar || 
+                    nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.No_Reparable,
+
                 EstadoEquipo.Reparado => 
-                    nuevo == EstadoEquipo.Listo_Para_Retirar,
+                    nuevo == EstadoEquipo.Listo_Para_Retirar || 
+                    nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.Listo_Para_Retirar => 
-                    nuevo == EstadoEquipo.Entregado,
+                    nuevo == EstadoEquipo.Entregado || 
+                    nuevo == EstadoEquipo.Reparado || 
+                    nuevo == EstadoEquipo.En_Reparacion || 
+                    nuevo == EstadoEquipo.No_Reparable,
 
                 EstadoEquipo.No_Reparable => 
-                    nuevo == EstadoEquipo.Entregado,
+                    nuevo == EstadoEquipo.Entregado || 
+                    nuevo == EstadoEquipo.En_Reparacion,
 
                 EstadoEquipo.Entregado => 
                     false, // Estado final

@@ -62,7 +62,13 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.TutorNombre,
                 request.TutorDni,
                 request.TutorTelefono,
-                request.TitularTelefono
+                request.TitularTelefono,
+                request.PersonaEntregaTipo,
+                request.PersonaEntregaNombre,
+                request.PersonaEntregaDni,
+                request.PersonaEntregaTelefono,
+                request.PersonaEntregaParentesco,
+                request.DocIdentidadIngresoBase64
             );
 
             var resultado = await _mediator.Send(command);
@@ -103,7 +109,13 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.SoloCargador,
                 request.TutorNombre,
                 request.TutorDni,
-                request.TutorTelefono
+                request.TutorTelefono,
+                request.PersonaEntregaTipo,
+                request.PersonaEntregaNombre,
+                request.PersonaEntregaDni,
+                request.PersonaEntregaTelefono,
+                request.PersonaEntregaParentesco,
+                request.DocIdentidadIngresoBase64
             );
 
             var resultado = await _mediator.Send(command);
@@ -174,11 +186,32 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.FirmaEntregaBase64,
                 request.TelefonoContacto,
                 request.TutorNombre,
-                request.TutorDni
+                request.TutorDni,
+                request.PersonaRetiroTipo,
+                request.PersonaRetiroNombre,
+                request.PersonaRetiroDni,
+                request.PersonaRetiroTelefono,
+                request.PersonaRetiroParentesco,
+                request.DocIdentidadEntregaBase64
             );
 
-            var resultado = await _mediator.Send(command);
-            return Ok(resultado);
+            try
+            {
+                var resultado = await _mediator.Send(command);
+                return Ok(resultado);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Error interno al actualizar el estado: " + ex.Message });
+            }
         }
 
         [HttpGet("{id}/notificaciones")]
@@ -191,7 +224,7 @@ namespace MiCompuEdu.WebApi.Controllers
         }
 
         [HttpPost("{id}/evidencias")]
-        [Authorize(Roles = "Tecnico,Supervisor,Administrador")]
+        [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
         public async Task<ActionResult<EvidenciaDto>> SubirEvidencia(Guid id, [FromForm] Microsoft.AspNetCore.Http.IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -294,7 +327,13 @@ namespace MiCompuEdu.WebApi.Controllers
         string? TutorNombre = null,
         string? TutorDni = null,
         string? TutorTelefono = null,
-        string? TitularTelefono = null
+        string? TitularTelefono = null,
+        string? PersonaEntregaTipo = null,
+        string? PersonaEntregaNombre = null,
+        string? PersonaEntregaDni = null,
+        string? PersonaEntregaTelefono = null,
+        string? PersonaEntregaParentesco = null,
+        string? DocIdentidadIngresoBase64 = null
     );
 
     public record CreateReparacionManualRequest(
@@ -319,7 +358,13 @@ namespace MiCompuEdu.WebApi.Controllers
         bool SoloCargador = false,
         string? TutorNombre = null,
         string? TutorDni = null,
-        string? TutorTelefono = null
+        string? TutorTelefono = null,
+        string? PersonaEntregaTipo = null,
+        string? PersonaEntregaNombre = null,
+        string? PersonaEntregaDni = null,
+        string? PersonaEntregaTelefono = null,
+        string? PersonaEntregaParentesco = null,
+        string? DocIdentidadIngresoBase64 = null
     );
 
     public record UpdateEstadoRequest(
@@ -333,6 +378,12 @@ namespace MiCompuEdu.WebApi.Controllers
         string? FirmaEntregaBase64 = null,
         string? TelefonoContacto = null,
         string? TutorNombre = null,
-        string? TutorDni = null
+        string? TutorDni = null,
+        string? PersonaRetiroTipo = null,
+        string? PersonaRetiroNombre = null,
+        string? PersonaRetiroDni = null,
+        string? PersonaRetiroTelefono = null,
+        string? PersonaRetiroParentesco = null,
+        string? DocIdentidadEntregaBase64 = null
     );
 }

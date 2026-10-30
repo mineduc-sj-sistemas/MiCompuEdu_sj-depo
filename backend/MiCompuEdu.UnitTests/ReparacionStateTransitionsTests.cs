@@ -82,6 +82,7 @@ namespace MiCompuEdu.UnitTests
         [Theory]
         [InlineData(EstadoEquipo.Ingresado, EstadoEquipo.En_Diagnostico, true)]
         [InlineData(EstadoEquipo.Ingresado, EstadoEquipo.En_Reparacion, true)]
+        [InlineData(EstadoEquipo.Ingresado, EstadoEquipo.Reparado, true)]
         [InlineData(EstadoEquipo.Ingresado, EstadoEquipo.Entregado, false)]
         [InlineData(EstadoEquipo.En_Diagnostico, EstadoEquipo.Listo_Para_Retirar, true)]
         [InlineData(EstadoEquipo.En_Reparacion, EstadoEquipo.Reparado, true)]

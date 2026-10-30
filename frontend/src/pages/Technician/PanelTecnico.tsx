@@ -232,7 +232,8 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
           fechaEsperadaGarantia: fechaEsperadaGarantia ? new Date(fechaEsperadaGarantia).toISOString() : undefined
         } : null);
       } else {
-        setMensaje({ tipo: 'error', texto: 'Error al actualizar la orden en el servidor.' });
+        const errorData = await response.json().catch(() => null);
+        setMensaje({ tipo: 'error', texto: errorData?.error || errorData?.message || 'Error al actualizar la orden en el servidor.' });
       }
     } catch (error) {
       setRepairs(prev => prev.map(r => r.id === selectedRepair.id 
@@ -612,7 +613,20 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                         {r.estado.replace(/_/g, ' ')}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-550 truncate mt-1">Tutor: {r.nombreTutor}</p>
+                    <p className="text-xs text-slate-700 font-semibold truncate mt-1">
+                      {(r.tipoBeneficiario ?? 1) === 1 ? 'Alumno: ' : 'Titular: '}
+                      {r.alumnoNombreCompleto || r.nombreTutor}
+                    </p>
+                    {(r.tipoBeneficiario ?? 1) === 1 && r.tutorResponsableNombre && (
+                      <p className="text-[11px] text-slate-500 truncate">
+                        Tutor: {r.tutorResponsableNombre}
+                      </p>
+                    )}
+                    {r.personaEntregaNombre && (
+                      <p className="text-[10px] text-slate-500 truncate">
+                        Entregó: {r.personaEntregaNombre} ({r.personaEntregaParentesco || 'Entregó'})
+                      </p>
+                    )}
                     <p className="text-xs text-slate-400">Modelo: {r.marcaModelo}</p>
                     {r.proveedorGarantia && (
                       <p className="text-[10px] font-semibold text-slate-550 mt-1">
@@ -770,9 +784,46 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Tutor: <span className="font-medium text-slate-700">{selectedRepair.nombreTutor}</span> ({selectedRepair.telefonoTutor}) • <span className="text-slate-400">Ingreso: {new Date(selectedRepair.fechaIngreso).toLocaleDateString()}</span>
-                  </p>
+                  <div className="text-xs text-slate-600 mt-2 space-y-1 bg-slate-50 border border-slate-200/80 rounded-lg p-2.5">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                      <span>
+                        <strong className="text-slate-800">{(selectedRepair.tipoBeneficiario ?? 1) === 1 ? 'Alumno:' : 'Titular:'}</strong>{' '}
+                        {selectedRepair.alumnoNombreCompleto || selectedRepair.nombreTutor}{' '}
+                        {(selectedRepair.alumnoDni || selectedRepair.titularDni) && (
+                          <span className="text-slate-400 font-mono">(DNI: {selectedRepair.alumnoDni || selectedRepair.titularDni})</span>
+                        )}
+                      </span>
+                      {(selectedRepair.tipoBeneficiario ?? 1) === 1 && selectedRepair.tutorResponsableNombre && (
+                        <span>
+                          <strong className="text-slate-800">Tutor:</strong> {selectedRepair.tutorResponsableNombre}{' '}
+                          {selectedRepair.tutorResponsableDni && <span className="text-slate-400 font-mono">(DNI: {selectedRepair.tutorResponsableDni})</span>}
+                        </span>
+                      )}
+                      <span>
+                        <strong className="text-slate-800">Tel:</strong> {selectedRepair.telefonoTutor || 'Sin teléfono'}
+                      </span>
+                      <span>
+                        <strong className="text-slate-800">Ingreso:</strong> {new Date(selectedRepair.fechaIngreso).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    {(selectedRepair.personaEntregaNombre || selectedRepair.personaRetiroNombre) && (
+                      <div className="pt-1.5 mt-1.5 border-t border-slate-200/60 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-slate-500">
+                        {selectedRepair.personaEntregaNombre && (
+                          <span>
+                            <strong className="text-slate-700">Entregó en depósito:</strong> {selectedRepair.personaEntregaNombre}{' '}
+                            <span className="text-slate-400">({selectedRepair.personaEntregaParentesco || 'Entregó'})</span>
+                          </span>
+                        )}
+                        {selectedRepair.personaRetiroNombre && (
+                          <span>
+                            <strong className="text-slate-700">Retiró:</strong> {selectedRepair.personaRetiroNombre}{' '}
+                            <span className="text-slate-400">({selectedRepair.personaRetiroParentesco || 'Retiró'})</span>
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Botones de Impresión solicitados */}
@@ -946,6 +997,49 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
 
                 {/* Secciones colapsables para Evidencias e Historial */}
                 <div className="space-y-2 pt-1">
+                  {(selectedRepair.docIdentidadIngresoUrl || selectedRepair.docIdentidadEntregaUrl) && (
+                    <div className="border border-slate-200 rounded-lg p-3 bg-slate-50/70 space-y-2 text-xs">
+                      <div className="flex items-center gap-1.5 font-bold text-slate-800">
+                        <FileText className="w-4 h-4 text-[#FF8200]" />
+                        <span>Documentos de Identidad Digitalizados (DNI)</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {selectedRepair.docIdentidadIngresoUrl && (
+                          <div className="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center justify-between gap-2">
+                            <div>
+                              <p className="font-semibold text-slate-800 text-[11px]">DNI Presentado al Ingreso</p>
+                              <p className="text-[10px] text-slate-500">{selectedRepair.personaEntregaNombre || 'Constancia digital'}</p>
+                            </div>
+                            <a
+                              href={selectedRepair.docIdentidadIngresoUrl.startsWith('http') ? selectedRepair.docIdentidadIngresoUrl : `${API_BASE_URL.replace('/api/v1', '')}${selectedRepair.docIdentidadIngresoUrl}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs bg-orange-50 hover:bg-orange-100 text-[#FF8200] border border-orange-200 px-2.5 py-1 rounded font-bold transition-colors cursor-pointer"
+                            >
+                              Ver Documento
+                            </a>
+                          </div>
+                        )}
+                        {selectedRepair.docIdentidadEntregaUrl && (
+                          <div className="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center justify-between gap-2">
+                            <div>
+                              <p className="font-semibold text-slate-800 text-[11px]">DNI Registrado al Retiro</p>
+                              <p className="text-[10px] text-slate-500">{selectedRepair.personaRetiroNombre || 'Constancia digital'}</p>
+                            </div>
+                            <a
+                              href={selectedRepair.docIdentidadEntregaUrl.startsWith('http') ? selectedRepair.docIdentidadEntregaUrl : `${API_BASE_URL.replace('/api/v1', '')}${selectedRepair.docIdentidadEntregaUrl}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded font-bold transition-colors cursor-pointer"
+                            >
+                              Ver Documento
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   <details className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50/50">
                     <summary className="p-2.5 text-xs font-bold text-slate-700 flex items-center justify-between cursor-pointer select-none hover:bg-slate-100 transition-colors">
                       <span className="flex items-center gap-1.5">

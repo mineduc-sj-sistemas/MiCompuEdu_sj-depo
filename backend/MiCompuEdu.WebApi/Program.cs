@@ -146,6 +146,50 @@ using (var scope = app.Services.CreateScope())
             var context = services.GetRequiredService<ApplicationDbContext>();
             context.Database.Migrate();
 
+            context.Database.ExecuteSqlRaw(@"
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaEntregaTipo') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaEntregaTipo"" VARCHAR(50);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaEntregaNombre') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaEntregaNombre"" VARCHAR(200);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaEntregaDni') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaEntregaDni"" VARCHAR(30);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaEntregaTelefono') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaEntregaTelefono"" VARCHAR(50);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaEntregaParentesco') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaEntregaParentesco"" VARCHAR(100);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'DocIdentidadIngresoUrl') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""DocIdentidadIngresoUrl"" VARCHAR(500);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaRetiroTipo') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaRetiroTipo"" VARCHAR(50);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaRetiroNombre') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaRetiroNombre"" VARCHAR(200);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaRetiroDni') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaRetiroDni"" VARCHAR(30);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaRetiroTelefono') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaRetiroTelefono"" VARCHAR(50);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'PersonaRetiroParentesco') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""PersonaRetiroParentesco"" VARCHAR(100);
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'reparaciones' AND column_name = 'DocIdentidadEntregaUrl') THEN
+                        ALTER TABLE reparaciones ADD COLUMN ""DocIdentidadEntregaUrl"" VARCHAR(500);
+                    END IF;
+
+                    UPDATE beneficiarios SET ""TipoBeneficiario"" = 1 WHERE ""TipoBeneficiario"" = 0;
+                END $$;
+            ");
+
             if (!context.Usuarios.Any())
             {
                 context.Usuarios.AddRange(
