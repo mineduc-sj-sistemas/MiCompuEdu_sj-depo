@@ -20,6 +20,8 @@ namespace MiCompuEdu.Application.Common.Interfaces
         DbSet<ProgramaEducativo> ProgramasEducativos { get; }
         DbSet<AuditLog> AuditLogs { get; }
         DbSet<UbicacionDeposito> UbicacionesDeposito { get; }
+        DbSet<PlanillaDiaria> PlanillasDiarias { get; }
+        DbSet<ArchivoPlanillaDiaria> ArchivosPlanillaDiaria { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

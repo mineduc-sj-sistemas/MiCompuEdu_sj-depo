@@ -37,6 +37,8 @@ namespace MiCompuEdu.Infrastructure.Persistence
         public DbSet<ProgramaEducativo> ProgramasEducativos => Set<ProgramaEducativo>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<UbicacionDeposito> UbicacionesDeposito => Set<UbicacionDeposito>();
+        public DbSet<PlanillaDiaria> PlanillasDiarias => Set<PlanillaDiaria>();
+        public DbSet<ArchivoPlanillaDiaria> ArchivosPlanillaDiaria => Set<ArchivoPlanillaDiaria>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -435,6 +437,35 @@ namespace MiCompuEdu.Infrastructure.Persistence
                 .WithMany(u => u.Reparaciones)
                 .HasForeignKey(r => r.UbicacionDepositoId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // ════════════════════════════════════════════════════════
+            //  PLANILLAS DIARIAS DE RETIRO
+            // ════════════════════════════════════════════════════════
+            modelBuilder.Entity<PlanillaDiaria>(entity =>
+            {
+                entity.ToTable("planillas_diarias");
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.Fecha).IsRequired();
+                entity.Property(p => p.Observaciones).HasColumnType("text");
+                entity.Property(p => p.SubidoPorNombre).HasMaxLength(200);
+                entity.Property(p => p.CreadoEn).HasDefaultValueSql("NOW()");
+                entity.HasIndex(p => p.Fecha).HasDatabaseName("ix_planillas_diarias_fecha");
+            });
+
+            modelBuilder.Entity<ArchivoPlanillaDiaria>(entity =>
+            {
+                entity.ToTable("archivos_planilla_diaria");
+                entity.HasKey(a => a.Id);
+                entity.Property(a => a.NombreArchivo).HasMaxLength(260).IsRequired();
+                entity.Property(a => a.TipoContenido).HasMaxLength(100).IsRequired();
+                entity.Property(a => a.ContenidoBase64).HasColumnType("text").IsRequired();
+                entity.Property(a => a.CreadoEn).HasDefaultValueSql("NOW()");
+
+                entity.HasOne(a => a.PlanillaDiaria)
+                    .WithMany(p => p.Archivos)
+                    .HasForeignKey(a => a.PlanillaDiariaId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

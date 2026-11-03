@@ -186,6 +186,28 @@ using (var scope = app.Services.CreateScope())
                         ALTER TABLE reparaciones ADD COLUMN ""DocIdentidadEntregaUrl"" VARCHAR(500);
                     END IF;
 
+                    CREATE TABLE IF NOT EXISTS planillas_diarias (
+                        ""Id"" UUID PRIMARY KEY,
+                        ""Fecha"" TIMESTAMP WITH TIME ZONE NOT NULL,
+                        ""Observaciones"" TEXT NULL,
+                        ""SubidoPorId"" UUID NULL,
+                        ""SubidoPorNombre"" VARCHAR(200) NOT NULL DEFAULT '',
+                        ""CreadoEn"" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+                        ""ActualizadoEn"" TIMESTAMP WITH TIME ZONE NULL
+                    );
+                    CREATE INDEX IF NOT EXISTS ix_planillas_diarias_fecha ON planillas_diarias (""Fecha"");
+
+                    CREATE TABLE IF NOT EXISTS archivos_planilla_diaria (
+                        ""Id"" UUID PRIMARY KEY,
+                        ""PlanillaDiariaId"" UUID NOT NULL REFERENCES planillas_diarias(""Id"") ON DELETE CASCADE,
+                        ""NombreArchivo"" VARCHAR(260) NOT NULL,
+                        ""TipoContenido"" VARCHAR(100) NOT NULL,
+                        ""ContenidoBase64"" TEXT NOT NULL,
+                        ""TamanoBytes"" BIGINT NOT NULL DEFAULT 0,
+                        ""CreadoEn"" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+                        ""ActualizadoEn"" TIMESTAMP WITH TIME ZONE NULL
+                    );
+
                     UPDATE beneficiarios SET ""TipoBeneficiario"" = 1 WHERE ""TipoBeneficiario"" = 0;
                 END $$;
             ");
