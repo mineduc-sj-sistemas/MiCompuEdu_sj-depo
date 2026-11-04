@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Reparacion } from '../../types';
+import type { Reparacion, EvidenciaItem, EscuelaItem, ProgramaItem, HistorialMovimientoItem } from '../../types';
 import { API_BASE_URL } from '../../config';
 import { imprimirComprobante } from '../../utils/printHelpers';
 import { SidebarListaReparacionesTecnico } from '../../components/Tecnico/SidebarListaReparacionesTecnico';
@@ -20,7 +20,7 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
   const [observaciones, setObservaciones] = useState('');
   const [nuevoEstado, setNuevoEstado] = useState('En_Diagnostico');
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
-  const [evidencias, setEvidencias] = useState<any[]>([]);
+  const [evidencias, setEvidencias] = useState<EvidenciaItem[]>([]);
 
   const [proveedorGarantia, setProveedorGarantia] = useState('');
   const [remitoGarantia, setRemitoGarantia] = useState('');
@@ -35,8 +35,8 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
   const [bulkDiagnostico, setBulkDiagnostico] = useState('');
   const [bulkObservaciones, setBulkObservaciones] = useState('');
 
-  const [escuelas, setEscuelas] = useState<any[]>([]);
-  const [programas, setProgramas] = useState<any[]>([]);
+  const [escuelas, setEscuelas] = useState<EscuelaItem[]>([]);
+  const [programas, setProgramas] = useState<ProgramaItem[]>([]);
   const [escuelaFiltroId, setEscuelaFiltroId] = useState('');
   const [programaFiltroId, setProgramaFiltroId] = useState('');
   const [fallaFiltroId, setFallaFiltroId] = useState('');
@@ -44,19 +44,20 @@ export const PanelTecnico: React.FC<PanelTecnicoProps> = ({ token, nombreTecnico
   const [fechaFinFiltro, setFechaFinFiltro] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [historial, setHistorial] = useState<any[]>([]);
+  const [historial, setHistorial] = useState<HistorialMovimientoItem[]>([]);
 
   useEffect(() => {
     const loadCatalogs = async () => {
       try {
-        const resEscuelas = await fetch(`${API_BASE_URL}/Escuelas`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const [resEscuelas, resProgramas] = await Promise.all([
+          fetch(`${API_BASE_URL}/Escuelas`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch(`${API_BASE_URL}/Programas`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
         if (resEscuelas.ok) setEscuelas(await resEscuelas.json());
-
-        const resProgramas = await fetch(`${API_BASE_URL}/Programas`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
         if (resProgramas.ok) setProgramas(await resProgramas.json());
       } catch (err) {
         console.warn('Error crítico: backend no disponible.', err);

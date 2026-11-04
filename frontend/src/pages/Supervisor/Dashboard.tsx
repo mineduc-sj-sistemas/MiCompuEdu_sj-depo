@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { DashboardStats } from '../../types';
+import type { DashboardStats, Reparacion, HistorialMovimientoItem } from '../../types';
 import { LogoSanJuan } from '../../components/Shared/LogoSanJuan';
 import { DashboardChartsGrid } from '../../components/Dashboard/DashboardChartsGrid';
 import { ModalTrazabilidadEquipo } from '../../components/Dashboard/ModalTrazabilidadEquipo';
@@ -38,12 +38,12 @@ const estadoNombreEsp: Record<string, string> = {
 
 export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [repairs, setRepairs] = useState<any[]>([]);
+  const [repairs, setRepairs] = useState<Reparacion[]>([]);
   const [loading, setLoading] = useState(false);
   const [filtroActivo, setFiltroActivo] = useState<{ tipo: string; valor: string; label: string } | null>(null);
 
-  const [selectedModalRepair, setSelectedModalRepair] = useState<any | null>(null);
-  const [modalHistory, setModalHistory] = useState<any[]>([]);
+  const [selectedModalRepair, setSelectedModalRepair] = useState<Reparacion | null>(null);
+  const [modalHistory, setModalHistory] = useState<HistorialMovimientoItem[]>([]);
   const [loadingModalHistory, setLoadingModalHistory] = useState(false);
 
   const fetchStats = async () => {
@@ -143,7 +143,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ token }) => {
     });
   }, [repairs, filtroActivo]);
 
-  const handleRowClick = async (repair: any) => {
+  const handleRowClick = async (repair: Reparacion) => {
     setSelectedModalRepair(repair);
     setLoadingModalHistory(true);
     try {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MiCompuEdu.Application.DTOs;
@@ -23,15 +24,15 @@ namespace MiCompuEdu.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UsuarioDto>>> ObtenerTodos()
+        public async Task<ActionResult<List<UsuarioDto>>> ObtenerTodos(CancellationToken cancellationToken = default)
         {
             var query = new GetUsuariosQuery();
-            var resultado = await _mediator.Send(query);
+            var resultado = await _mediator.Send(query, cancellationToken);
             return Ok(resultado);
         }
 
         [HttpPost]
-        public async Task<ActionResult<UsuarioDto>> Crear([FromBody] CreateUsuarioRequest request)
+        public async Task<ActionResult<UsuarioDto>> Crear([FromBody] CreateUsuarioRequest request, CancellationToken cancellationToken = default)
         {
             var command = new CreateUsuarioCommand(
                 request.NombreCompleto,
@@ -41,12 +42,12 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.Rol
             );
 
-            var resultado = await _mediator.Send(command);
+            var resultado = await _mediator.Send(command, cancellationToken);
             return CreatedAtAction(nameof(Crear), new { id = resultado.Id }, resultado);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UsuarioDto>> Actualizar(Guid id, [FromBody] UpdateUsuarioRequest request)
+        public async Task<ActionResult<UsuarioDto>> Actualizar(Guid id, [FromBody] UpdateUsuarioRequest request, CancellationToken cancellationToken = default)
         {
             var command = new UpdateUsuarioCommand(
                 id,
@@ -56,15 +57,15 @@ namespace MiCompuEdu.WebApi.Controllers
                 request.Rol
             );
 
-            var resultado = await _mediator.Send(command);
+            var resultado = await _mediator.Send(command, cancellationToken);
             return Ok(resultado);
         }
 
         [HttpPut("{id}/toggle-active")]
-        public async Task<ActionResult<bool>> ToggleActive(Guid id)
+        public async Task<ActionResult<bool>> ToggleActive(Guid id, CancellationToken cancellationToken = default)
         {
             var command = new ToggleUsuarioActiveCommand(id);
-            var resultado = await _mediator.Send(command);
+            var resultado = await _mediator.Send(command, cancellationToken);
             return Ok(resultado);
         }
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Reparacion } from '../../types';
+import type { Reparacion, HistorialMovimientoItem } from '../../types';
 import { API_BASE_URL } from '../../config';
 import {
   Laptop, X, User, ShieldCheck, Phone, FileText, Eye, Clock,
@@ -9,7 +9,7 @@ import {
 interface ModalDetalleEntregaProps {
   selectedRepair: Reparacion | null;
   onClose: () => void;
-  historialMovimientos: any[];
+  historialMovimientos: HistorialMovimientoItem[];
   loadingHistorial: boolean;
   onReimprimirComprobante: (repair: Reparacion) => void;
   previewDocUrl: string | null;
@@ -203,7 +203,7 @@ export const ModalDetalleEntrega: React.FC<ModalDetalleEntregaProps> = ({
                   <p className="text-xs text-slate-400 italic">No hay historial disponible.</p>
                 ) : (
                   <div className="space-y-2 pt-1">
-                    {historialMovimientos.map((m: any, idx: number) => (
+                    {historialMovimientos.map((m, idx) => (
                       <div key={m.id || idx} className="bg-white p-2.5 rounded-lg border border-slate-200 text-xs flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-slate-700">{m.estadoAnterior || 'Inicio'}</span>
@@ -212,7 +212,7 @@ export const ModalDetalleEntrega: React.FC<ModalDetalleEntregaProps> = ({
                           {m.observaciones && <span className="text-slate-500 italic truncate max-w-xs ml-2">({m.observaciones})</span>}
                         </div>
                         <div className="text-[11px] text-slate-400 font-mono">
-                          {new Date(m.fechaMovimiento).toLocaleString('es-AR')}
+                          {m.fechaMovimiento ? new Date(m.fechaMovimiento).toLocaleString('es-AR') : '-'}
                         </div>
                       </div>
                     ))}

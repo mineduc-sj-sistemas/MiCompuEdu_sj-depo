@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MiCompuEdu.Application.Dashboard.Queries;
@@ -21,10 +22,10 @@ namespace MiCompuEdu.WebApi.Controllers
 
         [HttpGet("stats")]
         [Authorize(Roles = "Supervisor,Administrador")]
-        public async Task<ActionResult<DashboardDto>> ObtenerEstadisticas()
+        public async Task<ActionResult<DashboardDto>> ObtenerEstadisticas(CancellationToken cancellationToken = default)
         {
             var query = new GetDashboardStatsQuery();
-            var resultado = await _mediator.Send(query);
+            var resultado = await _mediator.Send(query, cancellationToken);
             return Ok(resultado);
         }
     }

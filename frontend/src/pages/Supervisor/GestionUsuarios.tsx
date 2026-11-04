@@ -271,7 +271,7 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
                 <label className="block text-slate-700 text-xs font-semibold mb-1.5">Rol *</label>
                 <select
                   value={rol}
-                  onChange={(e) => setRol(e.target.value as any)}
+                  onChange={(e) => setRol(e.target.value as ManagedUser['rol'])}
                   className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#FF8200] transition-colors"
                 >
                   <option value="Operador">Operador (Ingresos / Entregas)</option>

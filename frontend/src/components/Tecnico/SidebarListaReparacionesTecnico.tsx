@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Reparacion } from '../../types';
+import type { Reparacion, EscuelaItem, ProgramaItem } from '../../types';
 
 interface SidebarListaReparacionesTecnicoProps {
   repairs: Reparacion[];
@@ -25,8 +25,8 @@ interface SidebarListaReparacionesTecnicoProps {
   setFechaInicioFiltro: (v: string) => void;
   fechaFinFiltro: string;
   setFechaFinFiltro: (v: string) => void;
-  escuelas: any[];
-  programas: any[];
+  escuelas: EscuelaItem[];
+  programas: ProgramaItem[];
   fetchRepairs: () => void;
   handleSelectRepair: (r: Reparacion) => void;
 }

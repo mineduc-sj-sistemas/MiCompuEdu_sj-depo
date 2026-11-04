@@ -87,7 +87,7 @@ export const DocumentoIdentidadSection: React.FC<DocumentoIdentidadSectionProps>
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.warn('Error al iniciar cámara:', err);
       setCameraError('No se pudo acceder a la cámara. Verifique los permisos del navegador o use la opción de subir archivo.');
     }

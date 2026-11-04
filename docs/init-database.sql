@@ -233,3 +233,38 @@ CREATE TABLE audit_log (
 CREATE INDEX ix_audit_tabla_registro ON audit_log (tabla, registro_id);
 
 COMMENT ON TABLE audit_log IS 'Log inmutable global para cambios a nivel de fila mediante JSONB.';
+
+-- -----------------------------------------------------------------------------
+-- 12. TABLA: planillas_diarias (Respaldo Digital de Actas de Retiro por Fecha)
+-- -----------------------------------------------------------------------------
+CREATE TABLE planillas_diarias (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    fecha TIMESTAMPTZ NOT NULL,
+    observaciones VARCHAR(1000),
+    operador_nombre VARCHAR(200) NOT NULL,
+    usuario_id UUID,
+    creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    actualizado_en TIMESTAMPTZ
+);
+
+CREATE INDEX ix_planillas_diarias_fecha ON planillas_diarias (fecha DESC);
+
+COMMENT ON TABLE planillas_diarias IS 'Cabecera de planillas físicas de retiro firmadas agrupadas por fecha.';
+
+-- -----------------------------------------------------------------------------
+-- 13. TABLA: archivos_planilla_diaria (Hojas Escaneadas Imagen/PDF)
+-- -----------------------------------------------------------------------------
+CREATE TABLE archivos_planilla_diaria (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    planilla_diaria_id UUID NOT NULL,
+    nombre_archivo VARCHAR(300) NOT NULL,
+    url_archivo VARCHAR(500) NOT NULL,
+    tipo_archivo VARCHAR(50) NOT NULL,
+    tamano_bytes BIGINT NOT NULL DEFAULT 0,
+    creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    actualizado_en TIMESTAMPTZ,
+    CONSTRAINT fk_archivos_planilla_diaria_planillas_diarias_id FOREIGN KEY (planilla_diaria_id) REFERENCES planillas_diarias(id) ON DELETE CASCADE
+);
+
+COMMENT ON TABLE archivos_planilla_diaria IS 'Archivos escaneados (JPG, PNG, WEBP, PDF) asociados a una planilla diaria de retiro.';
+

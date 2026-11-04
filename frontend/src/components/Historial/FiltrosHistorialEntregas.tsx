@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, X, CheckCircle2, AlertTriangle } from 'lucide-react';
+import type { ProgramaItem, EscuelaItem } from '../../types';
 
 export type FiltroResultado = 'todos' | 'reparados' | 'no_reparables';
 export type FiltroTiempo = 'todos' | 'hoy' | 'semana' | 'mes';
@@ -18,8 +19,8 @@ interface FiltrosHistorialEntregasProps {
   totalRepairs: number;
   totalReparadas: number;
   totalNoReparables: number;
-  programas: any[];
-  escuelas: any[];
+  programas: ProgramaItem[];
+  escuelas: EscuelaItem[];
 }
 
 export const FiltrosHistorialEntregas: React.FC<FiltrosHistorialEntregasProps> = ({
@@ -115,7 +116,7 @@ export const FiltrosHistorialEntregas: React.FC<FiltrosHistorialEntregasProps> =
               className="bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1 text-slate-700 focus:outline-none focus:border-[#FF8200]"
             >
               <option value="">Todos los programas</option>
-              {programas.map((p: any) => (
+              {programas.map((p) => (
                 <option key={p.id} value={p.id}>{p.nombre}</option>
               ))}
             </select>
@@ -131,7 +132,7 @@ export const FiltrosHistorialEntregas: React.FC<FiltrosHistorialEntregasProps> =
               className="bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1 text-slate-700 focus:outline-none focus:border-[#FF8200] max-w-xs truncate"
             >
               <option value="">Todas las escuelas</option>
-              {escuelas.map((e: any) => (
+              {escuelas.map((e) => (
                 <option key={e.id} value={e.id}>{e.nombre}</option>
               ))}
             </select>

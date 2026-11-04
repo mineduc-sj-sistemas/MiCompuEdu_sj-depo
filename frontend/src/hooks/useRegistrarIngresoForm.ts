@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import type { Beneficiario } from '../types';
+import type { Beneficiario, EscuelaItem, ProgramaItem } from '../types';
+import type { PrintData } from '../utils/printHelpers';
 import { API_BASE_URL } from '../config';
 import { parseDniScan } from '../utils/dniParser';
 import type { ScannedDniData } from '../utils/dniParser';
@@ -28,7 +29,7 @@ export function useRegistrarIngresoForm(token: string, nombreOperador: string) {
   const [personaEntregaParentesco, setPersonaEntregaParentesco] = useState('Tutor Responsable');
   const [docIdentidadIngresoBase64, setDocIdentidadIngresoBase64] = useState<string | null>(null);
   const [firmaIngresoBase64, setFirmaIngresoBase64] = useState<string | null>(null);
-  const [ultimoComprobante, setUltimoComprobante] = useState<any | null>(null);
+  const [ultimoComprobante, setUltimoComprobante] = useState<PrintData | null>(null);
 
   const [registrarNuevoEquipo, setRegistrarNuevoEquipo] = useState(false);
   const [customSerial, setCustomSerial] = useState('');
@@ -50,8 +51,8 @@ export function useRegistrarIngresoForm(token: string, nombreOperador: string) {
   const [manualEquipoModelo, setManualEquipoModelo] = useState('');
   const [manualEquipoCredencialesOffice, setManualEquipoCredencialesOffice] = useState('');
 
-  const [programas, setProgramas] = useState<any[]>([]);
-  const [escuelas, setEscuelas] = useState<any[]>([]);
+  const [programas, setProgramas] = useState<ProgramaItem[]>([]);
+  const [escuelas, setEscuelas] = useState<EscuelaItem[]>([]);
   const [selectedEscuelaId, setSelectedEscuelaId] = useState<string>('');
   const [escuelaSearch, setEscuelaSearch] = useState('');
   const [isEscuelaDropdownOpen, setIsEscuelaDropdownOpen] = useState(false);
@@ -79,14 +80,15 @@ export function useRegistrarIngresoForm(token: string, nombreOperador: string) {
   useEffect(() => {
     const cargarCatalogos = async () => {
       try {
-        const resEscuelas = await fetch(`${API_BASE_URL}/Escuelas`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const [resEscuelas, resProgramas] = await Promise.all([
+          fetch(`${API_BASE_URL}/Escuelas`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch(`${API_BASE_URL}/Programas`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
         if (resEscuelas.ok) setEscuelas(await resEscuelas.json());
-
-        const resProgramas = await fetch(`${API_BASE_URL}/Programas`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
         if (resProgramas.ok) setProgramas(await resProgramas.json());
       } catch {
         setMensajeError('No se pudieron cargar los catálogos del sistema. Verifique la conexión con el servidor.');
@@ -95,7 +97,7 @@ export function useRegistrarIngresoForm(token: string, nombreOperador: string) {
     cargarCatalogos();
   }, [token]);
 
-  const handleEscuelaCreada = (nuevaEscuela: any) => {
+  const handleEscuelaCreada = (nuevaEscuela: EscuelaItem) => {
     setEscuelas((prev) => [...prev, nuevaEscuela].sort((a, b) => a.nombre.localeCompare(b.nombre)));
     setSelectedEscuelaId(nuevaEscuela.id);
     setIsCrearEscuelaModalOpen(false);
@@ -149,7 +151,7 @@ export function useRegistrarIngresoForm(token: string, nombreOperador: string) {
     }
   }, [dniInput]);
 
-  const buscarBeneficiario = async (overrideDni?: string, scannedData?: any) => {
+  const buscarBeneficiario = async (overrideDni?: string, scannedData?: ScannedDniData) => {
     const rawInput = overrideDni || dniInput.trim();
     let cleanDni = rawInput;
     let scanInfo = scannedData;

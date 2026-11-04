@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Reparacion } from '../../types';
+import type { Reparacion, EscuelaItem, ProgramaItem, HistorialMovimientoItem } from '../../types';
 import { API_BASE_URL } from '../../config';
 import {
   History, RefreshCw, CheckCircle2, AlertTriangle,
@@ -27,12 +27,12 @@ export const HistorialEntregas: React.FC<HistorialEntregasProps> = ({ token, nom
   const [filtroEscuela, setFiltroEscuela] = useState('');
 
   // Catálogos
-  const [escuelas, setEscuelas] = useState<any[]>([]);
-  const [programas, setProgramas] = useState<any[]>([]);
+  const [escuelas, setEscuelas] = useState<EscuelaItem[]>([]);
+  const [programas, setProgramas] = useState<ProgramaItem[]>([]);
 
   // Modal de Detalle
   const [selectedRepair, setSelectedRepair] = useState<Reparacion | null>(null);
-  const [historialMovimientos, setHistorialMovimientos] = useState<any[]>([]);
+  const [historialMovimientos, setHistorialMovimientos] = useState<HistorialMovimientoItem[]>([]);
   const [loadingHistorial, setLoadingHistorial] = useState(false);
 
   // Modal de visualización de imagen/documento escaneado

@@ -1,9 +1,10 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import type { Reparacion, HistorialMovimientoItem } from '../../types';
 
 interface ModalTrazabilidadEquipoProps {
-  selectedModalRepair: any;
-  modalHistory: any[];
+  selectedModalRepair: Reparacion;
+  modalHistory: HistorialMovimientoItem[];
   loadingModalHistory: boolean;
   onClose: () => void;
 }
@@ -101,7 +102,7 @@ export const ModalTrazabilidadEquipo: React.FC<ModalTrazabilidadEquipoProps> = (
               <p className="text-xs text-slate-400">Sin movimientos registrados.</p>
             ) : (
               <div className="relative border-l-2 border-slate-100 pl-4 ml-2 space-y-4">
-                {modalHistory.map((item: any, idx: number) => (
+                {modalHistory.map((item, idx) => (
                   <div key={idx} className="relative text-xs">
                     <div className="absolute -left-[23px] top-1.5 w-3 h-3 rounded-full bg-[#FF8200] border-2 border-white" />
                     <div className="flex items-center justify-between text-slate-400 text-[10px] mb-1">

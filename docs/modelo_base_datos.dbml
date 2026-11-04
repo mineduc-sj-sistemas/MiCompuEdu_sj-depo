@@ -121,9 +121,40 @@ Table notificaciones {
   creado_en timestamp [default: `now()`]
 }
 
+Table planillas_diarias {
+  id uuid [pk, default: `gen_random_uuid()`]
+  fecha timestamp [not null]
+  observaciones varchar(1000)
+  operador_nombre varchar(200) [not null]
+  usuario_id uuid
+  creado_en timestamp [default: `now()`]
+  actualizado_en timestamp
+}
+
+Table archivos_planilla_diaria {
+  id uuid [pk, default: `gen_random_uuid()`]
+  planilla_diaria_id uuid [not null]
+  nombre_archivo varchar(300) [not null]
+  url_archivo varchar(500) [not null]
+  tipo_archivo varchar(50) [not null]
+  tamano_bytes bigint [not null, default: 0]
+  creado_en timestamp [default: `now()`]
+}
+
+Table audit_log {
+  id bigserial [pk, increment]
+  tabla varchar(100) [not null]
+  registro_id uuid [not null]
+  accion varchar(20) [not null]
+  usuario_id uuid
+  datos_anteriores jsonb
+  datos_nuevos jsonb
+  fecha timestamp [default: `now()`]
+}
+
 // Relaciones
-Ref: equipos.beneficiario_id > beneficiarios.id [delete: cascade]
-Ref: reparaciones.equipo_id > equipos.id [delete: cascade]
+Ref: equipos.beneficiario_id > beneficiarios.id [delete: restrict]
+Ref: reparaciones.equipo_id > equipos.id [delete: restrict]
 Ref: reparaciones.operador_ingreso_id > usuarios.id
 Ref: reparaciones.tecnico_asignado_id > usuarios.id
 Ref: reparaciones.falla_catalogo_id > fallas_catalogo.id [delete: set null]
@@ -131,3 +162,4 @@ Ref: historial_movimientos.reparacion_id > reparaciones.id [delete: cascade]
 Ref: historial_movimientos.usuario_id > usuarios.id
 Ref: evidencias_reparacion.reparacion_id > reparaciones.id [delete: cascade]
 Ref: notificaciones.reparacion_id > reparaciones.id [delete: cascade]
+Ref: archivos_planilla_diaria.planilla_diaria_id > planillas_diarias.id [delete: cascade]

@@ -23,6 +23,8 @@ namespace MiCompuEdu.Application.Usuarios.Queries
         public async Task<List<UsuarioDto>> Handle(GetUsuariosQuery request, CancellationToken cancellationToken)
         {
             var usuarios = await _context.Usuarios
+                .AsNoTracking()
+                .TagWith("Usuarios_Listado")
                 .OrderBy(u => u.NombreCompleto)
                 .Select(u => new UsuarioDto
                 {

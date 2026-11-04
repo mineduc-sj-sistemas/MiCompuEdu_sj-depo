@@ -30,6 +30,8 @@ namespace MiCompuEdu.Application.Programas.Queries
         public async Task<List<ProgramaEducativoDto>> Handle(GetProgramasEducativosQuery request, CancellationToken cancellationToken)
         {
             return await _context.ProgramasEducativos
+                .AsNoTracking()
+                .TagWith("ProgramasEducativos_CatalogoActivo")
                 .Where(p => p.Activo)
                 .OrderBy(p => p.Nombre)
                 .Select(p => new ProgramaEducativoDto

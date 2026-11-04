@@ -29,6 +29,8 @@ namespace MiCompuEdu.Application.Escuelas.Queries
         public async Task<List<EscuelaDto>> Handle(GetEscuelasQuery request, CancellationToken cancellationToken)
         {
             return await _context.Escuelas
+                .AsNoTracking()
+                .TagWith("Escuelas_CatalogoActivo")
                 .Where(e => e.Activo)
                 .OrderBy(e => e.Nombre)
                 .Select(e => new EscuelaDto

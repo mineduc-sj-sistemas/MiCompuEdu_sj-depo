@@ -118,7 +118,7 @@ export const RegistrarIngreso: React.FC<RegistrarIngresoProps> = ({ token, nombr
             {f.ultimoComprobante && (
               <button
                 type="button"
-                onClick={() => imprimirComprobante(f.ultimoComprobante)}
+                onClick={() => f.ultimoComprobante && imprimirComprobante(f.ultimoComprobante)}
                 className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-sm"
               >
                 <Printer className="w-3.5 h-3.5" />

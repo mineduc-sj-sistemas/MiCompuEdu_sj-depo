@@ -3,6 +3,7 @@ import type { Reparacion } from '../../types';
 import { API_BASE_URL } from '../../config';
 import { Search, RefreshCw, Laptop, AlertTriangle, Check, Loader2, Calendar, Printer } from 'lucide-react';
 import { imprimirComprobante } from '../../utils/printHelpers';
+import type { PrintData } from '../../utils/printHelpers';
 import { ModalConfirmarEntrega } from '../../components/Entrega/ModalConfirmarEntrega';
 import type { PersonaRetiroTipo } from '../../components/Entrega/ModalConfirmarEntrega';
 import type { ScannedDniData } from '../../utils/dniParser';
@@ -40,7 +41,7 @@ export const EntregaNotebook: React.FC<EntregaNotebookProps> = ({ token, nombreO
   const [personaRetiroParentesco, setPersonaRetiroParentesco] = useState('Tutor Responsable');
   const [docIdentidadEntregaBase64, setDocIdentidadEntregaBase64] = useState<string | null>(null);
   const [firmaEntregaBase64, setFirmaEntregaBase64] = useState<string | null>(null);
-  const [ultimoComprobanteEgreso, setUltimoComprobanteEgreso] = useState<any | null>(null);
+  const [ultimoComprobanteEgreso, setUltimoComprobanteEgreso] = useState<PrintData | null>(null);
 
   const aplicarPersonaRetiro = (tipo: PersonaRetiroTipo, targetRepair?: Reparacion | null) => {
     const rep = targetRepair !== undefined ? targetRepair : selectedRepair;

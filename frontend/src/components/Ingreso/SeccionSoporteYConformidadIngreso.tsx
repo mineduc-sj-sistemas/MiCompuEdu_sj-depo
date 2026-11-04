@@ -3,10 +3,11 @@ import { FileText, Plus, ShieldCheck, Info } from 'lucide-react';
 import { DigitalSignatureCanvas } from '../Signature/DigitalSignatureCanvas';
 import { DocumentoIdentidadSection } from '../Scanner/DocumentoIdentidadSection';
 import type { ScannedDniData } from '../../utils/dniParser';
+import type { EscuelaItem } from '../../types';
 
 interface SeccionSoporteYConformidadIngresoProps {
   esAlumno: boolean;
-  escuelas: any[];
+  escuelas: EscuelaItem[];
   escuelaSearch: string;
   handleEscuelaSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEscuelaDropdownOpen: boolean;

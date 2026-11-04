@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MiCompuEdu.Application.Beneficiarios.Queries;
@@ -21,10 +22,10 @@ namespace MiCompuEdu.WebApi.Controllers
 
         [HttpGet("{dni}")]
         [Authorize(Roles = "Operador,Supervisor,Administrador")]
-        public async Task<ActionResult<BeneficiarioDto>> ObtenerPorDni(string dni)
+        public async Task<ActionResult<BeneficiarioDto>> ObtenerPorDni(string dni, CancellationToken cancellationToken = default)
         {
             var query = new GetBeneficiarioByDniQuery(dni);
-            var resultado = await _mediator.Send(query);
+            var resultado = await _mediator.Send(query, cancellationToken);
 
             if (resultado == null)
             {

@@ -104,8 +104,8 @@ export const ImportarPadron: React.FC<ImportarPadronProps> = ({ token }) => {
 
       const resData = await response.json();
       setResult(resData);
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Ocurrió un error inesperado al procesar el archivo.');
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : 'Ocurrió un error inesperado al procesar el archivo.');
     } finally {
       setLoading(false);
     }

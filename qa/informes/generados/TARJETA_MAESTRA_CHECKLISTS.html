@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -527,7 +527,7 @@
       </div>
       <div>
         <div class="meta-label">Fecha de Emisión:</div>
-        <div class="meta-val">2026-10-29</div>
+        <div class="meta-val">2026-11-04 (Auditoría #3)</div>
       </div>
       <div>
         <div class="meta-label">Destinatarios:</div>
@@ -535,7 +535,7 @@
       </div>
       <div>
         <div class="meta-label">Alcance Evaluado:</div>
-        <div class="meta-val">10 Áreas de Control + LOC</div>
+        <div class="meta-val">10 Áreas (79 Ítems) + Métricas</div>
       </div>
     </div>
 
@@ -550,8 +550,8 @@
         <div class="kpi-label">Cumplidos</div>
       </div>
       <div class="kpi-card kpi-green">
-        <div class="kpi-number">0</div>
-        <div class="kpi-label">Vistas Monolíticas (>500 lín)</div>
+        <div class="kpi-number">29 / 29</div>
+        <div class="kpi-label">Tests xUnit (0 Warn / 0 Fail)</div>
       </div>
       <div class="kpi-card kpi-blue">
         <div class="kpi-number" id="kpiPercent">100.0%</div>
@@ -571,27 +571,41 @@
     </div>
 
     <!-- SECCIÓN DE DIAGNÓSTICO EN TIEMPO REAL: COMPLEJIDAD Y LOC -->
-        <div class="complexity-alert-section" style="background: #F0FDF4; border-color: #86EFAC;">
+    <div class="complexity-alert-section" style="background: #F0FDF4; border-color: #86EFAC;">
       <div class="alert-header" style="border-bottom-color: #BBF7D0;">
         <div class="alert-title-wrap">
           <span style="font-size: 20px;">✅</span>
-          <h3 style="color: #065F46;">Diagnóstico de Código: Complejidad, Líneas (LOC) y Clean Architecture — 100% Cumplido</h3>
+          <h3 style="color: #065F46;">Diagnóstico Profundo de Código: LOC, Tipado Estricto, EF Core, Seguridad y Tests — 100% Cumplido</h3>
         </div>
-        <span class="alert-badge" style="background: #D1FAE5; color: #065F46;">Auditoría Remediada</span>
+        <span class="alert-badge" style="background: #D1FAE5; color: #065F46;">Auditoría #3 Verificada</span>
       </div>
 
       <div class="alert-cards-grid">
         <div class="mini-alert-card" style="border-left-color: #10B981; background: #FFFFFF; border-color: #A7F3D0;">
-          <h4>🎨 Frontend: 0 Vistas Superan el Límite (&gt;500 lín)</h4>
+          <h4>🎨 Frontend: 0 Vistas &gt;500 lín y 0 Tipos <code>any</code></h4>
           <p>
-            Las 11 páginas de <code>frontend/src/pages/</code> cumplen estrictamente el umbral (&lt; 500 líneas). Se extrajeron subcomponentes modulares en <code>components/Ingreso</code>, <code>components/Tecnico</code>, <code>components/Dashboard</code>, <code>components/Entrega</code>, <code>components/Historial</code>, <code>components/Planillas</code> y el custom hook <code>useRegistrarIngresoForm.ts</code>.
+            Las 11 páginas en <code>frontend/src/pages/</code> cumplen el umbral (&lt;500 lín). Se eliminaron las <strong>38 ocurrencias de <code>any</code></strong> con interfaces estrictas en <code>types.ts</code>, se integró interceptor global <code>401</code> (<code>installSessionExpiredInterceptor</code>) y <code>Promise.all()</code> en carga de catálogos. <code>npm run build</code> compila con <strong>0 errores</strong>.
           </p>
         </div>
 
         <div class="mini-alert-card" style="border-left-color: #10B981; background: #FFFFFF; border-color: #A7F3D0;">
           <h4>⚙️ Backend: 13 Controladores Delgados (&lt;200 lín) y MediatR Puro</h4>
           <p>
-            <strong>0 controladores</strong> superan las 200 líneas (máximo: <code>ReparacionesController.cs</code> con 171 lín) y <strong>0 controladores</strong> inyectan <code>DbContext</code>. El 100% delega a Commands/Queries de MediatR (<code>ISender</code>).
+            <strong>0 controladores</strong> superan 200 líneas (máx: <code>ReparacionesController.cs</code> con 171 lín) y <strong>0 controladores</strong> inyectan <code>DbContext</code>. El 100% delega a MediatR (<code>ISender</code>) propagando <code>CancellationToken</code> en todos los endpoints HTTP.
+          </p>
+        </div>
+
+        <div class="mini-alert-card" style="border-left-color: #10B981; background: #FFFFFF; border-color: #A7F3D0;">
+          <h4>🧪 Suite xUnit &amp; Seguridad OWASP: 29/29 Tests en Verde</h4>
+          <p>
+            <code>dotnet test</code> ejecuta <strong>29/29 pruebas aprobadas con 0 warnings y 0 errores</strong> (<code>DniParserTests</code>, <code>ReparacionStateTransitionsTests</code>, <code>RolePermissionTests</code>, <code>QueryAndCommandIntegrationTests</code>). Validación binaria Magic Bytes en <code>FileSecurityValidator.cs</code> y secreto JWT obligatorio sin fallbacks.
+          </p>
+        </div>
+
+        <div class="mini-alert-card" style="border-left-color: #10B981; background: #FFFFFF; border-color: #A7F3D0;">
+          <h4>🗄️ EF Core &amp; PostgreSQL: AsNoTracking + AsSplitQuery + TagWith</h4>
+          <p>
+            100% de consultas de lectura aplican <code>.AsNoTracking()</code> y <code>.TagWith(...)</code>. <code>GetReparacionesQuery.cs</code> incorpora <code>.AsSplitQuery()</code> para evitar explosión cartesiana en colecciones hijas. Auditoría transaccional automática <code>JSONB</code> en <code>ApplicationDbContext.SaveChangesAsync</code>.
           </p>
         </div>
       </div>
@@ -1200,7 +1214,7 @@
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_4" checked onchange="toggleItem('chk_3_4', 3)">
         <div class="item-content">
           <span class="item-bold">Cobertura de Índices para Filtros Críticos</span>
-          <span class="item-text"></span>
+          <span class="item-text">Índices B-Tree y parciales en PostgreSQL sobre columnas de alta selectividad: <code>beneficiarios(dni)</code> (UNIQUE), <code>equipos(numero_serie)</code> (UNIQUE), <code>reparaciones(estado)</code>, <code>reparaciones(tecnico_asignado_id) WHERE estado &lt;&gt; 'Entregado'</code>, <code>planillas_diarias(fecha)</code> y <code>audit_log(fecha_hora DESC)</code> verificados en <code>ApplicationDbContext.cs</code> e <code>init-database.sql</code>.</span>
         </div>
       </label>
     
@@ -1208,7 +1222,7 @@
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_5" checked onchange="toggleItem('chk_3_5', 3)">
         <div class="item-content">
           <span class="item-bold">Etiquetado de Consultas con `.TagWith()`</span>
-          <span class="item-text">Consultas complejas etiquetadas en código (ej. `.TagWith("BandejaTecnica_ListadoActivo")`) para facilitar el diagnóstico en los logs de PostgreSQL.</span>
+          <span class="item-text">Consultas complejas etiquetadas en código (ej. <code>.TagWith("BandejaTecnica_ListadoActivo")</code>, <code>.TagWith("Dashboard_ReparacionesStats")</code>, <code>.TagWith("Padron_GetBeneficiarioByDni")</code>, <code>.TagWith("PlanillasDiarias_GetByRange")</code>) para facilitar el diagnóstico en los logs de PostgreSQL.</span>
         </div>
       </label>
     
@@ -1232,7 +1246,7 @@
         <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_8" checked onchange="toggleItem('chk_3_8', 3)">
         <div class="item-content">
           <span class="item-bold">Auditoría Transaccional (`audit_log`)</span>
-          <span class="item-text">Inserción atómica dentro de la misma transacción de los snapshots `JSONB` de cambios críticos.</span>
+          <span class="item-text">Inserción atómica dentro de la misma transacción de los snapshots `JSONB` de cambios críticos (`ApplicationDbContext.SaveChangesAsync`).</span>
         </div>
       </label>
     
@@ -1262,7 +1276,7 @@
         <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_0" checked onchange="toggleItem('chk_4_0', 4)">
         <div class="item-content">
           <span class="item-bold">Contratos REST Consistentes</span>
-          <span class="item-text"></span>
+          <span class="item-text">Versionado uniforme bajo el prefijo <code>/api/v1/*</code> en los 13 controladores, uso semántico de verbos HTTP (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>) y códigos de estado estándar (<code>200 OK</code>, <code>201 Created</code>, <code>400 Bad Request</code>, <code>401 Unauthorized</code>, <code>403 Forbidden</code>, <code>404 Not Found</code>) con respuestas de error RFC 7807 (<code>ProblemDetails</code>).</span>
         </div>
       </label>
     
@@ -1270,7 +1284,7 @@
         <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_1" checked onchange="toggleItem('chk_4_1', 4)">
         <div class="item-content">
           <span class="item-bold">Validación Estricta de Payloads (Anti Mass-Assignment)</span>
-          <span class="item-text"></span>
+          <span class="item-text">Ningún endpoint recibe entidades de dominio directamente en el body HTTP. Todas las entradas utilizan Commands/DTOs inmutables específicos por caso de uso (<code>RegistrarIngresoCommand</code>, <code>ActualizarReparacionTecnicoRequest</code>, <code>EntregarEquipoRequest</code>, <code>CreateUserCommand</code>) impidiendo la sobrescritura no autorizada de campos internos o privilegios.</span>
         </div>
       </label>
     
@@ -1340,7 +1354,7 @@
         <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_2" checked onchange="toggleItem('chk_5_2', 5)">
         <div class="item-content">
           <span class="item-bold">Tests de Permisos y Roles (RBAC)</span>
-          <span class="item-text">Pruebas en `RolePermissionTests.cs` comprobando que roles no autorizados reciban `403 Forbidden` al invocar acciones restringidas.</span>
+          <span class="item-text">Pruebas en `RolePermissionTests.cs` comprobando que roles no autorizados reciban `403 Forbidden` al invocar acciones restringidas (29/29 pruebas pasando con `dotnet test`).</span>
         </div>
       </label>
     
@@ -1385,7 +1399,7 @@
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`code-simplification` y `deprecation-and-migration`.</code></div>
     
 
     <div class="checklist-items">
@@ -1394,7 +1408,7 @@
         <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_0" checked onchange="toggleItem('chk_6_0', 6)">
         <div class="item-content">
           <span class="item-bold">Sin Esquemas de Base de Datos Obsoletos</span>
-          <span class="item-text"></span>
+          <span class="item-text">Eliminadas tablas o columnas huérfanas de iteraciones previas; el modelo relacional de <code>ApplicationDbContext.cs</code>, las migraciones de EF Core y <code>docs/init-database.sql</code> están 100% alineados en las 14 tablas activas.</span>
         </div>
       </label>
     
@@ -1402,7 +1416,7 @@
         <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_1" checked onchange="toggleItem('chk_6_1', 6)">
         <div class="item-content">
           <span class="item-bold">Sin Archivos Temporales de Compilación o IDEs en Git</span>
-          <span class="item-text"></span>
+          <span class="item-text">Directorios <code>bin/</code>, <code>obj/</code>, <code>node_modules/</code>, <code>dist/</code>, <code>.vs/</code> y logs locales están excluidos en <code>.gitignore</code> y ausentes del índice de seguimiento de Git.</span>
         </div>
       </label>
     
@@ -1410,7 +1424,7 @@
         <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_2" checked onchange="toggleItem('chk_6_2', 6)">
         <div class="item-content">
           <span class="item-bold">Limpieza de Archivos de Carga / Comprobantes</span>
-          <span class="item-text"></span>
+          <span class="item-text">Las carpetas de evidencias fotográficas y planillas escaneadas (<code>wwwroot/uploads/evidencias</code> y <code>wwwroot/uploads/planillas-diarias</code>) no contienen archivos basura de prueba versionados en el repositorio.</span>
         </div>
       </label>
     
@@ -1418,7 +1432,7 @@
         <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_3" checked onchange="toggleItem('chk_6_3', 6)">
         <div class="item-content">
           <span class="item-bold">Sin Mocks ni Credenciales Fijas en Código Productivo</span>
-          <span class="item-text"></span>
+          <span class="item-text">Removidos todos los datos hardcodeados en <code>GetDashboardStatsQuery.cs</code> y eliminados los fallbacks de clave JWT en <code>Program.cs</code> y <code>FirmaRemotaController.cs</code>.</span>
         </div>
       </label>
     
@@ -1426,7 +1440,7 @@
         <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_4" checked onchange="toggleItem('chk_6_4', 6)">
         <div class="item-content">
           <span class="item-bold">Scripts Utilitarios Documentados</span>
-          <span class="item-text"></span>
+          <span class="item-text">Los scripts operativos de mantenimiento e importación de padrón leen credenciales exclusivamente desde variables de entorno (<code>process.env.DATABASE_URL</code>) sin cadenas de conexión embebidas.</span>
         </div>
       </label>
     
@@ -1434,7 +1448,7 @@
         <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_5" checked onchange="toggleItem('chk_6_5', 6)">
         <div class="item-content">
           <span class="item-bold">Planillas Excel y Padrón Limpio</span>
-          <span class="item-text"></span>
+          <span class="item-text">Los archivos `.xlsx` y `.csv` de padrones reales con datos personales de alumnos/docentes están excluidos en <code>.gitignore</code>; la ingesta de padrón se realiza vía interfaz supervisada (<code>ImportarPadron.tsx</code>).</span>
         </div>
       </label>
     
@@ -1455,7 +1469,7 @@
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`ci-cd-and-automation` y `shipping-and-launch`.</code></div>
     
 
     <div class="checklist-items">
@@ -1464,7 +1478,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_0" checked onchange="toggleItem('chk_7_0', 7)">
         <div class="item-content">
           <span class="item-bold">Configuración Docker y Docker Compose Válida</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>docker-compose.yml</code> orquesta los servicios <code>db</code> (PostgreSQL 16 Alpine), <code>backend</code> (.NET 8 ASP.NET Runtime) y <code>frontend</code> (Nginx Alpine) con redes internas, healthchecks y dependencias <code>service_healthy</code>.</span>
         </div>
       </label>
     
@@ -1472,7 +1486,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_1" checked onchange="toggleItem('chk_7_1', 7)">
         <div class="item-content">
           <span class="item-bold">Imágenes Docker Multi-stage</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>backend/Dockerfile</code> compila con <code>mcr.microsoft.com/dotnet/sdk:8.0</code> y publica sobre <code>aspnet:8.0</code> liviano; <code>frontend/Dockerfile</code> compila con <code>node:20-alpine</code> y sirve estáticos con <code>nginx:alpine</code>.</span>
         </div>
       </label>
     
@@ -1480,7 +1494,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_2" checked onchange="toggleItem('chk_7_2', 7)">
         <div class="item-content">
           <span class="item-bold">Configuración de Nginx Reverse Proxy y SPA</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>frontend/nginx.conf</code> configura <code>try_files $uri $uri/ /index.html</code> para rutas de React Router, proxy reverso hacia <code>/api/</code> y <code>/uploads/</code>, compresión Gzip y cabeceras de caché para assets estáticos.</span>
         </div>
       </label>
     
@@ -1488,7 +1502,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_3" checked onchange="toggleItem('chk_7_3', 7)">
         <div class="item-content">
           <span class="item-bold">Variables de Entorno Mandatorias</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>Program.cs</code> valida en el arranque la presencia de cadena de conexión (<code>DATABASE_URL</code> o <code>ConnectionStrings:DefaultConnection</code>) y clave criptográfica JWT (<code>JWT_KEY</code> / <code>Jwt:Key</code> &ge; 32 bytes), abortando el inicio si faltan.</span>
         </div>
       </label>
     
@@ -1496,7 +1510,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_4" checked onchange="toggleItem('chk_7_4', 7)">
         <div class="item-content">
           <span class="item-bold">Volúmenes Persistentes y Permisos</span>
-          <span class="item-text"></span>
+          <span class="item-text">Volúmenes declarados en <code>docker-compose.yml</code> para persistencia de datos de PostgreSQL (<code>postgres_data</code>) y almacenamiento de archivos adjuntos/planillas (<code>uploads_data</code> en <code>/app/wwwroot/uploads</code>).</span>
         </div>
       </label>
     
@@ -1504,7 +1518,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_5" checked onchange="toggleItem('chk_7_5', 7)">
         <div class="item-content">
           <span class="item-bold">Migraciones Automáticas Controladas en el Despliegue</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>Program.cs</code> ejecuta <code>await context.Database.MigrateAsync()</code> e inicializa el seeder idempotente (<code>DbInitializer.SeedAsync</code>) dentro de un bloque controlado al iniciar el host.</span>
         </div>
       </label>
     
@@ -1512,7 +1526,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_6" checked onchange="toggleItem('chk_7_6', 7)">
         <div class="item-content">
           <span class="item-bold">Configuración de Plataforma en la Nube / Render</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>render.yaml</code> (Blueprint IaC) y el parser automático de URIs <code>postgresql://</code> en <code>Program.cs</code> permiten desplegar directamente en Render o infraestructura gubernamental con SSL habilitado.</span>
         </div>
       </label>
     
@@ -1520,7 +1534,7 @@
         <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_7" checked onchange="toggleItem('chk_7_7', 7)">
         <div class="item-content">
           <span class="item-bold">Health Checks Operativos</span>
-          <span class="item-text"></span>
+          <span class="item-text">Endpoint público <code>GET /api/v1/health</code> configurado en <code>Program.cs</code> para monitoreo de disponibilidad por balanceadores de carga, Docker y Render.</span>
         </div>
       </label>
     
@@ -1566,7 +1580,7 @@
         <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_2" checked onchange="toggleItem('chk_8_2', 8)">
         <div class="item-content">
           <span class="item-bold">Etiquetado de Versiones (Tags)</span>
-          <span class="item-text">Creación de tags SemVer o de fecha (`v1.0.0`, `v2026.10.29`) antes de cada pase a producción.</span>
+          <span class="item-text">Creación de tags SemVer o de fecha (`v1.0.0`, `v2026.10.29`, `v2026.11.04`) antes de cada pase a producción.</span>
         </div>
       </label>
     
@@ -1574,7 +1588,7 @@
         <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_3" checked onchange="toggleItem('chk_8_3', 8)">
         <div class="item-content">
           <span class="item-bold">Segregación de Entornos y Archivos Excluidos</span>
-          <span class="item-text"></span>
+          <span class="item-text">Archivo <code>.gitignore</code> en raíz protege secretos locales (<code>.env</code>, <code>appsettings.Development.json</code> con credenciales), artefactos de compilación (<code>bin/</code>, <code>obj/</code>, <code>dist/</code>) y archivos de padrón sensibles.</span>
         </div>
       </label>
     
@@ -1603,7 +1617,7 @@
       </div>
     </div>
 
-    
+    <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`documentation-and-adrs` y `context-engineering`.</code></div>
     
 
     <div class="checklist-items">
@@ -1612,7 +1626,7 @@
         <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_0" checked onchange="toggleItem('chk_9_0', 9)">
         <div class="item-content">
           <span class="item-bold">Documento de Contexto Vivo (`context.md`)</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>context.md</code> actualizado con la arquitectura Clean Architecture (.NET 8 + React 19), los 13 controladores, las 14 tablas de base de datos, el módulo de Planillas Diarias de Retiro y la bitácora de auditoría QA.</span>
         </div>
       </label>
     
@@ -1620,7 +1634,7 @@
         <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_1" checked onchange="toggleItem('chk_9_1', 9)">
         <div class="item-content">
           <span class="item-bold">Esquemas y DDL</span>
-          <span class="item-text"></span>
+          <span class="item-text"><code>docs/init-database.sql</code> y <code>docs/modelo_base_datos.dbml</code> sincronizados con el esquema productivo completo (incluyendo <code>planillas_diarias</code>, <code>archivos_planilla_diaria</code> y <code>audit_log</code> con índices B-Tree/GIN).</span>
         </div>
       </label>
     
@@ -1628,7 +1642,7 @@
         <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_2" checked onchange="toggleItem('chk_9_2', 9)">
         <div class="item-content">
           <span class="item-bold">Documentación de Endpoints</span>
-          <span class="item-text"></span>
+          <span class="item-text">Catálogo de rutas <code>/api/v1/*</code>, roles autorizados y contratos de entrada/salida documentados en <code>context.md</code> y expuestos mediante OpenAPI/Swagger en entorno de desarrollo.</span>
         </div>
       </label>
     
@@ -1636,7 +1650,7 @@
         <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_3" checked onchange="toggleItem('chk_9_3', 9)">
         <div class="item-content">
           <span class="item-bold">Variables de Entorno (`.env.example`)</span>
-          <span class="item-text"></span>
+          <span class="item-text">Plantilla <code>.env.example</code> completa con todas las variables requeridas por Backend, PostgreSQL, CORS, WhatsApp Cloud API y Frontend Vite sin exponer secretos reales.</span>
         </div>
       </label>
     
@@ -1644,7 +1658,7 @@
         <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_4" checked onchange="toggleItem('chk_9_4', 9)">
         <div class="item-content">
           <span class="item-bold">Guía de Puesta en Marcha</span>
-          <span class="item-text"></span>
+          <span class="item-text">Instrucciones paso a paso en <code>README.md</code> y <code>docs/propuesta_implementacion.md</code> para levantar el proyecto en desarrollo local, Docker Compose y despliegue cloud en Render.</span>
         </div>
       </label>
     
@@ -1652,7 +1666,7 @@
         <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_5" checked onchange="toggleItem('chk_9_5', 9)">
         <div class="item-content">
           <span class="item-bold">Reglas de Negocio Documentadas</span>
-          <span class="item-text"></span>
+          <span class="item-text">Flujos de ingreso por padrón y carga manual, obligatoriedad de tutor para alumnos, máquina de estados de reparación, firma remota por QR, entrega con teléfono obligatorio y planillas diarias documentados en <code>context.md</code> y <code>qa/deuda-tecnica/registro.md</code>.</span>
         </div>
       </label>
     
@@ -1710,7 +1724,8 @@
       // Actualizar KPIs Globales
       const pct = ((checked / total) * 100).toFixed(1);
       document.getElementById('kpiChecked').innerText = checked;
-      document.getElementById('kpiPending').innerText = total - checked;
+      const kpiPendingEl = document.getElementById('kpiPending');
+      if (kpiPendingEl) kpiPendingEl.innerText = total - checked;
       document.getElementById('kpiPercent').innerText = pct + '%';
       document.getElementById('progressPercentLabel').innerText = pct + '% Completado';
       document.getElementById('mainProgressBar').style.width = pct + '%';
@@ -1735,14 +1750,16 @@
 
     function copySummaryText() {
       const pct = document.getElementById('kpiPercent').innerText;
-      const text = "📋 [QA MiCompuEdu_sj] Tarjeta Maestra de Checklists\n" +
+      const text = "📋 [QA MiCompuEdu_sj] Tarjeta Maestra de Checklists (Auditoría #3)\n" +
                    "• Puntos de Control: " + total + "\n" +
                    "• Cumplidos: " + checked + "\n" +
                    "• Pendientes: " + (total - checked) + "\n" +
-                   "• Vistas Monolíticas (>500 lín): 0\n" +
-                   "• Infracciones DbContext en Controllers: 0\n" +
+                   "• Tests Automatizados xUnit: 29/29 aprobados (0 warnings)\n" +
+                   "• Tipado TypeScript: 0 tipos 'any' (tsc -b && vite build OK)\n" +
+                   "• Vistas Monolíticas (>500 lín): 0 (11/11 cumplen)\n" +
+                   "• Infracciones DbContext en Controllers: 0 (13/13 cumplen)\n" +
                    "• Nivel de Conformidad: " + pct + "\n" +
-                   "Generado: " + new Date().toLocaleDateString();
+                   "Generado: 2026-11-04";
       navigator.clipboard.writeText(text).then(() => {
         alert("✅ Resumen copiado al portapapeles. ¡Listo para pegar en Teams, Slack o Chat!");
       });

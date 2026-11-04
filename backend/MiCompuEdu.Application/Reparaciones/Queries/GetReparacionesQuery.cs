@@ -37,6 +37,7 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
         {
             var query = _context.Reparaciones
                 .AsNoTracking()
+                .AsSplitQuery()
                 .TagWith("BandejaTecnica_ListadoActivo")
                 .Include(r => r.Equipo)
                     .ThenInclude(e => e.Beneficiario)

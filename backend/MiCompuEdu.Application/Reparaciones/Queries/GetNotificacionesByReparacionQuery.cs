@@ -24,6 +24,8 @@ namespace MiCompuEdu.Application.Reparaciones.Queries
         public async Task<List<NotificacionDto>> Handle(GetNotificacionesByReparacionQuery request, CancellationToken cancellationToken)
         {
             var list = await _context.Notificaciones
+                .AsNoTracking()
+                .TagWith("Notificaciones_PorReparacion")
                 .Where(n => n.ReparacionId == request.ReparacionId)
                 .OrderByDescending(n => n.CreadoEn)
                 .ToListAsync(cancellationToken);

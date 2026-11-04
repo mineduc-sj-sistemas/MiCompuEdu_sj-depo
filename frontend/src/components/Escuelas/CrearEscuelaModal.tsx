@@ -38,8 +38,8 @@ export function CrearEscuelaModal({ token, onClose, onSuccess }: CrearEscuelaMod
       onSuccess(data);
       
       setNombre('');
-    } catch (err: any) {
-      setError(err.message || 'Error de conexión.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error de conexión.');
     } finally {
       setLoading(false);
     }

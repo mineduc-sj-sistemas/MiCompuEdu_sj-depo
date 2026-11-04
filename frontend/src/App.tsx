@@ -13,6 +13,7 @@ import { PlanillasRetiro } from './pages/Operator/PlanillasRetiro'
 
 import { ConsultaPublica } from './pages/ConsultaPublica'
 import { HealthCheckBanner } from './components/Shared/HealthCheckBanner'
+import { installSessionExpiredInterceptor } from './config'
 import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon, Database, History, FileCheck2 } from 'lucide-react'
 
 function App() {
@@ -26,6 +27,10 @@ function App() {
   const [currentPage, setCurrentPage] = useState<string>('');
 
   useEffect(() => {
+    installSessionExpiredInterceptor(() => {
+      setUser(null);
+    });
+
     const session = localStorage.getItem('micompuedu_session');
     if (session) {
       try {

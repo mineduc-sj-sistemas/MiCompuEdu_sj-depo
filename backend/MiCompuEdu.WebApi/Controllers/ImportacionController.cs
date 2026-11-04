@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MiCompuEdu.Application.Beneficiarios.Commands;
@@ -21,7 +22,7 @@ namespace MiCompuEdu.WebApi.Controllers
 
         [HttpPost("padron")]
         [Authorize(Roles = "Supervisor,Administrador")]
-        public async Task<ActionResult<ImportarPadronResultDto>> ImportarPadron([FromForm] IFormFile archivo)
+        public async Task<ActionResult<ImportarPadronResultDto>> ImportarPadron([FromForm] IFormFile archivo, CancellationToken cancellationToken = default)
         {
             if (archivo == null || archivo.Length == 0)
             {
@@ -37,7 +38,7 @@ namespace MiCompuEdu.WebApi.Controllers
 
             using var stream = archivo.OpenReadStream();
             var command = new ImportarPadronCommand(stream);
-            var resultado = await _mediator.Send(command);
+            var resultado = await _mediator.Send(command, cancellationToken);
 
             return Ok(resultado);
         }

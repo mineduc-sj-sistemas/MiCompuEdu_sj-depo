@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MiCompuEdu.Application.DTOs;
@@ -22,10 +23,10 @@ namespace MiCompuEdu.WebApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<List<UbicacionDepositoDto>>> ObtenerTodas()
+        public async Task<ActionResult<List<UbicacionDepositoDto>>> ObtenerTodas(CancellationToken cancellationToken = default)
         {
             var query = new GetUbicacionesQuery();
-            var resultado = await _mediator.Send(query);
+            var resultado = await _mediator.Send(query, cancellationToken);
             return Ok(resultado);
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MiCompuEdu.Application.Programas.Queries;
@@ -21,10 +22,10 @@ namespace MiCompuEdu.WebApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<List<ProgramaEducativoDto>>> ObtenerTodos()
+        public async Task<ActionResult<List<ProgramaEducativoDto>>> ObtenerTodos(CancellationToken cancellationToken = default)
         {
             var query = new GetProgramasEducativosQuery();
-            var resultado = await _mediator.Send(query);
+            var resultado = await _mediator.Send(query, cancellationToken);
             return Ok(resultado);
         }
     }

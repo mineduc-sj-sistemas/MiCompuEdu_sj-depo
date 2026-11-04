@@ -163,7 +163,7 @@ namespace MiCompuEdu.Application.Reparaciones.Commands
                     double totalDays = 0;
                     foreach (var hist in historialReparaciones)
                     {
-                        totalDays += (hist.FechaEntrega.Value - hist.FechaIngreso).TotalDays;
+                        totalDays += (hist.FechaEntrega!.Value - hist.FechaIngreso).TotalDays;
                     }
                     promedioDias = totalDays / historialReparaciones.Count;
                     if (promedioDias < 1) promedioDias = 1.0;

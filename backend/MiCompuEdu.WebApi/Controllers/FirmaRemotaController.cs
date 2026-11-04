@@ -25,7 +25,7 @@ namespace MiCompuEdu.WebApi.Controllers
             _mediator = mediator;
             _jwtKey = !string.IsNullOrWhiteSpace(jwtOptions.Value.Key)
                 ? jwtOptions.Value.Key
-                : "ClaveSecretaSuperSeguraParaSanJuanDeAlMenos32Caracteres!";
+                : throw new InvalidOperationException("La clave JWT no está configurada.");
         }
 
         [Authorize(Roles = "Operador,Supervisor,Administrador")]

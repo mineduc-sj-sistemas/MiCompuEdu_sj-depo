@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Reparacion } from '../../types';
+import type { Reparacion, EvidenciaItem, HistorialMovimientoItem } from '../../types';
 import { API_BASE_URL } from '../../config';
 import { imprimirFichaEstado, imprimirIngresoComprobante } from '../../utils/printHelpers';
 import { Printer, FileText, CheckCircle2, Clock, Sparkles, Camera } from 'lucide-react';
@@ -76,9 +76,9 @@ interface ModalGestionTecnicaProps {
   setRemitoGarantia: (v: string) => void;
   fechaEsperadaGarantia: string;
   setFechaEsperadaGarantia: (v: string) => void;
-  evidencias: any[];
-  setEvidencias: React.Dispatch<React.SetStateAction<any[]>>;
-  historial: any[];
+  evidencias: EvidenciaItem[];
+  setEvidencias: React.Dispatch<React.SetStateAction<EvidenciaItem[]>>;
+  historial: HistorialMovimientoItem[];
   loading: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;

@@ -26,7 +26,7 @@ namespace MiCompuEdu.UnitTests
         [InlineData("RegistrarIngreso", "Operador,Supervisor,Administrador")]
         [InlineData("ObtenerTodos", "Operador,Tecnico,Supervisor,Administrador")]
         [InlineData("ActualizarEstado", "Operador,Tecnico,Supervisor,Administrador")]
-        [InlineData("SubirEvidencia", "Tecnico,Supervisor,Administrador")]
+        [InlineData("SubirEvidencia", "Operador,Tecnico,Supervisor,Administrador")]
         public void ReparacionesControllerMethods_ShouldHaveCorrectRoles(string methodName, string expectedRoles)
         {
             // Arrange

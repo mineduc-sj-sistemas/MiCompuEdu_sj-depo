@@ -1,4 +1,4 @@
-import type { Reparacion } from '../types';
+import type { Reparacion, HistorialMovimientoItem } from '../types';
 
 export interface EquipoMovimiento {
   numeroSerie: string;
@@ -309,7 +309,7 @@ export const imprimirComprobante = (data: PrintData) => {
 export const imprimirFichaEstado = (
   repair: Reparacion,
   tecnicoNombre: string,
-  historial?: any[]
+  historial?: HistorialMovimientoItem[]
 ) => {
   const printWindow = window.open('', '_blank');
   if (!printWindow) {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MiCompuEdu.Application.Escuelas.Queries;
@@ -21,18 +22,18 @@ namespace MiCompuEdu.WebApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<List<EscuelaDto>>> ObtenerTodas()
+        public async Task<ActionResult<List<EscuelaDto>>> ObtenerTodas(CancellationToken cancellationToken = default)
         {
             var query = new GetEscuelasQuery();
-            var resultado = await _mediator.Send(query);
+            var resultado = await _mediator.Send(query, cancellationToken);
             return Ok(resultado);
         }
 
         [HttpPost]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<EscuelaDto>> Crear(MiCompuEdu.Application.Escuelas.Commands.CreateEscuelaCommand command)
+        public async Task<ActionResult<EscuelaDto>> Crear(MiCompuEdu.Application.Escuelas.Commands.CreateEscuelaCommand command, CancellationToken cancellationToken = default)
         {
-            var resultado = await _mediator.Send(command);
+            var resultado = await _mediator.Send(command, cancellationToken);
             return Ok(resultado);
         }
     }

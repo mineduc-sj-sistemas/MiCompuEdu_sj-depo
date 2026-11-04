@@ -1,150 +1,102 @@
 # Contexto del Proyecto: MiCompuEdu_sj
 
-Este documento sirve como registro de contexto y arquitectura del sistema **MiCompuEdu_sj** (Sistema de Gestión y Trazabilidad de Dispositivos Educativos para el Depósito del Ministerio de Educación de San Juan). Será actualizado con cada cambio relevante en la base de código.
+Este documento sirve como registro maestro de contexto y arquitectura del sistema **MiCompuEdu_sj** (Sistema de Gestión y Trazabilidad de Dispositivos Educativos para el Depósito del Ministerio de Educación de San Juan).
 
 ---
 
 ## 1. Descripción General
 
-**MiCompuEdu_sj** es una plataforma web integral diseñada para automatizar el flujo de trabajo de recepción, diagnóstico, reparación, trazabilidad y entrega de dispositivos tecnológicos (notebooks de los programas *Conectar Igualdad*, *Juana Manso*, etc.) en el depósito central del Ministerio de Educación de San Juan.
+**MiCompuEdu_sj** es una plataforma web integral diseñada para automatizar el flujo de trabajo de recepción, diagnóstico, reparación, trazabilidad, archivo de planillas firmadas y entrega de dispositivos tecnológicos (notebooks de los programas *Maestros de América*, *Conectar Igualdad*, *Juana Manso*, etc.) en el depósito central del Ministerio de Educación de San Juan.
 
 ### Problemas que resuelve:
-1. **Registro manual ineficiente**: Errores en la transcripción de datos de beneficiarios y números de serie de equipos.
-2. **Falta de trazabilidad**: Dificultad para conocer el estado y el historial de reparaciones de un equipo en tiempo real.
-3. **Pérdida de información**: Datos sin validar contra el padrón nominal del Ministerio.
+1. **Registro manual ineficiente**: Errores en la transcripción de datos de beneficiarios, tutores y números de serie de equipos.
+2. **Falta de trazabilidad**: Dificultad para conocer el estado, el responsable de entrega/retiro y el historial de reparaciones de un equipo en tiempo real.
+3. **Pérdida de información**: Datos sin validar contra el padrón nominal del Ministerio o falta de respaldo digital de actas y planillas firmadas.
 4. **Fallas de comunicación**: Equipos archivados indefinidamente debido a la falta de comunicación efectiva para el retiro.
 
 ### Soluciones clave:
-- Búsqueda y autocompletado asistido por escaneo del código de barras (PDF417) de los DNI.
-- Integración nominal con el padrón del Ministerio.
-- Gestión digital de reparaciones con asignación de técnicos y cambio de estados.
-- Notificaciones automáticas al tutor por WhatsApp Business API (en cambios a "Listo para retirar" y "No reparable").
-- Generación de comprobante de ingreso en PDF con código QR único para seguimiento.
-- Dashboard de métricas e indicadores de rendimiento técnico para supervisores.
+- Búsqueda y autocompletado asistido por escaneo del código de barras (PDF417) del DNI argentino (`dniParser.ts`).
+- Integración nominal con el padrón de *Maestros de América* y soporte para **carga manual completa** cuando el DNI o serie no figura en el padrón.
+- Validación obligatoria de datos del **Tutor Responsable** en el caso de alumnos, junto con el registro detallado de la persona física que entrega o retira el equipo y su teléfono de contacto.
+- Captura de firma digital manuscrita (en pantalla o remota vía QR) y digitalización de DNI.
+- Archivo digital de **Planillas de Retiro Diarias** (múltiples hojas escaneadas en imagen o PDF vinculadas a una fecha específica con buscador por día).
+- Gestión digital de reparaciones con asignación de técnicos, plantillas rápidas, derivación a garantía externa en lote y cambio de estados.
+- Notificaciones automáticas en segundo plano (`NotificationWorkerService`) al tutor/titular por WhatsApp Business API con política de hasta 3 reintentos.
+- Generación de comprobantes oficiales de ingreso, egreso, ficha de estado y remito de garantía en PDF/impresión con código QR único.
+- Dashboard interactivo de métricas e indicadores de rendimiento técnico para supervisores y administradores.
 
 ---
 
 ## 2. Arquitectura Tecnológica
 
-El sistema se compone de dos componentes principales (Backend y Frontend):
+El sistema se compone de dos bloques principales (Backend y Frontend) bajo estándares estrictos de calidad:
 
 ### Backend (`/backend`)
-- **Framework**: .NET 8.
-- **Patrón de Arquitectura**: **Clean Architecture** (Arquitectura Limpia) organizada en 4 proyectos desacoplados:
-  - `MiCompuEdu.Domain`: Contiene entidades puras, enumeraciones y lógica de dominio (0 dependencias externas).
-  - `MiCompuEdu.Application`: Contiene casos de uso, interfaces, DTOs, validaciones y mediadores (**CQRS** con **MediatR**).
-  - `MiCompuEdu.Infrastructure`: Implementación de base de datos con **Entity Framework Core** y servicios externos (WhatsApp, generación de PDF).
-  - `MiCompuEdu.WebApi`: Controladores REST que exponen la API, middleware de manejo global de excepciones y autenticación/autorización JWT.
-- **Base de Datos**: PostgreSQL (configurada vía EF Core).
-- **Seguridad**: Autenticación mediante tokens JWT (expiración de 8 horas) y control de accesos basado en roles (*Administrador, Supervisor, Técnico, Operador*).
+- **Framework**: .NET 8 (`ASP.NET Core Web API`).
+- **Patrón de Arquitectura**: **Clean Architecture** organizada en 4 proyectos desacoplados + 1 proyecto de pruebas:
+  - `MiCompuEdu.Domain`: Entidades puras (`BaseEntity`), enumeraciones y lógica de dominio (0 dependencias externas).
+  - `MiCompuEdu.Application`: Casos de uso CQRS con **MediatR** (`IRequest` / `IRequestHandler`), validadores **FluentValidation**, interfaces (`IApplicationDbContext`, `ICurrentUserService`, `IWhatsAppService`, `IPdfGeneratorService`), opciones tipadas (`JwtOptions`, `WhatsAppOptions`) y validador de seguridad de archivos (`FileSecurityValidator`).
+  - `MiCompuEdu.Infrastructure`: Persistencia con **Entity Framework Core 8** (PostgreSQL / Npgsql), interceptor automático de auditoría JSONB (`ApplicationDbContext.SaveChangesAsync`), worker en segundo plano (`NotificationWorkerService`) y servicios de infraestructura (`WhatsAppService`, `PdfGeneratorService`).
+  - `MiCompuEdu.WebApi`: 13 controladores REST livianos (`< 200` líneas cada uno, 100% desacoplados de `DbContext` vía `ISender`), `GlobalExceptionHandlerMiddleware` (estándar RFC 7807 `ProblemDetails`), `CurrentUserService`, cabeceras de seguridad HTTP y políticas CORS restrictivas.
+  - `MiCompuEdu.UnitTests`: Suite de 29 pruebas unitarias automatizadas con **xUnit**, **Moq**, **FluentAssertions** y **EF Core InMemory**.
 
 ### Frontend (`/frontend`)
 - **Framework**: React 19 + Vite 8.
-- **Lenguaje**: TypeScript.
-- **Estilos**: Tailwind CSS v4 (integrado vía plugin nativo `@tailwindcss/vite`).
-- **Navegación / Rutas**: Renderizado condicional en `App.tsx` basado en el rol del usuario guardado en la sesión local.
+- **Lenguaje**: TypeScript 5.9 en modo estricto (`strict: true`, **0 usos de `any`**).
+- **Estilos**: Tailwind CSS v4 (integrado vía `@tailwindcss/vite`) con identidad visual institucional del Gobierno de San Juan (`#FF8200`).
+- **Modularización**: Todas las vistas (`src/pages/`) tienen menos de 500 líneas de código, apoyadas en custom hooks (`useRegistrarIngresoForm`, `usePlanillasRetiro`) y subcomponentes especializados (`src/components/`).
+- **Seguridad de Sesión**: Interceptor centralizado de respuestas `401 Unauthorized` (`installSessionExpiredInterceptor` en `src/config.ts`) que limpia la sesión caducada y redirige automáticamente al login.
 
 ---
 
 ## 3. Modelo de Datos y Esquema PostgreSQL
 
-El esquema de base de datos está diseñado bajo PostgreSQL, utilizando **EF Core Migrations** para versionamiento de esquema. Se cuenta con **12 índices de rendimiento estratégicos** (incluyendo índices parciales para colas de trabajo activas y cola de envío de notificaciones pendientes) y **constraints de integridad referencial** a nivel físico (`CHECK`, `ON DELETE RESTRICT/CASCADE`).
+El esquema relacional en PostgreSQL cuenta con **EF Core Migrations** versionadas, **12+ índices estratégicos** (incluyendo índices parciales `WHERE estado != 'Entregado'` y `WHERE estado = 'Pendiente'`) y restricciones físicas (`CHECK`, `UNIQUE`, `ON DELETE RESTRICT/CASCADE`).
 
-### Tablas Principales:
-- **usuarios**: Cuentas del personal. Contiene índices únicos en `nombre_usuario` y `email`. Validación por `CHECK` en el rol.
-- **beneficiarios**: Tutores/alumnos. Contiene índice único en `dni` e índice compuesto en `(apellido, nombre)`. FK opcional a `escuelas`.
-- **equipos**: Netbooks/computadoras. Índice único en `numero_serie`. FK restrict a `beneficiarios`. FK opcional a `programas_educativos`.
-- **fallas_catalogo**: Catálogo estandarizado de fallas (PK autoincremental `SERIAL`). Índice único en `nombre`.
-- **reparaciones**: Órdenes de servicio. Índice parcial `ix_reparaciones_estado_activo` (`WHERE estado != 'Entregado'`) para optimizar listados operativos.
-- **historial_movimientos**: Trazabilidad cronológica. Índice compuesto descendente en `(reparacion_id, fecha_movimiento DESC)`. FK cascaded a `reparaciones`.
-- **evidencias_reparacion**: Adjuntos y fotos técnicas cargadas. FK cascaded a `reparaciones`.
-- **notificaciones**: Historial y cola de envío. Índice parcial `ix_notificaciones_pendientes` (`WHERE estado = 'Pendiente'`) para el despachador.
-
-### Tablas de Escalabilidad Futura (Creadas y soportadas en el modelo):
-- **escuelas**: Catálogo provincial de establecimientos (CUE único, nombre, localidad, departamento). Vincula beneficiarios a su colegio.
-- **programas_educativos**: Programas de entrega (Conectar Igualdad, Juana Manso, etc.). Vincula equipos con su lote u origen del programa.
-- **audit_log**: Log global inmutable de auditoría a nivel de fila. Utiliza tipos `JSONB` de PostgreSQL para registrar `datos_anteriores` y `datos_nuevos` en cualquier acción (INSERT, UPDATE, DELETE).
-
----
-
-## 4. Estructura de Directorios
-
-```
-MiCompuEdu_sj-depo/
-├── backend/
-│   ├── MiCompuEdu.Domain/           # Entidades, Enums y Lógica pura
-│   ├── MiCompuEdu.Application/      # DTOs, Interfaces, CQRS (Commands/Queries)
-│   ├── MiCompuEdu.Infrastructure/   # DB Context, Servicios (WhatsApp, PDF), Migrations
-│   ├── MiCompuEdu.WebApi/           # API Controllers, Middlewares, Program.cs
-│   └── Dockerfile                   # Configuración de compilación y empaquetado .NET
-├── frontend/
-│   ├── public/                      # Recursos estáticos públicos
-│   ├── src/
-│   │   ├── assets/                  # Logos e imágenes
-│   │   ├── components/              # Componentes de UI compartidos
-│   │   ├── pages/                   # Login, Operator, Supervisor, Technician
-│   │   ├── types.ts                 # Definiciones de tipos TS
-│   │   ├── App.tsx                  # Componente principal con enrutamiento de roles
-│   │   └── main.tsx                 # Punto de entrada de React
-│   ├── Dockerfile                   # Configuración de empaquetado de producción
-│   └── nginx.conf                   # Servidor web para SPA routing
-├── docs/                            # Planos de arquitectura, init-database.sql DDL, y documentación
-├── docker-compose.yml               # Orquestación de Postgres, Backend y Frontend
-└── context.md                       # Este archivo de contexto
-```
+### Tablas del Sistema:
+1. **`escuelas`**: Establecimientos educativos provinciales (`cue` único, `nombre`, `localidad`, `departamento`).
+2. **`programas_educativos`**: Programas de distribución (*Maestros de América*, *Conectar Igualdad*, *Juana Manso*, etc.).
+3. **`ubicaciones_deposito`**: Posiciones físicas de estantería/fila en el depósito (`codigo` único).
+4. **`usuarios`**: Cuentas del personal con `password_hash` BCrypt y `CHECK` de rol (`Administrador`, `Supervisor`, `Tecnico`, `Operador`).
+5. **`beneficiarios`**: Alumnos, docentes y directivos (`dni` único, datos de contacto y columnas de tutor responsable: `dni_tutor`, `nombre_tutor`, `telefono_tutor`, `grado`, `seccion`).
+6. **`equipos`**: Netbooks registradas (`numero_serie` único, `marca`, `modelo`, `beneficiario_id`, `programa_educativo_id`).
+7. **`fallas_catalogo`**: Catálogo tipificado de fallas comunes.
+8. **`reparaciones`**: Órdenes de servicio con trazabilidad de ingreso/retiro (`persona_entrega_*`, `persona_retiro_*`, `doc_identidad_*`, `firma_*_base64`), garantía externa (`proveedor_garantia`, `remito_garantia`, `fecha_esperada_garantia`) y estado.
+9. **`historial_movimientos`**: Trazabilidad cronológica de cambios de estado por orden.
+10. **`evidencias_reparacion`**: Fotografías y adjuntos técnicos validados por firma mágica (magic bytes).
+11. **`notificaciones`**: Cola e historial de envíos por WhatsApp/Email con contador de `reintentos`.
+12. **`planillas_diarias`** y **`archivos_planilla_diaria`**: Registro de planillas físicas firmadas por fecha de retiro con soporte para múltiples archivos adjuntos (JPG, PNG, WEBP, PDF).
+13. **`audit_log`**: Log inmutable de auditoría a nivel de fila con `datos_anteriores` y `datos_nuevos` en formato `JSONB`.
 
 ---
 
-## 5. Datos de Sembrado y Cuentas de Acceso
+## 4. Catálogo de Endpoints REST (`/api/v1`)
 
-En el inicio de la API (`Program.cs`), si la base de datos está vacía, se siembran los siguientes usuarios con la contraseña común `Admin123!`:
-
-| Nombre Completo | Nombre de Usuario | Rol | Propósito |
-|---|---|---|---|
-| Administrador del Sistema | `admin` | Administrador | Configuración global y gestión de usuarios. |
-| Supervisor de Depósito | `supervisor` | Supervisor | Asignación de tareas y dashboard de control. |
-| Técnico Reparador Alfa | `tecnico` | Técnico | Diagnóstico, reparación y carga de evidencias. |
-| Operador de Recepción Uno | `operador` | Operador | Registro de ingresos y entregas físicas. |
-
-Fallas sembradas en el catálogo inicial:
-1. *No Enciende*
-2. *Pantalla Rota / Sin Imagen*
-3. *Bloqueo de Seguridad Juana Manso*
-4. *Falla de Teclado*
-5. *Problemas de Sistema Operativo*
-
----
-
-## 6. Catálogo de Endpoints REST (API RESTful)
-
-Las rutas de la API están prefijadas con `/api/v1`.
-
-### 6.1. Módulo de Autenticación (`/api/v1/auth`)
-- **POST `/login`**: Permite el ingreso de usuarios. Retorna el JWT token y datos del usuario.
-
-### 6.2. Módulo de Beneficiarios (`/api/v1/beneficiarios`)
-- **GET `/{dni}`**: Recupera la información nominal del beneficiario y su notebook asignada buscando por DNI.
-
-### 6.3. Módulo de Reparaciones (`/api/v1/reparaciones`)
-- **POST `/`**: Registra el ingreso de una notebook y genera el comprobante PDF real con QR.
-- **GET `/`**: Obtiene la lista filtrable de reparaciones.
-- **PUT `/{id}/estado`**: Actualiza el estado, diagnóstico y observaciones de la orden, y dispara notificaciones de WhatsApp.
-
-### 6.4. Módulo de Usuarios (`/api/v1/usuarios`)
-- **GET `/`**: Obtiene el listado completo de usuarios registrados (Exclusivo Administrador).
-- **POST `/`**: Registra un nuevo usuario encriptando la contraseña con BCrypt (Exclusivo Administrador).
-- **PUT `/{id}`**: Modifica datos de un usuario existente (Exclusivo Administrador).
-- **PUT `/{id}/toggle-active`**: Activa o desactiva la cuenta de un usuario (Exclusivo Administrador).
+1. **`AuthController` (`/api/v1/auth`)**: `POST /login` (autenticación JWT con BCrypt).
+2. **`BeneficiariosController` (`/api/v1/beneficiarios`)**: `GET /{dni}` (búsqueda por DNI de titular/tutor o número de serie).
+3. **`ReparacionesController` (`/api/v1/reparaciones`)**:
+   - `GET /`: Listado filtrado y paginado con `.AsNoTracking()`, `.AsSplitQuery()` y `.TagWith()`.
+   - `POST /`: Registro de ingreso desde padrón.
+   - `POST /manual`: Registro de ingreso con alta/actualización manual de beneficiario y equipo.
+   - `PUT /{id}/estado`: Actualización de diagnóstico, estado, garantía o entrega final.
+   - `GET /{id}/historial` y `GET /{id}/notificaciones`: Trazabilidad e historial de avisos.
+   - `POST /{id}/evidencias`: Subida segura de evidencia validada con `FileSecurityValidator`.
+   - `GET /{id}/comprobante` y `GET /consulta-publica/{id}`: Comprobante PDF y consulta pública por QR.
+4. **`PlanillasDiariasController` (`/api/v1/planillasdiarias`)**: `GET /`, `POST /`, `POST /{id}/archivos`, `DELETE /{id}`, `DELETE /archivos/{archivoId}`.
+5. **`FirmaRemotaController` (`/api/v1/firmaremota`)**: `GET /token/{reparacionId}` y `POST /guardar` (firma manuscrita desde celular vía QR con token HMAC-SHA256).
+6. **`DashboardController` (`/api/v1/dashboard/stats`)**: KPIs operativos, distribución de estados, top escuelas, efectividad técnica y tendencia mensual.
+7. **`AuditoriaController` (`/api/v1/auditoria`)**: Consulta paginada de registros `audit_log` (Supervisor/Administrador).
+8. **`ImportacionController` (`/api/v1/importacion/padron`)**: Importación masiva desde Excel (`.xlsx`/`.xls`).
+9. **`EscuelasController`, `ProgramasController`, `UbicacionesController`, `CleanupEscuelasController`, `UsuariosController`**: Administración de catálogos y personal.
 
 ---
 
-## 7. Registro de Cambios Recientes
+## 5. Registro de Cambios Recientes
 
-- **2026-06-17**: Implementación del **Módulo de Gestión de Garantías Externas y Derivación (Paso 6)**: adición de las columnas `ProveedorGarantia`, `RemitoGarantia` y `FechaEsperadaGarantia` a la tabla `reparaciones` con su correspondiente migración EF Core. Actualización de controladores y comandos MediatR. Creación del conmutador de **Modo Masivo** en el [PanelTecnico.tsx](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/frontend/src/pages/Technician/PanelTecnico.tsx) para derivación en lote y generación de remito oficial imprimible. Validación exitosa en el pipeline de tests automatizados (`test-endpoints.js`).
-- **2026-06-17**: Rediseño integral de la base de datos PostgreSQL. Migración de `EnsureCreated()` a **EF Core Migrations** versionadas. Configuración del esquema robusto con 12 índices de rendimiento (parciales y compuestos) y constraints de integridad a nivel físico. Creación de nuevas entidades de dominio y tablas de escalabilidad (`escuelas`, `programas_educativos`) preparadas para crecimiento futuro. Creación del script DDL maestro en [init-database.sql](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/docs/init-database.sql). Validación exitosa mediante pruebas de integración automatizadas.
-- **2026-06-16**: Implementación del módulo de **Gestión de Usuarios (CRUD)**: creación de endpoints en [UsuariosController.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.WebApi/Controllers/UsuariosController.cs), comandos de aplicación, y la vista frontend [GestionUsuarios.tsx](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/frontend/src/pages/Supervisor/GestionUsuarios.tsx) para Administradores.
-- **2026-06-16**: Integración de la llamada real HTTP a la API de WhatsApp Business (Meta Graph API) en [WhatsAppService.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.Infrastructure/Services/WhatsAppService.cs).
-- **2026-06-16**: Implementación de la generación real de comprobantes PDF con códigos QR empleando `QuestPDF` y `QRCoder` en [PdfGeneratorService.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.Infrastructure/Services/PdfGeneratorService.cs) y consumo en [RegistrarIngresoCommand.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.Application/Reparaciones/Commands/RegistrarIngresoCommand.cs).
-- **2026-06-16**: Modificación del backend ([ReparacionesController.cs](file:///C:/Users/Docente/Desktop/MiCompuEdu_sj-depo/backend/MiCompuEdu.WebApi/Controllers/ReparacionesController.cs)) para autorizar al rol `Operador` a cambiar los estados de reparación y registrar diagnósticos técnicos. Esto consolida el flujo simplificado de 2 roles (Operador y Administrador).
-- **2026-06-16**: Clonación inicial del repositorio y creación de este documento de contexto (`context.md`).
-
+- **2026-11-04**: **Auditoría Profunda y Remediación Integral QA Pre-Deploy (10/10 Áreas al 100%)**:
+  - Refactorización de los 13 controladores de `MiCompuEdu.WebApi` para eliminar toda dependencia directa de `ApplicationDbContext`, delegando el 100% de la lógica a handlers CQRS de `MediatR` con propagación de `CancellationToken` y manteniendo cada controlador por debajo de 200 líneas.
+  - Refactorización y modularización de las 11 páginas del frontend React (`src/pages/`) para que ninguna supere las 500 líneas, extrayendo hooks y subcomponentes cohesivos.
+  - Eliminación del 100% de usos del tipo `any` en TypeScript (`0` ocurrencias en todo `frontend/src/`), incorporación de carga paralela con `Promise.all` e interceptor global de sesión expirada (`401 Unauthorized`).
+  - Optimización de consultas EF Core con `.AsNoTracking()`, `.AsSplitQuery()` y `.TagWith()`, y eliminación de datos mock en `GetDashboardStatsQuery`.
+  - Validación de seguridad de archivos por *Magic Bytes* (`FileSecurityValidator`), cabeceras HTTP de seguridad, CORS restrictivo por entorno y suite de 29 pruebas unitarias en `MiCompuEdu.UnitTests` pasando al 100%.
+- **2026-07-02**: Implementación del módulo de **Planillas de Retiro Diarias** (`PlanillasDiariasController`, `PlanillasRetiro.tsx`) para adjuntar múltiples hojas escaneadas (imagen o PDF) vinculadas a un día específico con búsqueda por fecha, carga manual cuando el DNI no se encuentra en *Maestros de América*, obligatoriedad de datos del tutor para alumnos y edición de teléfono en ingreso/entrega.

@@ -6,6 +6,36 @@ export interface User {
   email: string;
 }
 
+export interface EvidenciaItem {
+  id: string;
+  urlArchivo: string;
+  nombreArchivo: string;
+}
+
+export interface EscuelaItem {
+  id: string;
+  nombre: string;
+}
+
+export interface ProgramaItem {
+  id: string;
+  nombre: string;
+  descripcion?: string;
+}
+
+export interface HistorialMovimientoItem {
+  id?: string;
+  fechaMovimiento?: string;
+  estadoAnterior?: string;
+  estadoOrigen?: string;
+  estadoNuevo?: string;
+  estadoDestino?: string;
+  usuarioNombre?: string;
+  operadorNombre?: string;
+  observaciones?: string;
+  accionesRealizadas?: string;
+}
+
 export interface Equipo {
   id: string;
   numeroSerie: string;
@@ -39,11 +69,14 @@ export interface Reparacion {
   equipoId: string;
   numeroSerie: string;
   marcaModelo: string;
+  marca?: string;
+  modelo?: string;
   alumnoNombreCompleto?: string;
   alumnoDni?: string;
   alumnoTelefono?: string;
   alumnoEmail?: string;
   nombreTutor: string;
+  dniTutor?: string;
   telefonoTutor: string;
   titularDni?: string;
   titularEmail?: string;
@@ -69,6 +102,8 @@ export interface Reparacion {
   escuelaNombre?: string;
   programaEducativoId?: string;
   programaEducativoNombre?: string;
+  tecnicoAsignadoId?: string;
+  tecnicoAsignadoNombre?: string;
   soloCargador?: boolean;
   estado: string;
   fallaReportada: string;
@@ -79,7 +114,7 @@ export interface Reparacion {
   observaciones?: string;
   comprobanteUrl?: string;
   fechaIngreso: string;
-  evidencias?: any[];
+  evidencias?: EvidenciaItem[];
   fechaEntrega?: string;
   ubicacionDepositoId?: string;
   ubicacionDepositoCodigo?: string;

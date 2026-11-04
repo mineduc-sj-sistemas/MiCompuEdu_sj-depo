@@ -23,6 +23,8 @@ namespace MiCompuEdu.Application.Ubicaciones.Queries
         public async Task<List<UbicacionDepositoDto>> Handle(GetUbicacionesQuery request, CancellationToken cancellationToken)
         {
             var list = await _context.UbicacionesDeposito
+                .AsNoTracking()
+                .TagWith("UbicacionesDeposito_CatalogoActivo")
                 .Where(u => u.Activo)
                 .OrderBy(u => u.Codigo)
                 .ToListAsync(cancellationToken);
