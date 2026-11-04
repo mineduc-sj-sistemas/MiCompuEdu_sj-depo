@@ -25,6 +25,8 @@ namespace MiCompuEdu.Application.Beneficiarios.Queries
         {
             var term = request.Dni.Trim().ToUpper();
             var beneficiario = await _context.Beneficiarios
+                .AsNoTracking()
+                .TagWith("Padron_BuscarBeneficiarioPorDniOSerie")
                 .Include(b => b.Escuela)
                 .Include(b => b.Equipos)
                     .ThenInclude(e => e.ProgramaEducativo)

@@ -2,12 +2,15 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using MiCompuEdu.Application.Common.Interfaces;
+using MediatR;
+using MiCompuEdu.Application.Common.Options;
 using MiCompuEdu.Application.DTOs;
+using MiCompuEdu.Application.Usuarios.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MiCompuEdu.WebApi.Controllers
@@ -16,82 +19,56 @@ namespace MiCompuEdu.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IApplicationDbContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly ISender _mediator;
+        private readonly JwtOptions _jwtOptions;
 
-        public AuthController(IApplicationDbContext context, IConfiguration configuration)
+        public AuthController(ISender mediator, IOptions<JwtOptions> jwtOptions)
         {
-            _context = context;
-            _configuration = configuration;
+            _mediator = mediator;
+            _jwtOptions = jwtOptions.Value;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
         {
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.NombreUsuario.ToLower() == request.NombreUsuario.ToLower() && u.Activo);
-
-            if (usuario == null)
+            var user = await _mediator.Send(new AuthenticateUserQuery(request.NombreUsuario, request.Password), cancellationToken);
+            if (user == null)
             {
                 return Unauthorized("Usuario o contraseña incorrectos.");
             }
 
-            bool isValid = false;
-            try
+            if (string.IsNullOrEmpty(_jwtOptions.Key))
             {
-                isValid = BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash);
+                throw new InvalidOperationException("La clave secreta del JWT ('Jwt:Key') no está configurada.");
             }
-            catch (Exception)
-            {
-                // Solo registramos el error internamente (si existiera logger), y mantenemos isValid = false
-                isValid = false;
-            }
-
-            if (!isValid)
-            {
-                return Unauthorized("Usuario o contraseña incorrectos.");
-            }
-
-            string nombre = usuario.NombreCompleto;
-            string rol = usuario.Rol.ToString();
-            string email = usuario.Email;
-            Guid userId = usuario.Id;
-
-            var keyStr = _configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(keyStr))
-            {
-                throw new InvalidOperationException("La clave secreta del JWT ('Jwt:Key') no está configurada en la aplicación.");
-            }
-            var issuer = _configuration["Jwt:Issuer"] ?? "MiCompuEdu_Issuer";
-            var audience = _configuration["Jwt:Audience"] ?? "MiCompuEdu_Audience";
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(keyStr);
+            var key = Encoding.UTF8.GetBytes(_jwtOptions.Key);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                    new Claim(ClaimTypes.Name, request.NombreUsuario),
-                    new Claim(ClaimTypes.Role, rol),
-                    new Claim(ClaimTypes.Email, email)
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.NombreUsuario),
+                    new Claim(ClaimTypes.Role, user.Rol),
+                    new Claim(ClaimTypes.Email, user.Email)
                 }),
-                Expires = DateTime.UtcNow.AddHours(8),
-                Issuer = issuer,
-                Audience = audience,
+                Expires = DateTime.UtcNow.AddHours(_jwtOptions.ExpirationHours > 0 ? _jwtOptions.ExpirationHours : 8),
+                Issuer = _jwtOptions.Issuer,
+                Audience = _jwtOptions.Audience,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
 
             return Ok(new LoginResponseDto
             {
-                Token = tokenString,
-                NombreCompleto = nombre,
-                NombreUsuario = request.NombreUsuario,
-                Rol = rol,
-                Email = email
+                Token = tokenHandler.WriteToken(token),
+                NombreCompleto = user.NombreCompleto,
+                NombreUsuario = user.NombreUsuario,
+                Rol = user.Rol,
+                Email = user.Email
             });
         }
     }

@@ -1,50 +1,28 @@
-using System;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using MiCompuEdu.Application.Escuelas.Commands;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MiCompuEdu.Application.Common.Interfaces;
 
 namespace MiCompuEdu.WebApi.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     [ApiController]
     [Route("api/[controller]")]
     public class CleanupEscuelasController : ControllerBase
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISender _mediator;
 
-        public CleanupEscuelasController(IApplicationDbContext context)
+        public CleanupEscuelasController(ISender mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
 
         [HttpPost("run")]
-        public async Task<IActionResult> Run()
+        public async Task<IActionResult> Run(CancellationToken cancellationToken)
         {
-            var escuelas = await _context.Escuelas.ToListAsync();
-            var grouped = escuelas.GroupBy(e => e.Nombre.Trim().ToUpper()).Where(g => g.Count() > 1);
-
-            int deleted = 0;
-            foreach (var group in grouped)
-            {
-                var mainEscuela = group.OrderBy(e => e.CreadoEn).First();
-                var duplicates = group.Where(e => e.Id != mainEscuela.Id).ToList();
-
-                foreach (var dup in duplicates)
-                {
-                    // Reasignar beneficiarios
-                    var beneficiarios = await _context.Beneficiarios.Where(b => b.EscuelaId == dup.Id).ToListAsync();
-                    foreach (var b in beneficiarios)
-                    {
-                        b.EscuelaId = mainEscuela.Id;
-                    }
-
-                    _context.Escuelas.Remove(dup);
-                    deleted++;
-                }
-            }
-
-            await _context.SaveChangesAsync(default);
+            var deleted = await _mediator.Send(new CleanupDuplicateEscuelasCommand(), cancellationToken);
             return Ok(new { Message = $"Limpieza completada. {deleted} escuelas duplicadas fueron eliminadas." });
         }
     }

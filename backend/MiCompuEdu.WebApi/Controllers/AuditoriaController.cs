@@ -1,10 +1,10 @@
 using System;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using MiCompuEdu.Application.Common.Interfaces;
+using MediatR;
+using MiCompuEdu.Application.Auditoria.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MiCompuEdu.WebApi.Controllers
 {
@@ -13,33 +13,17 @@ namespace MiCompuEdu.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class AuditoriaController : ControllerBase
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISender _mediator;
 
-        public AuditoriaController(IApplicationDbContext context)
+        public AuditoriaController(ISender mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
 
         [HttpGet("{tabla}/{registroId}")]
-        public async Task<IActionResult> ObtenerHistorial(string tabla, Guid registroId)
+        public async Task<IActionResult> ObtenerHistorial(string tabla, Guid registroId, CancellationToken cancellationToken)
         {
-            var logs = await _context.AuditLogs
-                .Include(a => a.Usuario)
-                .Where(a => a.Tabla.ToLower() == tabla.ToLower() && a.RegistroId == registroId)
-                .OrderBy(a => a.Fecha)
-                .Select(a => new
-                {
-                    a.Id,
-                    a.Tabla,
-                    a.RegistroId,
-                    a.Accion,
-                    a.Fecha,
-                    Usuario = a.Usuario != null ? a.Usuario.NombreCompleto : "Sistema/Desconocido",
-                    a.DatosAnteriores,
-                    a.DatosNuevos
-                })
-                .ToListAsync();
-
+            var logs = await _mediator.Send(new GetAuditLogsQuery(tabla, registroId), cancellationToken);
             return Ok(logs);
         }
     }

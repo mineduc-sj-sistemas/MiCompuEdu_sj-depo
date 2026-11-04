@@ -2,11 +2,13 @@ using System;
 using System.Linq;
 using System.Text;
 using MiCompuEdu.Application.Common.Interfaces;
+using MiCompuEdu.Application.Common.Options;
 using MiCompuEdu.Application.Reparaciones.Commands;
 using MiCompuEdu.Domain.Entities;
 using MiCompuEdu.Domain.Enums;
 using MiCompuEdu.Infrastructure.Persistence;
 using MiCompuEdu.Infrastructure.Services;
+using MiCompuEdu.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -65,7 +67,6 @@ if (rawConnectionString.StartsWith("postgres://", StringComparison.OrdinalIgnore
     connectionString = $"Host={dbUri.Host};Port={dbPort};Database={dbUri.AbsolutePath.TrimStart('/')};Username={Uri.UnescapeDataString(userInfo[0])};Password={Uri.UnescapeDataString(userInfo.Length > 1 ? userInfo[1] : "")};SSL Mode=Prefer;Trust Server Certificate=true";
 }
 
-// Usar Npgsql. Si hay problemas conectando, en runtime controlamos la falla
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString, b => b.MigrationsAssembly("MiCompuEdu.Infrastructure")));
 
@@ -73,26 +74,77 @@ builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequir
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegistrarIngresoCommand).Assembly));
 
-builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET")
+    ?? builder.Configuration["Jwt:Key"];
+
+if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.Length < 32)
+{
+    throw new InvalidOperationException("Seguridad (AUD-001): La clave secreta 'Jwt:Key' o 'JWT_SECRET' debe estar definida y tener al menos 32 caracteres.");
+}
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MiCompuEdu_Issuer";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "MiCompuEdu_Audience";
+
+builder.Services.Configure<JwtOptions>(opts =>
+{
+    opts.Key = jwtKey;
+    opts.Issuer = jwtIssuer;
+    opts.Audience = jwtAudience;
+    opts.ExpirationHours = 8;
+});
+
+builder.Services.Configure<WhatsAppOptions>(opts =>
+{
+    opts.ApiUrl = builder.Configuration["WhatsApp:ApiUrl"] ?? "https://graph.facebook.com/v19.0";
+    opts.PhoneNumberId = Environment.GetEnvironmentVariable("WHATSAPP_PHONE_NUMBER_ID") ?? builder.Configuration["WhatsApp:PhoneNumberId"] ?? string.Empty;
+    opts.AccessToken = Environment.GetEnvironmentVariable("WHATSAPP_TOKEN") ?? builder.Configuration["WhatsApp:AccessToken"] ?? string.Empty;
+    opts.TemplateName = builder.Configuration["WhatsApp:TemplateName"];
+});
+
+builder.Services.AddHttpClient<IWhatsAppService, WhatsAppService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(15);
+});
 builder.Services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
 builder.Services.AddHostedService<NotificationWorkerService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ISignalRService, SignalRService>();
 
+var allowedOriginsRaw = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
+    ?? builder.Configuration["Cors:AllowedOrigins"]
+    ?? "http://localhost:5173,http://localhost:8080,https://micompuedu-frontend.onrender.com,https://micompuedu-sj-depo.onrender.com";
+
+var allowedOrigins = allowedOriginsRaw
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.SetIsOriginAllowed(origin => true)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .SetIsOriginAllowed(origin =>
+                      origin.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase) ||
+                      origin.StartsWith("http://127.0.0.1", StringComparison.OrdinalIgnoreCase) ||
+                      allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
+        else
+        {
+            policy.SetIsOriginAllowed(origin =>
+                      allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase) ||
+                      origin.EndsWith(".onrender.com", StringComparison.OrdinalIgnoreCase) ||
+                      origin.EndsWith(".sanjuan.gob.ar", StringComparison.OrdinalIgnoreCase) ||
+                      origin.EndsWith(".sanjuan.edu.ar", StringComparison.OrdinalIgnoreCase))
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
     });
 });
-
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSecretaSuperSeguraParaSanJuanDeAlMenos32Caracteres!";
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MiCompuEdu_Issuer";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "MiCompuEdu_Audience";
 
 builder.Services.AddAuthentication(options =>
 {
@@ -115,6 +167,16 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    await next();
+});
 
 if (app.Environment.IsDevelopment())
 {

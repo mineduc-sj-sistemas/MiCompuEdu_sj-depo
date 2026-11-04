@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using MiCompuEdu.Application.Common.Interfaces;
+using MiCompuEdu.Application.Common.Security;
 using MiCompuEdu.Application.DTOs;
 using MiCompuEdu.Application.Reparaciones.Commands;
 using MiCompuEdu.Application.Reparaciones.Queries;
 using MiCompuEdu.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using MiCompuEdu.Application.Common.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace MiCompuEdu.WebApi.Controllers
 {
@@ -22,182 +22,84 @@ namespace MiCompuEdu.WebApi.Controllers
     public class ReparacionesController : ControllerBase
     {
         private readonly ISender _mediator;
-        private readonly IApplicationDbContext _context;
+        private readonly ICurrentUserService _currentUser;
 
-        public ReparacionesController(ISender mediator, IApplicationDbContext context)
+        public ReparacionesController(ISender mediator, ICurrentUserService currentUser)
         {
             _mediator = mediator;
-            _context = context;
+            _currentUser = currentUser;
         }
 
         [HttpPost]
         [Authorize(Roles = "Operador,Supervisor,Administrador")]
-        public async Task<ActionResult<ReparacionDto>> RegistrarIngreso([FromBody] CreateReparacionRequest request)
+        public async Task<ActionResult<ReparacionDto>> RegistrarIngreso(
+            [FromBody] CreateReparacionRequest request,
+            CancellationToken cancellationToken)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var operadorId))
-            {
+            if (!_currentUser.UserId.HasValue)
                 return Unauthorized("Token de autenticación no contiene un identificador de usuario válido.");
-            }
 
-            var command = new RegistrarIngresoCommand(
-                request.EquipoId,
-                request.EquipoMarca,
-                request.EquipoModelo,
-                request.FallaReportada,
-                request.FallaCatalogoId,
-                request.Observaciones,
-                operadorId,
-                request.EscuelaId,
-                request.ProgramaEducativoId,
-                request.UbicacionDepositoId,
-                request.FirmaIngresoBase64,
-                request.FechaIngreso,
-                request.SoloCargador,
-                request.TipoBeneficiario,
-                request.NuevoEquipoNumeroSerie,
-                request.NuevoEquipoMarca,
-                request.NuevoEquipoModelo,
-                request.NuevoEquipoCredencialesOffice,
-                request.TutorNombre,
-                request.TutorDni,
-                request.TutorTelefono,
-                request.TitularTelefono,
-                request.PersonaEntregaTipo,
-                request.PersonaEntregaNombre,
-                request.PersonaEntregaDni,
-                request.PersonaEntregaTelefono,
-                request.PersonaEntregaParentesco,
-                request.DocIdentidadIngresoBase64
-            );
-
-            var resultado = await _mediator.Send(command);
-            
+            var resultado = await _mediator.Send(request.ToCommand(_currentUser.UserId.Value), cancellationToken);
             return CreatedAtAction(nameof(RegistrarIngreso), new { id = resultado.Id }, resultado);
         }
 
         [HttpPost("manual")]
         [Authorize(Roles = "Operador,Supervisor,Administrador")]
-        public async Task<ActionResult<ReparacionDto>> RegistrarIngresoManual([FromBody] CreateReparacionManualRequest request)
+        public async Task<ActionResult<ReparacionDto>> RegistrarIngresoManual(
+            [FromBody] CreateReparacionManualRequest request,
+            CancellationToken cancellationToken)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var operadorId))
-            {
+            if (!_currentUser.UserId.HasValue)
                 return Unauthorized("Token de autenticación no contiene un identificador de usuario válido.");
-            }
 
-            var command = new MiCompuEdu.Application.Reparaciones.Commands.RegistrarIngresoManualCommand(
-                request.TitularDni,
-                request.TitularNombre,
-                request.TitularApellido,
-                request.TitularTelefono,
-                request.TitularEmail,
-                request.TipoBeneficiario,
-                request.EquipoNumeroSerie,
-                request.EquipoMarca,
-                request.EquipoModelo,
-                request.EquipoCredencialesOffice,
-                request.FallaReportada,
-                request.FallaCatalogoId,
-                request.Observaciones,
-                operadorId,
-                request.EscuelaId,
-                request.ProgramaEducativoId,
-                request.UbicacionDepositoId,
-                request.FirmaIngresoBase64,
-                request.FechaIngreso,
-                request.SoloCargador,
-                request.TutorNombre,
-                request.TutorDni,
-                request.TutorTelefono,
-                request.PersonaEntregaTipo,
-                request.PersonaEntregaNombre,
-                request.PersonaEntregaDni,
-                request.PersonaEntregaTelefono,
-                request.PersonaEntregaParentesco,
-                request.DocIdentidadIngresoBase64
-            );
-
-            var resultado = await _mediator.Send(command);
-            
+            var resultado = await _mediator.Send(request.ToCommand(_currentUser.UserId.Value), cancellationToken);
             return CreatedAtAction(nameof(RegistrarIngreso), new { id = resultado.Id }, resultado);
         }
 
         [HttpGet("{id}/historial")]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<List<HistorialMovimientoDto>>> ObtenerHistorial(Guid id)
+        public async Task<ActionResult<List<HistorialMovimientoDto>>> ObtenerHistorial(Guid id, CancellationToken cancellationToken)
         {
-            var query = new GetHistorialMovimientosQuery(id);
-            var resultado = await _mediator.Send(query);
+            var resultado = await _mediator.Send(new GetHistorialMovimientosQuery(id), cancellationToken);
             return Ok(resultado);
         }
 
         [HttpGet]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
         public async Task<ActionResult<List<ReparacionDto>>> ObtenerTodos(
-            [FromQuery] string? estado, 
+            [FromQuery] string? estado,
             [FromQuery] string? busqueda,
             [FromQuery] Guid? escuelaId,
             [FromQuery] Guid? programaEducativoId,
             [FromQuery] Guid? tecnicoAsignadoId,
             [FromQuery] int? fallaCatalogoId,
             [FromQuery] DateTime? fechaInicio,
-            [FromQuery] DateTime? fechaFin)
+            [FromQuery] DateTime? fechaFin,
+            CancellationToken cancellationToken)
         {
             var query = new GetReparacionesQuery(
-                estado, 
-                busqueda, 
-                escuelaId, 
-                programaEducativoId, 
-                tecnicoAsignadoId, 
-                fallaCatalogoId, 
-                fechaInicio, 
-                fechaFin
+                estado, busqueda, escuelaId, programaEducativoId,
+                tecnicoAsignadoId, fallaCatalogoId, fechaInicio, fechaFin
             );
-            var resultado = await _mediator.Send(query);
-            return Ok(resultado);
+            return Ok(await _mediator.Send(query, cancellationToken));
         }
 
         [HttpPut("{id}/estado")]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<bool>> ActualizarEstado(Guid id, [FromBody] UpdateEstadoRequest request)
+        public async Task<ActionResult<bool>> ActualizarEstado(
+            Guid id,
+            [FromBody] UpdateEstadoRequest request,
+            CancellationToken cancellationToken)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var usuarioId))
-            {
+            if (!_currentUser.UserId.HasValue)
                 return Unauthorized("Token de autenticación no contiene un identificador de usuario válido.");
-            }
 
             if (!Enum.TryParse<EstadoEquipo>(request.NuevoEstado, out var parsedEstado))
-            {
                 return BadRequest($"El estado '{request.NuevoEstado}' no es un estado de reparación válido.");
-            }
-
-            var command = new ActualizarEstadoCommand(
-                id,
-                parsedEstado,
-                request.Diagnostico,
-                request.AccionesRealizadas,
-                request.Observaciones,
-                usuarioId,
-                request.ProveedorGarantia,
-                request.RemitoGarantia,
-                request.FechaEsperadaGarantia,
-                request.FirmaEntregaBase64,
-                request.TelefonoContacto,
-                request.TutorNombre,
-                request.TutorDni,
-                request.PersonaRetiroTipo,
-                request.PersonaRetiroNombre,
-                request.PersonaRetiroDni,
-                request.PersonaRetiroTelefono,
-                request.PersonaRetiroParentesco,
-                request.DocIdentidadEntregaBase64
-            );
 
             try
             {
-                var resultado = await _mediator.Send(command);
+                var resultado = await _mediator.Send(request.ToCommand(id, parsedEstado, _currentUser.UserId.Value), cancellationToken);
                 return Ok(resultado);
             }
             catch (KeyNotFoundException ex)
@@ -208,182 +110,63 @@ namespace MiCompuEdu.WebApi.Controllers
             {
                 return BadRequest(new { error = ex.Message });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Error interno al actualizar el estado: " + ex.Message });
-            }
         }
 
         [HttpGet("{id}/notificaciones")]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<List<NotificacionDto>>> ObtenerNotificaciones(Guid id)
+        public async Task<ActionResult<List<NotificacionDto>>> ObtenerNotificaciones(Guid id, CancellationToken cancellationToken)
         {
-            var query = new GetNotificacionesByReparacionQuery(id);
-            var resultado = await _mediator.Send(query);
-            return Ok(resultado);
+            return Ok(await _mediator.Send(new GetNotificacionesByReparacionQuery(id), cancellationToken));
         }
 
         [HttpPost("{id}/evidencias")]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<ActionResult<EvidenciaDto>> SubirEvidencia(Guid id, [FromForm] Microsoft.AspNetCore.Http.IFormFile file)
+        public async Task<ActionResult<EvidenciaDto>> SubirEvidencia(
+            Guid id,
+            [FromForm] IFormFile file,
+            CancellationToken cancellationToken)
         {
             if (file == null || file.Length == 0)
-            {
                 return BadRequest("No se proporcionó ningún archivo válido.");
-            }
 
-            try
-            {
-                var extension = System.IO.Path.GetExtension(file.FileName).ToLower();
-                var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
-                if (!System.Linq.Enumerable.Contains(extensionesPermitidas, extension))
-                {
-                    return BadRequest("Tipo de archivo no permitido. Solo se permiten imágenes (jpg, jpeg, png) y PDFs.");
-                }
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms, cancellationToken);
+            var bytes = ms.ToArray();
 
-                // Asegurar directorio uploads/evidencias en wwwroot
-                var uploadsFolder = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "evidencias");
-                if (!System.IO.Directory.Exists(uploadsFolder))
-                {
-                    System.IO.Directory.CreateDirectory(uploadsFolder);
-                }
+            var validation = FileSecurityValidator.ValidateFile(file.FileName, bytes);
+            if (!validation.IsValid)
+                return BadRequest(validation.ErrorMessage);
 
-                var fileName = $"{Guid.NewGuid()}{extension}";
-                var filePath = System.IO.Path.Combine(uploadsFolder, fileName);
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "evidencias");
+            Directory.CreateDirectory(uploadsFolder);
 
-                using (var stream = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
+            var safeFileName = $"{Guid.NewGuid()}{validation.SafeExtension}";
+            await System.IO.File.WriteAllBytesAsync(Path.Combine(uploadsFolder, safeFileName), bytes, cancellationToken);
 
-                var urlArchivo = $"/uploads/evidencias/{fileName}";
-                var command = new AgregarEvidenciaCommand(id, urlArchivo, file.FileName);
-
-                var resultado = await _mediator.Send(command);
-                return CreatedAtAction(nameof(SubirEvidencia), new { id = resultado.Id }, resultado);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error al guardar la evidencia física: {ex.Message}");
-            }
+            var resultado = await _mediator.Send(new AgregarEvidenciaCommand(id, $"/uploads/evidencias/{safeFileName}", file.FileName), cancellationToken);
+            return CreatedAtAction(nameof(SubirEvidencia), new { id = resultado.Id }, resultado);
         }
 
         [HttpGet("{id}/comprobante")]
         [Authorize(Roles = "Operador,Tecnico,Supervisor,Administrador")]
-        public async Task<IActionResult> DescargarComprobante(Guid id)
+        public async Task<IActionResult> DescargarComprobante(Guid id, CancellationToken cancellationToken)
         {
-            var filePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "App_Data", "comprobantes", $"{id}.pdf");
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "comprobantes", $"{id}.pdf");
             if (!System.IO.File.Exists(filePath))
-            {
                 return NotFound("El archivo físico del comprobante no existe en el servidor.");
-            }
 
-            var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath, cancellationToken);
             return File(fileBytes, "application/pdf", $"comprobante_{id.ToString().Substring(0, 8)}.pdf");
         }
 
         [HttpGet("{id}/estado-publico")]
+        [HttpGet("consulta-publica/{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<object>> ObtenerEstadoPublico(Guid id)
+        public async Task<ActionResult<EstadoPublicoReparacionDto>> ObtenerEstadoPublico(Guid id, CancellationToken cancellationToken)
         {
-            var rep = await _context.Reparaciones
-                .Include(r => r.Equipo)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (rep == null)
-            {
-                return NotFound("No se encontró información para la reparación consultada.");
-            }
-
-            return Ok(new
-            {
-                NumeroSerie = rep.Equipo.NumeroSerie,
-                MarcaModelo = $"{rep.Equipo.Marca} {rep.Equipo.Modelo}",
-                Estado = rep.Estado.ToString(),
-                FechaIngreso = rep.FechaIngreso,
-                FechaLimite = rep.FechaLimite
-            });
+            var rep = await _mediator.Send(new GetEstadoPublicoReparacionQuery(id), cancellationToken);
+            if (rep == null) return NotFound("No se encontró información para la reparación consultada.");
+            return Ok(rep);
         }
     }
-
-    public record CreateReparacionRequest(
-        Guid EquipoId,
-        string? EquipoMarca,
-        string? EquipoModelo,
-        string FallaReportada,
-        int? FallaCatalogoId,
-        string? Observaciones,
-        Guid? EscuelaId = null,
-        Guid? ProgramaEducativoId = null,
-        Guid? UbicacionDepositoId = null,
-        string? FirmaIngresoBase64 = null,
-        DateTime? FechaIngreso = null,
-        bool SoloCargador = false,
-        MiCompuEdu.Domain.Enums.TipoBeneficiario? TipoBeneficiario = null,
-        string? NuevoEquipoNumeroSerie = null,
-        string? NuevoEquipoMarca = null,
-        string? NuevoEquipoModelo = null,
-        string? NuevoEquipoCredencialesOffice = null,
-        string? TutorNombre = null,
-        string? TutorDni = null,
-        string? TutorTelefono = null,
-        string? TitularTelefono = null,
-        string? PersonaEntregaTipo = null,
-        string? PersonaEntregaNombre = null,
-        string? PersonaEntregaDni = null,
-        string? PersonaEntregaTelefono = null,
-        string? PersonaEntregaParentesco = null,
-        string? DocIdentidadIngresoBase64 = null
-    );
-
-    public record CreateReparacionManualRequest(
-        string TitularDni,
-        string TitularNombre,
-        string TitularApellido,
-        string TitularTelefono,
-        string TitularEmail,
-        MiCompuEdu.Domain.Enums.TipoBeneficiario TipoBeneficiario,
-        string EquipoNumeroSerie,
-        string EquipoMarca,
-        string EquipoModelo,
-        string? EquipoCredencialesOffice,
-        string FallaReportada,
-        int? FallaCatalogoId,
-        string? Observaciones,
-        Guid? EscuelaId = null,
-        Guid? ProgramaEducativoId = null,
-        Guid? UbicacionDepositoId = null,
-        string? FirmaIngresoBase64 = null,
-        DateTime? FechaIngreso = null,
-        bool SoloCargador = false,
-        string? TutorNombre = null,
-        string? TutorDni = null,
-        string? TutorTelefono = null,
-        string? PersonaEntregaTipo = null,
-        string? PersonaEntregaNombre = null,
-        string? PersonaEntregaDni = null,
-        string? PersonaEntregaTelefono = null,
-        string? PersonaEntregaParentesco = null,
-        string? DocIdentidadIngresoBase64 = null
-    );
-
-    public record UpdateEstadoRequest(
-        string NuevoEstado,
-        string? Diagnostico,
-        string? AccionesRealizadas,
-        string? Observaciones,
-        string? ProveedorGarantia = null,
-        string? RemitoGarantia = null,
-        DateTime? FechaEsperadaGarantia = null,
-        string? FirmaEntregaBase64 = null,
-        string? TelefonoContacto = null,
-        string? TutorNombre = null,
-        string? TutorDni = null,
-        string? PersonaRetiroTipo = null,
-        string? PersonaRetiroNombre = null,
-        string? PersonaRetiroDni = null,
-        string? PersonaRetiroTelefono = null,
-        string? PersonaRetiroParentesco = null,
-        string? DocIdentidadEntregaBase64 = null
-    );
 }

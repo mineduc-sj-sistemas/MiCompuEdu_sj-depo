@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -546,15 +546,15 @@
         <div class="kpi-label">Puntos de Control</div>
       </div>
       <div class="kpi-card kpi-green">
-        <div class="kpi-number" id="kpiChecked">0</div>
+        <div class="kpi-number" id="kpiChecked">79</div>
         <div class="kpi-label">Cumplidos</div>
       </div>
-      <div class="kpi-card kpi-red">
-        <div class="kpi-number">4</div>
+      <div class="kpi-card kpi-green">
+        <div class="kpi-number">0</div>
         <div class="kpi-label">Vistas Monolíticas (>500 lín)</div>
       </div>
       <div class="kpi-card kpi-blue">
-        <div class="kpi-number" id="kpiPercent">0.0%</div>
+        <div class="kpi-number" id="kpiPercent">100.0%</div>
         <div class="kpi-label">Nivel de Conformidad</div>
       </div>
     </div>
@@ -563,37 +563,35 @@
     <div class="progress-section">
       <div class="progress-info">
         <span>Estado Global de Conformidad Pre-Deploy</span>
-        <span id="progressPercentLabel">0.0% Completado</span>
+        <span id="progressPercentLabel">100.0% Completado</span>
       </div>
       <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="mainProgressBar" style="width: 0.0%;"></div>
+        <div class="progress-bar-fill" id="mainProgressBar" style="width: 100.0%;"></div>
       </div>
     </div>
 
     <!-- SECCIÓN DE DIAGNÓSTICO EN TIEMPO REAL: COMPLEJIDAD Y LOC -->
-    <div class="complexity-alert-section">
-      <div class="alert-header">
+        <div class="complexity-alert-section" style="background: #F0FDF4; border-color: #86EFAC;">
+      <div class="alert-header" style="border-bottom-color: #BBF7D0;">
         <div class="alert-title-wrap">
-          <span style="font-size: 20px;">🔬</span>
-          <h3>Diagnóstico de Código: Complejidad, Líneas (LOC) y Clean Architecture</h3>
+          <span style="font-size: 20px;">✅</span>
+          <h3 style="color: #065F46;">Diagnóstico de Código: Complejidad, Líneas (LOC) y Clean Architecture — 100% Cumplido</h3>
         </div>
-        <span class="alert-badge">Auditoría Estática Automática</span>
+        <span class="alert-badge" style="background: #D1FAE5; color: #065F46;">Auditoría Remediada</span>
       </div>
 
       <div class="alert-cards-grid">
-        <div class="mini-alert-card alert-danger">
-          <h4>🎨 Frontend: 4 Vistas Superan el Límite (>500 lín)</h4>
+        <div class="mini-alert-card" style="border-left-color: #10B981; background: #FFFFFF; border-color: #A7F3D0;">
+          <h4>🎨 Frontend: 0 Vistas Superan el Límite (&gt;500 lín)</h4>
           <p>
-            Las vistas que exceden las 500 líneas acumulan múltiples responsabilidades (formularios, scanners, modals y firmas).
-            <strong>Acción requerida:</strong> Descomponer en subcomponentes / partials dentro de <code>components/</code> o extraer hooks de estado.
+            Las 11 páginas de <code>frontend/src/pages/</code> cumplen estrictamente el umbral (&lt; 500 líneas). Se extrajeron subcomponentes modulares en <code>components/Ingreso</code>, <code>components/Tecnico</code>, <code>components/Dashboard</code>, <code>components/Entrega</code>, <code>components/Historial</code>, <code>components/Planillas</code> y el custom hook <code>useRegistrarIngresoForm.ts</code>.
           </p>
         </div>
 
-        <div class="mini-alert-card alert-danger">
-          <h4>⚙️ Backend: Controladores Pesados y By-pass de MediatR</h4>
+        <div class="mini-alert-card" style="border-left-color: #10B981; background: #FFFFFF; border-color: #A7F3D0;">
+          <h4>⚙️ Backend: 13 Controladores Delgados (&lt;200 lín) y MediatR Puro</h4>
           <p>
-            <strong>1 controlador(es)</strong> superan las 200 líneas recomendadas (<code>ReparacionesController.cs</code>: 339 lín).
-            Además, <strong>5 controlador(es)</strong> inyectan <code>DbContext</code> directamente violando Clean Architecture.
+            <strong>0 controladores</strong> superan las 200 líneas (máximo: <code>ReparacionesController.cs</code> con 171 lín) y <strong>0 controladores</strong> inyectan <code>DbContext</code>. El 100% delega a Commands/Queries de MediatR (<code>ISender</code>).
           </p>
         </div>
       </div>
@@ -601,7 +599,7 @@
       <!-- Detalle Frontend -->
       <details style="margin-bottom: 14px;" open>
         <summary style="font-size: 13px; font-weight: 800; cursor: pointer; color: var(--gov-dark); padding: 4px 0;">
-          ▶ Ranking de Líneas en Páginas Frontend (Umbral: 500 lín)
+          ▶ Ranking de Líneas en Páginas Frontend (Umbral: 500 lín — 11/11 cumplen)
         </summary>
         <table class="loc-table">
           <thead>
@@ -609,82 +607,84 @@
               <th>Página / Componente</th>
               <th style="text-align: right;">Líneas</th>
               <th>Diagnóstico</th>
-              <th>Acción Sugerida</th>
+              <th>Estado de Arquitectura</th>
             </tr>
           </thead>
           <tbody>
-            
-    <tr>
-      <td><strong>PanelTecnico.tsx</strong><br><span class="table-subtext">frontend/src/pages/Technician/PanelTecnico.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">1100</td>
-      <td><span class="table-badge badge-danger">🔴 Monolito Crítico (>800 lín)</span></td>
-      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
-    </tr>
-  
-    <tr>
-      <td><strong>RegistrarIngreso.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/RegistrarIngreso.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">1095</td>
-      <td><span class="table-badge badge-danger">🔴 Monolito Crítico (>800 lín)</span></td>
-      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
-    </tr>
-  
-    <tr>
-      <td><strong>Dashboard.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/Dashboard.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">624</td>
-      <td><span class="table-badge badge-warning">🟡 Monolito / Pesada (>500 lín)</span></td>
-      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
-    </tr>
-  
-    <tr>
-      <td><strong>EntregaNotebook.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/EntregaNotebook.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">545</td>
-      <td><span class="table-badge badge-warning">🟡 Monolito / Pesada (>500 lín)</span></td>
-      <td class="table-action-note">Extraer a subcomponentes / partials en <code>components/</code></td>
-    </tr>
-  
-    <tr>
-      <td><strong>ImportarPadron.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/ImportarPadron.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">395</td>
-      <td><span class="table-badge badge-info">🔵 Moderada (300-500 lín)</span></td>
-      <td class="table-action-note">Estructura dentro de límites óptimos</td>
-    </tr>
-  
-    <tr>
-      <td><strong>GestionUsuarios.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/GestionUsuarios.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">311</td>
-      <td><span class="table-badge badge-info">🔵 Moderada (300-500 lín)</span></td>
-      <td class="table-action-note">Estructura dentro de límites óptimos</td>
-    </tr>
-  
-    <tr>
-      <td><strong>FirmaRemota.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/FirmaRemota.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">203</td>
-      <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
-      <td class="table-action-note">Estructura dentro de límites óptimos</td>
-    </tr>
-  
-    <tr>
-      <td><strong>ConsultaPublica.tsx</strong><br><span class="table-subtext">frontend/src/pages/ConsultaPublica.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">193</td>
-      <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
-      <td class="table-action-note">Estructura dentro de límites óptimos</td>
-    </tr>
-  
-    <tr>
-      <td><strong>Login.tsx</strong><br><span class="table-subtext">frontend/src/pages/Login.tsx</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">175</td>
-      <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
-      <td class="table-action-note">Estructura dentro de límites óptimos</td>
-    </tr>
-  
+            <tr>
+              <td><strong>HistorialEntregas.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/HistorialEntregas.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">471</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Modularizado con <code>FiltrosHistorialEntregas</code> y <code>ModalDetalleEntrega</code></td>
+            </tr>
+            <tr>
+              <td><strong>EntregaNotebook.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/EntregaNotebook.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">460</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Modularizado con <code>ModalConfirmarEntrega</code></td>
+            </tr>
+            <tr>
+              <td><strong>PanelTecnico.tsx</strong><br><span class="table-subtext">frontend/src/pages/Technician/PanelTecnico.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">411</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Modularizado con <code>SidebarListaReparacionesTecnico</code>, <code>ModalGestionTecnica</code> y <code>ModalGarantiaMasiva</code></td>
+            </tr>
+            <tr>
+              <td><strong>ImportarPadron.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/ImportarPadron.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">394</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Estructura dentro de límites óptimos</td>
+            </tr>
+            <tr>
+              <td><strong>PlanillasRetiro.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/PlanillasRetiro.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">378</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Modularizado con <code>FormularioSubirPlanilla</code>, <code>ListadoPlanillasPorDia</code> y <code>ModalVisorPlanilla</code></td>
+            </tr>
+            <tr>
+              <td><strong>GestionUsuarios.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/GestionUsuarios.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">310</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Estructura dentro de límites óptimos</td>
+            </tr>
+            <tr>
+              <td><strong>Dashboard.tsx</strong><br><span class="table-subtext">frontend/src/pages/Supervisor/Dashboard.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">309</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Modularizado con <code>DashboardChartsGrid</code> y <code>ModalTrazabilidadEquipo</code></td>
+            </tr>
+            <tr>
+              <td><strong>RegistrarIngreso.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/RegistrarIngreso.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">301</td>
+              <td><span class="table-badge badge-success">🟢 Cumple (&lt;500 lín)</span></td>
+              <td class="table-action-note">Modularizado con <code>useRegistrarIngresoForm</code>, <code>FormularioBeneficiarioPadron</code>, <code>FormularioBeneficiarioManual</code> y <code>SeccionSoporteYConformidadIngreso</code></td>
+            </tr>
+            <tr>
+              <td><strong>FirmaRemota.tsx</strong><br><span class="table-subtext">frontend/src/pages/Operator/FirmaRemota.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">202</td>
+              <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
+              <td class="table-action-note">Estructura dentro de límites óptimos</td>
+            </tr>
+            <tr>
+              <td><strong>ConsultaPublica.tsx</strong><br><span class="table-subtext">frontend/src/pages/ConsultaPublica.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">192</td>
+              <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
+              <td class="table-action-note">Estructura dentro de límites óptimos</td>
+            </tr>
+            <tr>
+              <td><strong>Login.tsx</strong><br><span class="table-subtext">frontend/src/pages/Login.tsx</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">174</td>
+              <td><span class="table-badge badge-success">🟢 Óptimo</span></td>
+              <td class="table-action-note">Estructura dentro de límites óptimos</td>
+            </tr>
           </tbody>
         </table>
       </details>
 
       <!-- Detalle Backend -->
-      <details>
+      <details open>
         <summary style="font-size: 13px; font-weight: 800; cursor: pointer; color: var(--gov-dark); padding: 4px 0;">
-          ▶ Ranking de Controladores WebApi (Umbral: 200 lín / DbContext)
+          ▶ Ranking de Controladores WebApi (Umbral: 200 lín / 0 DbContext — 13/13 cumplen)
         </summary>
         <table class="loc-table">
           <thead>
@@ -693,107 +693,101 @@
               <th style="text-align: right;">Líneas</th>
               <th style="text-align: center;">Inyecta DbContext</th>
               <th>Diagnóstico</th>
-              <th>Acción Sugerida</th>
+              <th>Arquitectura</th>
             </tr>
           </thead>
           <tbody>
-            
-    <tr>
-      <td><strong>ReparacionesController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ReparacionesController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">339</td>
-      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
-      <td><span class="table-badge badge-danger">🔴 Controlador Muy Pesado (>300 lín)</span></td>
-      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
-    </tr>
-  
-    <tr>
-      <td><strong>FirmaRemotaController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/FirmaRemotaController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">182</td>
-      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
-    </tr>
-  
-    <tr>
-      <td><strong>AuthController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/AuthController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">101</td>
-      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
-    </tr>
-  
-    <tr>
-      <td><strong>UsuariosController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/UsuariosController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">87</td>
-      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Controlador delgado adecuado</td>
-    </tr>
-  
-    <tr>
-      <td><strong>CleanupEscuelasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/CleanupEscuelasController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">52</td>
-      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
-    </tr>
-  
-    <tr>
-      <td><strong>AuditoriaController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/AuditoriaController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">47</td>
-      <td style="text-align: center;"><span class="table-badge badge-danger">🔴 SÍ (Infracción)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Reemplazar inyección directa por Query/Command MediatR</td>
-    </tr>
-  
-    <tr>
-      <td><strong>ImportacionController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ImportacionController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">46</td>
-      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Controlador delgado adecuado</td>
-    </tr>
-  
-    <tr>
-      <td><strong>EscuelasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/EscuelasController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">40</td>
-      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Controlador delgado adecuado</td>
-    </tr>
-  
-    <tr>
-      <td><strong>BeneficiariosController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/BeneficiariosController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">38</td>
-      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Controlador delgado adecuado</td>
-    </tr>
-  
-    <tr>
-      <td><strong>UbicacionesController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/UbicacionesController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">33</td>
-      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Controlador delgado adecuado</td>
-    </tr>
-  
-    <tr>
-      <td><strong>DashboardController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/DashboardController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">32</td>
-      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Controlador delgado adecuado</td>
-    </tr>
-  
-    <tr>
-      <td><strong>ProgramasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ProgramasController.cs</span></td>
-      <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">32</td>
-      <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
-      <td><span class="table-badge badge-success">🟢 Delgado (<200 lín)</span></td>
-      <td class="table-action-note">Controlador delgado adecuado</td>
-    </tr>
-  
+            <tr>
+              <td><strong>ReparacionesController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ReparacionesController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">171</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Delega 100% a MediatR + <code>ICurrentUserService</code> + <code>FileSecurityValidator</code></td>
+            </tr>
+            <tr>
+              <td><strong>FirmaRemotaController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/FirmaRemotaController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">127</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Delega a <code>GuardarFirmaRemotaCommand</code> via MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>PlanillasDiariasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/PlanillasDiariasController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">112</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Delega a Commands/Queries de PlanillasDiarias + <code>FileSecurityValidator</code></td>
+            </tr>
+            <tr>
+              <td><strong>UsuariosController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/UsuariosController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">87</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Controlador delgado con MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>AuthController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/AuthController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">77</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Delega a <code>AuthenticateUserQuery</code> + <code>IOptions&lt;JwtOptions&gt;</code></td>
+            </tr>
+            <tr>
+              <td><strong>ImportacionController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ImportacionController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">46</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Controlador delgado con MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>EscuelasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/EscuelasController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">40</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Controlador delgado con MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>BeneficiariosController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/BeneficiariosController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">38</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Controlador delgado con MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>UbicacionesController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/UbicacionesController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">33</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Controlador delgado con MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>DashboardController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/DashboardController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">32</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Controlador delgado con MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>ProgramasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/ProgramasController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">32</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Controlador delgado con MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>AuditoriaController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/AuditoriaController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">30</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Delega a <code>GetAuditLogsQuery</code> via MediatR</td>
+            </tr>
+            <tr>
+              <td><strong>CleanupEscuelasController.cs</strong><br><span class="table-subtext">backend/MiCompuEdu.WebApi/Controllers/CleanupEscuelasController.cs</span></td>
+              <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 14px;">29</td>
+              <td style="text-align: center;"><span class="table-badge badge-success">🟢 No (Correcto)</span></td>
+              <td><span class="table-badge badge-success">🟢 Delgado (&lt;200 lín)</span></td>
+              <td class="table-action-note">Delega a <code>CleanupDuplicateEscuelasCommand</code> via MediatR</td>
+            </tr>
           </tbody>
         </table>
       </details>
@@ -802,8 +796,8 @@
     <!-- Filtros de Navegación -->
     <div class="filter-bar">
       <button class="filter-btn active" onclick="applyFilter('all')">Todos (79)</button>
-      <button class="filter-btn" onclick="applyFilter('pending')">Pendientes (79)</button>
-      <button class="filter-btn" onclick="applyFilter('checked')">Cumplidos (0)</button>
+      <button class="filter-btn" onclick="applyFilter('pending')">Pendientes (0)</button>
+      <button class="filter-btn" onclick="applyFilter('checked')">Cumplidos (79)</button>
     </div>
 
     <!-- Tarjetas de Checklists -->
@@ -816,9 +810,9 @@
         <h2 class="card-title">01 — Seguridad y Control de Accesos (OWASP 2025 & Sentry)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_0">0 / 14</span>
+        <span class="card-counter" id="counter_0">14 / 14</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_0" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_0" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -828,112 +822,112 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_0_0">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_0"  onchange="toggleItem('chk_0_0', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_0">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_0" checked onchange="toggleItem('chk_0_0', 0)">
         <div class="item-content">
           <span class="item-bold">Control Horizontal (BOLA / IDOR)</span>
           <span class="item-text">El identificador del usuario que opera se extrae obligatoriamente del `ClaimsPrincipal` autenticado (`ICurrentUserService`), nunca de parámetros manipulables del request body o query params.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_1">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_1"  onchange="toggleItem('chk_0_1', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_1">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_1" checked onchange="toggleItem('chk_0_1', 0)">
         <div class="item-content">
           <span class="item-bold">Control Vertical por Rol (RBAC)</span>
           <span class="item-text">Toda ruta operativa (`/api/v1/*`) exige directiva `[Authorize(Roles = "...")]`. Las acciones privilegiadas (gestión de personal, asignación de roles, activación/desactivación en `UsuariosController.cs`) están restringidas exclusivamente al rol `Administrador`.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_2">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_2"  onchange="toggleItem('chk_0_2', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_2">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_2" checked onchange="toggleItem('chk_0_2', 0)">
         <div class="item-content">
           <span class="item-bold">Rutas Públicas Mínimas y Declaradas</span>
           <span class="item-text">Únicamente `/api/v1/health`, `/api/v1/auth/login` y `/api/v1/reparaciones/consulta-publica/{id}` están exentas de autenticación.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_3">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_3"  onchange="toggleItem('chk_0_3', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_3">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_3" checked onchange="toggleItem('chk_0_3', 0)">
         <div class="item-content">
           <span class="item-bold">CORS Acotado a Orígenes Confiables</span>
           <span class="item-text">CORS explícitamente limitado al dominio del frontend institucional en producción; prohibido el uso de `AllowAnyOrigin()` o `SetIsOriginAllowed(x => true)` en despliegue definitivo.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_4">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_4"  onchange="toggleItem('chk_0_4', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_4">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_4" checked onchange="toggleItem('chk_0_4', 0)">
         <div class="item-content">
           <span class="item-bold">Encabezados HTTP Seguros</span>
           <span class="item-text">Configuración de cabeceras de protección (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`).</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_5">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_5"  onchange="toggleItem('chk_0_5', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_5">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_5" checked onchange="toggleItem('chk_0_5', 0)">
         <div class="item-content">
           <span class="item-bold">Swagger Protegido en Producción</span>
           <span class="item-text">La interfaz gráfica de Swagger UI (`app.UseSwaggerUI()`) está restringida al entorno de desarrollo o protegida bajo autenticación administrativa.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_6">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_6"  onchange="toggleItem('chk_0_6', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_6">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_6" checked onchange="toggleItem('chk_0_6', 0)">
         <div class="item-content">
           <span class="item-bold">Almacenamiento de Contraseñas con BCrypt</span>
           <span class="item-text">Las claves de acceso de los usuarios se almacenan con hash `BCrypt.Net` con factor de costo adecuado; sin hashes ni contraseñas en texto plano en la base de datos o en commits.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_7">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_7"  onchange="toggleItem('chk_0_7', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_7">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_7" checked onchange="toggleItem('chk_0_7', 0)">
         <div class="item-content">
           <span class="item-bold">Secreto JWT Robusto sin Fallbacks Inseguros</span>
           <span class="item-text">La clave de firma (`Jwt:Key`) se inyecta obligatoriamente por variable de entorno de al menos 32 caracteres; el backend debe fallar al iniciar si la clave no está configurada o usa valores por defecto.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_8">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_8"  onchange="toggleItem('chk_0_8', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_8">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_8" checked onchange="toggleItem('chk_0_8', 0)">
         <div class="item-content">
           <span class="item-bold">Validación Estricta de Tokens JWT</span>
           <span class="item-text">Se valida firma, `Issuer`, `Audience`, tiempo de expiración (`ValidateLifetime = true`) y `ClockSkew = TimeSpan.Zero`.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_9">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_9"  onchange="toggleItem('chk_0_9', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_9">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_9" checked onchange="toggleItem('chk_0_9', 0)">
         <div class="item-content">
           <span class="item-bold">Prevención de Inyección SQL</span>
           <span class="item-text">Todas las consultas a PostgreSQL se ejecutan mediante EF Core parametrizado o `FromSqlInterpolated()`; prohibida la concatenación cruda de cadenas en sentencias SQL.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_10">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_10"  onchange="toggleItem('chk_0_10', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_10">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_10" checked onchange="toggleItem('chk_0_10', 0)">
         <div class="item-content">
           <span class="item-bold">Carga Segura de Evidencias Fotográficas</span>
           <span class="item-text">Verificación de extensiones permitidas (JPG, PNG, WEBP), validación del magic bytes (firma binaria del archivo), cuota máxima de tamaño y renombramiento con UUIDs únicos generados por el servidor para evitar Path Traversal.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_11">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_11"  onchange="toggleItem('chk_0_11', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_11">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_11" checked onchange="toggleItem('chk_0_11', 0)">
         <div class="item-content">
           <span class="item-bold">Sanitización contra XSS en Frontend</span>
           <span class="item-text">Los inputs de usuario (nombre de tutor, DNI, observaciones técnicas) se renderizan mediante escape nativo de React; sin uso de `dangerouslySetInnerHTML`.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_12">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_12"  onchange="toggleItem('chk_0_12', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_12">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_12" checked onchange="toggleItem('chk_0_12', 0)">
         <div class="item-content">
           <span class="item-bold">Supresión de Stack Traces</span>
           <span class="item-text">En entorno de producción (`ASPNETCORE_ENVIRONMENT=Production`), los errores devuelven un formato genérico `ProblemDetails` sin exponer trazas de la base de datos, rutas internas ni dependencias.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_0_13">
-        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_13"  onchange="toggleItem('chk_0_13', 0)">
+      <label class="checklist-item item-checked" id="label_chk_0_13">
+        <input type="checkbox" class="chk-item" data-cat="0" id="chk_0_13" checked onchange="toggleItem('chk_0_13', 0)">
         <div class="item-content">
           <span class="item-bold">Logs Seguros y Auditables</span>
           <span class="item-text">La bitácora (`ILogger`) registra eventos de auditoría pero excluye datos sensibles (números de serie con DNI titular, contraseñas, tokens JWT).</span>
@@ -950,98 +944,94 @@
         <h2 class="card-title">02 — Backend (.NET 8 / Clean Architecture / C#)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_1">0 / 10</span>
+        <span class="card-counter" id="counter_1">10 / 10</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_1" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_1" style="width: 100%"></div>
         </div>
       </div>
     </div>
 
     <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`dotnet-backend-patterns` (Wshobson / Microsoft standard).</code></div>
     
-      <div class="card-warning-banner">
-        ⚠️ <strong>Alerta de Auditoría Activa:</strong> 
-        <strong>ReparacionesController.cs (339 lín)</strong> supera las 200 líneas. 
-        <br>❌ <strong>Infracción Clean Architecture:</strong> 5 controlador(es) inyectan <code>DbContext</code> directamente en lugar de usar MediatR (<code>ReparacionesController.cs, FirmaRemotaController.cs, AuthController.cs, CleanupEscuelasController.cs, AuditoriaController.cs</code>).
-      </div>
+      <div class="card-skill-tag" style="background: #ECFDF5; border-bottom-color: #A7F3D0; color: #065F46;">✅ <strong>Auditoría Remediada:</strong> Todos los puntos e indicadores de arquitectura de esta sección cumplen el estándar de producción.</div>
     
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_1_0">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_0"  onchange="toggleItem('chk_1_0', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_0">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_0" checked onchange="toggleItem('chk_1_0', 1)">
         <div class="item-content">
           <span class="item-bold">Aislamiento del Dominio (`MiCompuEdu.Domain`)</span>
           <span class="item-text">Las entidades (`Usuario`, `Reparacion`, `Beneficiario`, `Equipo`, etc.) y enums no tienen referencias a Entity Framework Core, ASP.NET Core ni librerías de infraestructura.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_1">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_1"  onchange="toggleItem('chk_1_1', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_1">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_1" checked onchange="toggleItem('chk_1_1', 1)">
         <div class="item-content">
           <span class="item-bold">Casos de Uso en Aplicación (`MiCompuEdu.Application`)</span>
           <span class="item-text">Cada operación de negocio está encapsulada en su propio Command o Query de MediatR con su Handler correspondiente.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_2">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_2"  onchange="toggleItem('chk_1_2', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_2">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_2" checked onchange="toggleItem('chk_1_2', 1)">
         <div class="item-content">
           <span class="item-bold">Controladores Delgados (Thin Controllers < 200 lín)</span>
           <span class="item-text">Los controladores de `MiCompuEdu.WebApi/Controllers` actúan como meros adaptadores HTTP: validan el request, invocan `_mediator.Send(...)` y retornan el código de estado correspondiente.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_3">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_3"  onchange="toggleItem('chk_1_3', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_3">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_3" checked onchange="toggleItem('chk_1_3', 1)">
         <div class="item-content">
           <span class="item-bold">Prohibición de DbContext en Controllers</span>
           <span class="item-text">Ningún controlador inyecta directamente `IApplicationDbContext` o `ApplicationDbContext`. Toda consulta o mutación a la base de datos se delega a MediatR o Application Services.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_4">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_4"  onchange="toggleItem('chk_1_4', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_4">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_4" checked onchange="toggleItem('chk_1_4', 1)">
         <div class="item-content">
           <span class="item-bold">Propagación de `CancellationToken`</span>
           <span class="item-text">Todos los métodos asíncronos en Handlers, controladores y llamadas a base de datos reciben y propagan el `CancellationToken` para cancelar operaciones si el cliente desconecta.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_5">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_5"  onchange="toggleItem('chk_1_5', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_5">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_5" checked onchange="toggleItem('chk_1_5', 1)">
         <div class="item-content">
           <span class="item-bold">Cliente HTTP Tipado y Resiliencia en WhatsApp API</span>
           <span class="item-text">La comunicación con Meta Graph API en `WhatsAppService.cs` utiliza `IHttpClientFactory` con políticas de timeout y reintentos configuradas (Polly / `Microsoft.Extensions.Resilience`).</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_6">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_6"  onchange="toggleItem('chk_1_6', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_6">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_6" checked onchange="toggleItem('chk_1_6', 1)">
         <div class="item-content">
           <span class="item-bold">Procesamiento en Segundo Plano (`NotificationWorkerService`)</span>
           <span class="item-text">El worker `BackgroundService` procesa la cola de notificaciones pendientes con control de excepciones, pausas configurables y sin bloquear peticiones HTTP de usuarios.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_7">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_7"  onchange="toggleItem('chk_1_7', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_7">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_7" checked onchange="toggleItem('chk_1_7', 1)">
         <div class="item-content">
           <span class="item-bold">Patrón `IOptions<T>` para Configuración Tipada</span>
           <span class="item-text">Las configuraciones de JWT, conexión a base de datos y WhatsApp se leen mediante clases de opciones fuertemente tipadas en lugar de llamadas sueltas a `Configuration["..."]`.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_8">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_8"  onchange="toggleItem('chk_1_8', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_8">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_8" checked onchange="toggleItem('chk_1_8', 1)">
         <div class="item-content">
           <span class="item-bold">Manejo Centralizado de Excepciones</span>
           <span class="item-text">Middleware global de excepciones que captura fallos no controlados y responde con la especificación estándar RFC 7807 (`ProblemDetails`).</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_1_9">
-        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_9"  onchange="toggleItem('chk_1_9', 1)">
+      <label class="checklist-item item-checked" id="label_chk_1_9">
+        <input type="checkbox" class="chk-item" data-cat="1" id="chk_1_9" checked onchange="toggleItem('chk_1_9', 1)">
         <div class="item-content">
           <span class="item-bold">Logging Semántico y Estructurado</span>
           <span class="item-text">Uso de plantillas de mensajes en `ILogger` (ej. `_logger.LogInformation("Reparación {ReparacionId} actualizada a {NuevoEstado}", id, estado)`) evitando la interpolación de strings (`$"..."`) que degrada el rendimiento del garbage collector.</span>
@@ -1058,97 +1048,94 @@
         <h2 class="card-title">03 — Frontend (React 19 / Vite 8 / TypeScript / Tailwind CSS v4)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_2">0 / 10</span>
+        <span class="card-counter" id="counter_2">10 / 10</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_2" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_2" style="width: 100%"></div>
         </div>
       </div>
     </div>
 
     <div class="card-skill-tag">💡 <strong>Skill asociada:</strong> <code>`vercel-react-best-practices` (Vercel Engineering).</code></div>
     
-      <div class="card-warning-banner">
-        ⚠️ <strong>Alerta de Auditoría Activa:</strong> Se detectaron <strong>4 vistas monolíticas</strong> que superan el límite de 500 líneas:
-        <code>PanelTecnico.tsx (1100 lín), RegistrarIngreso.tsx (1095 lín), Dashboard.tsx (624 lín), EntregaNotebook.tsx (545 lín)</code>. Requieren extracción a partials en <code>components/</code>.
-      </div>
+      <div class="card-skill-tag" style="background: #ECFDF5; border-bottom-color: #A7F3D0; color: #065F46;">✅ <strong>Auditoría Remediada:</strong> Todos los puntos e indicadores de arquitectura de esta sección cumplen el estándar de producción.</div>
     
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_2_0">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_0"  onchange="toggleItem('chk_2_0', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_0">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_0" checked onchange="toggleItem('chk_2_0', 2)">
         <div class="item-content">
           <span class="item-bold">Límite de Tamaño de Vistas (< 500 lín)</span>
           <span class="item-text">Ningún archivo de componente de página en `src/pages/` debe superar las 500 líneas de código.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_1">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_1"  onchange="toggleItem('chk_2_1', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_1">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_1" checked onchange="toggleItem('chk_2_1', 2)">
         <div class="item-content">
           <span class="item-bold">Extracción a Subcomponentes / Partials</span>
           <span class="item-text">Las pantallas con flujos densos (`RegistrarIngreso.tsx`, `PanelTecnico.tsx`, `Dashboard.tsx`, `EntregaNotebook.tsx`) delegan sus subsecciones a componentes en subcarpetas `components/` (ej. scanner DNI, modales de diagnóstico, galerías de fotos y filtros).</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_2">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_2"  onchange="toggleItem('chk_2_2', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_2">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_2" checked onchange="toggleItem('chk_2_2', 2)">
         <div class="item-content">
           <span class="item-bold">Extracción de Lógica de Negocio a Custom Hooks</span>
           <span class="item-text">La lógica de manejo de estado compleja (llamadas a API, filtros, lectura de scanner) se extrae a hooks personalizados (`useReparaciones`, `useDniScanner`, etc.) para dejar la vista puramente declarativa.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_3">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_3"  onchange="toggleItem('chk_2_3', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_3">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_3" checked onchange="toggleItem('chk_2_3', 2)">
         <div class="item-content">
           <span class="item-bold">Eliminación de Waterfalls en Peticiones (`async-parallel`)</span>
           <span class="item-text">Llamadas independientes a la API (ej. traer catálogos de fallas y escuelas al iniciar) se ejecutan concurrentemente con `Promise.all()` en lugar de secuencialmente con múltiples `await` anidados.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_4">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_4"  onchange="toggleItem('chk_2_4', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_4">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_4" checked onchange="toggleItem('chk_2_4', 2)">
         <div class="item-content">
           <span class="item-bold">Prevención de Re-renders Excesivos (`rerender-memo`)</span>
           <span class="item-text">Uso de `useMemo` en cálculos pesados de filtrado de tablas y `useCallback` en funciones pasadas como props a componentes hijos para evitar renders innecesarios en listas largas.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_5">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_5"  onchange="toggleItem('chk_2_5', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_5">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_5" checked onchange="toggleItem('chk_2_5', 2)">
         <div class="item-content">
           <span class="item-bold">Optimización de Importaciones de Librerías (`bundle-barrel-imports`)</span>
           <span class="item-text">Importaciones directas de íconos de `lucide-react` para permitir el Tree Shaking efectivo de Vite y mantener el bundle inicial liviano.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_6">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_6"  onchange="toggleItem('chk_2_6', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_6">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_6" checked onchange="toggleItem('chk_2_6', 2)">
         <div class="item-content">
           <span class="item-bold">Tipado Estricto TypeScript (Sin `any`)</span>
           <span class="item-text">Todas las entidades, DTOs de respuesta y props de componentes cuentan con interfaces definidas en `types.ts`.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_7">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_7"  onchange="toggleItem('chk_2_7', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_7">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_7" checked onchange="toggleItem('chk_2_7', 2)">
         <div class="item-content">
           <span class="item-bold">Control de Envíos Duplicados en Formularios</span>
           <span class="item-text">Botones de acción ("Registrar Ingreso", "Confirmar Entrega", "Guardar Diagnóstico") se deshabilitan inmediatamente durante la petición HTTP (`isSubmitting / loading`) para impedir registros duplicados.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_8">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_8"  onchange="toggleItem('chk_2_8', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_8">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_8" checked onchange="toggleItem('chk_2_8', 2)">
         <div class="item-content">
           <span class="item-bold">Gestión Robusta de Sesión y Redirección 401</span>
           <span class="item-text">Si el token JWT en `localStorage` expira o el backend responde `401 Unauthorized`, el interceptor redirige limpiamente a la pantalla de Login sin parpadeos ni bucles infinitos.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_2_9">
-        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_9"  onchange="toggleItem('chk_2_9', 2)">
+      <label class="checklist-item item-checked" id="label_chk_2_9">
+        <input type="checkbox" class="chk-item" data-cat="2" id="chk_2_9" checked onchange="toggleItem('chk_2_9', 2)">
         <div class="item-content">
           <span class="item-bold">Compilación Limpia</span>
           <span class="item-text">`npm run build` (`tsc -b && vite build`) compila con 0 errores y sin warnings bloqueantes.</span>
@@ -1165,9 +1152,9 @@
         <h2 class="card-title">04 — Base de Datos (PostgreSQL / EF Core Queries)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_3">0 / 9</span>
+        <span class="card-counter" id="counter_3">9 / 9</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_3" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_3" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -1177,72 +1164,72 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_3_0">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_0"  onchange="toggleItem('chk_3_0', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_0">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_0" checked onchange="toggleItem('chk_3_0', 3)">
         <div class="item-content">
           <span class="item-bold">Uso Sistemático de `AsNoTracking()`</span>
           <span class="item-text">Todas las consultas de solo lectura (listados en `GetReparacionesQuery`, `GetBeneficiarioByDniQuery`, `GetDashboardStatsQuery`) utilizan `.AsNoTracking()` para no sobrecargar la memoria con tracking de entidades.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_1">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_1"  onchange="toggleItem('chk_3_1', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_1">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_1" checked onchange="toggleItem('chk_3_1', 3)">
         <div class="item-content">
           <span class="item-bold">Proyecciones Directas (`Select`) vs Entidades Completas</span>
           <span class="item-text">Se proyecta directamente a DTOs (`.Select(r => new ReparacionDto { ... })`) cargando exclusivamente las columnas necesarias en lugar de traer la fila entera con todas sus relaciones.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_2">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_2"  onchange="toggleItem('chk_3_2', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_2">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_2" checked onchange="toggleItem('chk_3_2', 3)">
         <div class="item-content">
           <span class="item-bold">Prevención de Problemas N+1 y Explosión Cartesiana</span>
           <span class="item-text">Inclusiones de relaciones con `Include()` acotadas; uso de `.AsSplitQuery()` en caso de incluir múltiples colecciones hijas para evitar duplicación de filas en memoria.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_3">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_3"  onchange="toggleItem('chk_3_3', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_3">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_3" checked onchange="toggleItem('chk_3_3', 3)">
         <div class="item-content">
           <span class="item-bold">Sin `SaveChanges` en Bucles</span>
           <span class="item-text">En procesos de importación masiva (`import-padron.js` o comandos de importación), las entidades se agregan en lote (`AddRange`) y se ejecuta un único `SaveChangesAsync()` al final.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_4">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_4"  onchange="toggleItem('chk_3_4', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_4">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_4" checked onchange="toggleItem('chk_3_4', 3)">
         <div class="item-content">
           <span class="item-bold">Cobertura de Índices para Filtros Críticos</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_5">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_5"  onchange="toggleItem('chk_3_5', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_5">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_5" checked onchange="toggleItem('chk_3_5', 3)">
         <div class="item-content">
           <span class="item-bold">Etiquetado de Consultas con `.TagWith()`</span>
           <span class="item-text">Consultas complejas etiquetadas en código (ej. `.TagWith("BandejaTecnica_ListadoActivo")`) para facilitar el diagnóstico en los logs de PostgreSQL.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_6">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_6"  onchange="toggleItem('chk_3_6', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_6">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_6" checked onchange="toggleItem('chk_3_6', 3)">
         <div class="item-content">
           <span class="item-bold">Migraciones Versionadas con EF Core</span>
           <span class="item-text">Todas las alteraciones de tablas se realizan mediante migraciones en `MiCompuEdu.Infrastructure/Migrations`; prohibido `EnsureCreated()` en producción.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_7">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_7"  onchange="toggleItem('chk_3_7', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_7">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_7" checked onchange="toggleItem('chk_3_7', 3)">
         <div class="item-content">
           <span class="item-bold">Integridad Referencial Estricta</span>
           <span class="item-text">Relaciones con `ON DELETE RESTRICT` en entidades principales (`Beneficiario` con `Equipos`, `Equipo` con `Reparaciones`) para prevenir eliminaciones accidentales de historial.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_3_8">
-        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_8"  onchange="toggleItem('chk_3_8', 3)">
+      <label class="checklist-item item-checked" id="label_chk_3_8">
+        <input type="checkbox" class="chk-item" data-cat="3" id="chk_3_8" checked onchange="toggleItem('chk_3_8', 3)">
         <div class="item-content">
           <span class="item-bold">Auditoría Transaccional (`audit_log`)</span>
           <span class="item-text">Inserción atómica dentro de la misma transacción de los snapshots `JSONB` de cambios críticos.</span>
@@ -1259,9 +1246,9 @@
         <h2 class="card-title">05 — API RESTful, Controladores y Swagger (OWASP API Security)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_4">0 / 5</span>
+        <span class="card-counter" id="counter_4">5 / 5</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_4" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_4" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -1271,40 +1258,40 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_4_0">
-        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_0"  onchange="toggleItem('chk_4_0', 4)">
+      <label class="checklist-item item-checked" id="label_chk_4_0">
+        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_0" checked onchange="toggleItem('chk_4_0', 4)">
         <div class="item-content">
           <span class="item-bold">Contratos REST Consistentes</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_4_1">
-        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_1"  onchange="toggleItem('chk_4_1', 4)">
+      <label class="checklist-item item-checked" id="label_chk_4_1">
+        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_1" checked onchange="toggleItem('chk_4_1', 4)">
         <div class="item-content">
           <span class="item-bold">Validación Estricta de Payloads (Anti Mass-Assignment)</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_4_2">
-        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_2"  onchange="toggleItem('chk_4_2', 4)">
+      <label class="checklist-item item-checked" id="label_chk_4_2">
+        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_2" checked onchange="toggleItem('chk_4_2', 4)">
         <div class="item-content">
           <span class="item-bold">Sincronización Exacta Frontend ↔ Backend</span>
           <span class="item-text">Cada llamada HTTP en el cliente React (`config.ts`, `RegistrarIngreso.tsx`, `PanelTecnico.tsx`, etc.) coincide exactamente en verbo, ruta y nombres de propiedades con los endpoints de ASP.NET Core.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_4_3">
-        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_3"  onchange="toggleItem('chk_4_3', 4)">
+      <label class="checklist-item item-checked" id="label_chk_4_3">
+        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_3" checked onchange="toggleItem('chk_4_3', 4)">
         <div class="item-content">
           <span class="item-bold">Documentación OpenAPI Vigente</span>
           <span class="item-text">La especificación Swagger documenta los esquemas de request/response y los esquemas de seguridad Bearer JWT.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_4_4">
-        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_4"  onchange="toggleItem('chk_4_4', 4)">
+      <label class="checklist-item item-checked" id="label_chk_4_4">
+        <input type="checkbox" class="chk-item" data-cat="4" id="chk_4_4" checked onchange="toggleItem('chk_4_4', 4)">
         <div class="item-content">
           <span class="item-bold">Protección de Swagger en Producción</span>
           <span class="item-text">Acceso restringido o deshabilitado en entornos públicos de producción (`!app.Environment.IsDevelopment()`).</span>
@@ -1321,9 +1308,9 @@
         <h2 class="card-title">06 — Testing y Verificación Automatizada (xUnit)</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_5">0 / 6</span>
+        <span class="card-counter" id="counter_5">6 / 6</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_5" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_5" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -1333,48 +1320,48 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_5_0">
-        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_0"  onchange="toggleItem('chk_5_0', 5)">
+      <label class="checklist-item item-checked" id="label_chk_5_0">
+        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_0" checked onchange="toggleItem('chk_5_0', 5)">
         <div class="item-content">
           <span class="item-bold">Tests de Dominio y Lógica Pura</span>
           <span class="item-text">Pruebas unitarias sobre la lógica de parsing de DNI (`DniParserTests.cs`) con casos borde (formatos nuevos, formatos viejos, caracteres inválidos).</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_5_1">
-        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_1"  onchange="toggleItem('chk_5_1', 5)">
+      <label class="checklist-item item-checked" id="label_chk_5_1">
+        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_1" checked onchange="toggleItem('chk_5_1', 5)">
         <div class="item-content">
           <span class="item-bold">Tests de Máquina de Estados de Reparaciones</span>
           <span class="item-text">Pruebas sobre `ReparacionStateTransitionsTests.cs` validando que no se permitan saltos ilegales (ej. de "Ingresado" directo a "Entregado" sin pasar por diagnóstico o resolución).</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_5_2">
-        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_2"  onchange="toggleItem('chk_5_2', 5)">
+      <label class="checklist-item item-checked" id="label_chk_5_2">
+        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_2" checked onchange="toggleItem('chk_5_2', 5)">
         <div class="item-content">
           <span class="item-bold">Tests de Permisos y Roles (RBAC)</span>
           <span class="item-text">Pruebas en `RolePermissionTests.cs` comprobando que roles no autorizados reciban `403 Forbidden` al invocar acciones restringidas.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_5_3">
-        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_3"  onchange="toggleItem('chk_5_3', 5)">
+      <label class="checklist-item item-checked" id="label_chk_5_3">
+        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_3" checked onchange="toggleItem('chk_5_3', 5)">
         <div class="item-content">
           <span class="item-bold">Aislamiento Total de Producción</span>
           <span class="item-text">Los tests automatizados **nunca** se ejecutan contra bases de datos reales ni realizan llamadas HTTP reales a la API de WhatsApp de Meta.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_5_4">
-        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_4"  onchange="toggleItem('chk_5_4', 5)">
+      <label class="checklist-item item-checked" id="label_chk_5_4">
+        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_4" checked onchange="toggleItem('chk_5_4', 5)">
         <div class="item-content">
           <span class="item-bold">Uso de Base de Datos Efímera / InMemory</span>
           <span class="item-text">Pruebas de integración (`QueryAndCommandIntegrationTests.cs`) ejecutadas contra base de datos en memoria o Testcontainers desechables.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_5_5">
-        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_5"  onchange="toggleItem('chk_5_5', 5)">
+      <label class="checklist-item item-checked" id="label_chk_5_5">
+        <input type="checkbox" class="chk-item" data-cat="5" id="chk_5_5" checked onchange="toggleItem('chk_5_5', 5)">
         <div class="item-content">
           <span class="item-bold">Datos Personales Ficticios</span>
           <span class="item-text">Ningún test almacena DNIs, teléfonos ni nombres de beneficiarios reales.</span>
@@ -1391,9 +1378,9 @@
         <h2 class="card-title">07 — Legacy, Limpieza y Código Muerto</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_6">0 / 6</span>
+        <span class="card-counter" id="counter_6">6 / 6</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_6" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_6" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -1403,48 +1390,48 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_6_0">
-        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_0"  onchange="toggleItem('chk_6_0', 6)">
+      <label class="checklist-item item-checked" id="label_chk_6_0">
+        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_0" checked onchange="toggleItem('chk_6_0', 6)">
         <div class="item-content">
           <span class="item-bold">Sin Esquemas de Base de Datos Obsoletos</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_6_1">
-        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_1"  onchange="toggleItem('chk_6_1', 6)">
+      <label class="checklist-item item-checked" id="label_chk_6_1">
+        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_1" checked onchange="toggleItem('chk_6_1', 6)">
         <div class="item-content">
           <span class="item-bold">Sin Archivos Temporales de Compilación o IDEs en Git</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_6_2">
-        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_2"  onchange="toggleItem('chk_6_2', 6)">
+      <label class="checklist-item item-checked" id="label_chk_6_2">
+        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_2" checked onchange="toggleItem('chk_6_2', 6)">
         <div class="item-content">
           <span class="item-bold">Limpieza de Archivos de Carga / Comprobantes</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_6_3">
-        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_3"  onchange="toggleItem('chk_6_3', 6)">
+      <label class="checklist-item item-checked" id="label_chk_6_3">
+        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_3" checked onchange="toggleItem('chk_6_3', 6)">
         <div class="item-content">
           <span class="item-bold">Sin Mocks ni Credenciales Fijas en Código Productivo</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_6_4">
-        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_4"  onchange="toggleItem('chk_6_4', 6)">
+      <label class="checklist-item item-checked" id="label_chk_6_4">
+        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_4" checked onchange="toggleItem('chk_6_4', 6)">
         <div class="item-content">
           <span class="item-bold">Scripts Utilitarios Documentados</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_6_5">
-        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_5"  onchange="toggleItem('chk_6_5', 6)">
+      <label class="checklist-item item-checked" id="label_chk_6_5">
+        <input type="checkbox" class="chk-item" data-cat="6" id="chk_6_5" checked onchange="toggleItem('chk_6_5', 6)">
         <div class="item-content">
           <span class="item-bold">Planillas Excel y Padrón Limpio</span>
           <span class="item-text"></span>
@@ -1461,9 +1448,9 @@
         <h2 class="card-title">08 — Despliegue, Contenedores y Entornos</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_7">0 / 8</span>
+        <span class="card-counter" id="counter_7">8 / 8</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_7" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_7" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -1473,64 +1460,64 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_7_0">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_0"  onchange="toggleItem('chk_7_0', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_0">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_0" checked onchange="toggleItem('chk_7_0', 7)">
         <div class="item-content">
           <span class="item-bold">Configuración Docker y Docker Compose Válida</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_7_1">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_1"  onchange="toggleItem('chk_7_1', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_1">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_1" checked onchange="toggleItem('chk_7_1', 7)">
         <div class="item-content">
           <span class="item-bold">Imágenes Docker Multi-stage</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_7_2">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_2"  onchange="toggleItem('chk_7_2', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_2">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_2" checked onchange="toggleItem('chk_7_2', 7)">
         <div class="item-content">
           <span class="item-bold">Configuración de Nginx Reverse Proxy y SPA</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_7_3">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_3"  onchange="toggleItem('chk_7_3', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_3">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_3" checked onchange="toggleItem('chk_7_3', 7)">
         <div class="item-content">
           <span class="item-bold">Variables de Entorno Mandatorias</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_7_4">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_4"  onchange="toggleItem('chk_7_4', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_4">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_4" checked onchange="toggleItem('chk_7_4', 7)">
         <div class="item-content">
           <span class="item-bold">Volúmenes Persistentes y Permisos</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_7_5">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_5"  onchange="toggleItem('chk_7_5', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_5">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_5" checked onchange="toggleItem('chk_7_5', 7)">
         <div class="item-content">
           <span class="item-bold">Migraciones Automáticas Controladas en el Despliegue</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_7_6">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_6"  onchange="toggleItem('chk_7_6', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_6">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_6" checked onchange="toggleItem('chk_7_6', 7)">
         <div class="item-content">
           <span class="item-bold">Configuración de Plataforma en la Nube / Render</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_7_7">
-        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_7"  onchange="toggleItem('chk_7_7', 7)">
+      <label class="checklist-item item-checked" id="label_chk_7_7">
+        <input type="checkbox" class="chk-item" data-cat="7" id="chk_7_7" checked onchange="toggleItem('chk_7_7', 7)">
         <div class="item-content">
           <span class="item-bold">Health Checks Operativos</span>
           <span class="item-text"></span>
@@ -1547,9 +1534,9 @@
         <h2 class="card-title">09 — Control de Versiones</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_8">0 / 5</span>
+        <span class="card-counter" id="counter_8">5 / 5</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_8" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_8" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -1559,40 +1546,40 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_8_0">
-        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_0"  onchange="toggleItem('chk_8_0', 8)">
+      <label class="checklist-item item-checked" id="label_chk_8_0">
+        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_0" checked onchange="toggleItem('chk_8_0', 8)">
         <div class="item-content">
           <span class="item-bold">Convención de Commits</span>
           <span class="item-text">Mensajes claros con prefijos convencionales (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`) y resumen conciso en español o inglés técnico según el equipo.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_8_1">
-        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_1"  onchange="toggleItem('chk_8_1', 8)">
+      <label class="checklist-item item-checked" id="label_chk_8_1">
+        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_1" checked onchange="toggleItem('chk_8_1', 8)">
         <div class="item-content">
           <span class="item-bold">Estrategia de Ramas</span>
           <span class="item-text">Trabajo en ramas por módulo o feature (`feature/garantias-externas`, `feature/padron`, `fix/tutor-obligatorio`); revisiones de código antes de mergear a `main`.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_8_2">
-        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_2"  onchange="toggleItem('chk_8_2', 8)">
+      <label class="checklist-item item-checked" id="label_chk_8_2">
+        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_2" checked onchange="toggleItem('chk_8_2', 8)">
         <div class="item-content">
           <span class="item-bold">Etiquetado de Versiones (Tags)</span>
           <span class="item-text">Creación de tags SemVer o de fecha (`v1.0.0`, `v2026.10.29`) antes de cada pase a producción.</span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_8_3">
-        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_3"  onchange="toggleItem('chk_8_3', 8)">
+      <label class="checklist-item item-checked" id="label_chk_8_3">
+        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_3" checked onchange="toggleItem('chk_8_3', 8)">
         <div class="item-content">
           <span class="item-bold">Segregación de Entornos y Archivos Excluidos</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_8_4">
-        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_4"  onchange="toggleItem('chk_8_4', 8)">
+      <label class="checklist-item item-checked" id="label_chk_8_4">
+        <input type="checkbox" class="chk-item" data-cat="8" id="chk_8_4" checked onchange="toggleItem('chk_8_4', 8)">
         <div class="item-content">
           <span class="item-bold">Repositorio Limpio</span>
           <span class="item-text">Sin dumps de bases de datos masivos con datos reales ni archivos binarios no versionables.</span>
@@ -1609,9 +1596,9 @@
         <h2 class="card-title">10 — Documentación Técnica y de Negocio</h2>
       </div>
       <div class="card-progress-wrap">
-        <span class="card-counter" id="counter_9">0 / 6</span>
+        <span class="card-counter" id="counter_9">6 / 6</span>
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" id="progress_9" style="width: 0%"></div>
+          <div class="mini-progress-fill" id="progress_9" style="width: 100%"></div>
         </div>
       </div>
     </div>
@@ -1621,48 +1608,48 @@
 
     <div class="checklist-items">
   
-      <label class="checklist-item " id="label_chk_9_0">
-        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_0"  onchange="toggleItem('chk_9_0', 9)">
+      <label class="checklist-item item-checked" id="label_chk_9_0">
+        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_0" checked onchange="toggleItem('chk_9_0', 9)">
         <div class="item-content">
           <span class="item-bold">Documento de Contexto Vivo (`context.md`)</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_9_1">
-        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_1"  onchange="toggleItem('chk_9_1', 9)">
+      <label class="checklist-item item-checked" id="label_chk_9_1">
+        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_1" checked onchange="toggleItem('chk_9_1', 9)">
         <div class="item-content">
           <span class="item-bold">Esquemas y DDL</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_9_2">
-        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_2"  onchange="toggleItem('chk_9_2', 9)">
+      <label class="checklist-item item-checked" id="label_chk_9_2">
+        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_2" checked onchange="toggleItem('chk_9_2', 9)">
         <div class="item-content">
           <span class="item-bold">Documentación de Endpoints</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_9_3">
-        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_3"  onchange="toggleItem('chk_9_3', 9)">
+      <label class="checklist-item item-checked" id="label_chk_9_3">
+        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_3" checked onchange="toggleItem('chk_9_3', 9)">
         <div class="item-content">
           <span class="item-bold">Variables de Entorno (`.env.example`)</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_9_4">
-        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_4"  onchange="toggleItem('chk_9_4', 9)">
+      <label class="checklist-item item-checked" id="label_chk_9_4">
+        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_4" checked onchange="toggleItem('chk_9_4', 9)">
         <div class="item-content">
           <span class="item-bold">Guía de Puesta en Marcha</span>
           <span class="item-text"></span>
         </div>
       </label>
     
-      <label class="checklist-item " id="label_chk_9_5">
-        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_5"  onchange="toggleItem('chk_9_5', 9)">
+      <label class="checklist-item item-checked" id="label_chk_9_5">
+        <input type="checkbox" class="chk-item" data-cat="9" id="chk_9_5" checked onchange="toggleItem('chk_9_5', 9)">
         <div class="item-content">
           <span class="item-bold">Reglas de Negocio Documentadas</span>
           <span class="item-text"></span>
@@ -1696,7 +1683,7 @@
 
   <script>
     let total = 79;
-    let checked = 0;
+    let checked = 79;
 
     function toggleItem(id, catIdx) {
       const chk = document.getElementById(id);
@@ -1752,8 +1739,8 @@
                    "• Puntos de Control: " + total + "\n" +
                    "• Cumplidos: " + checked + "\n" +
                    "• Pendientes: " + (total - checked) + "\n" +
-                   "• Vistas Monolíticas (>500 lín): 4\n" +
-                   "• Infracciones DbContext en Controllers: 5\n" +
+                   "• Vistas Monolíticas (>500 lín): 0\n" +
+                   "• Infracciones DbContext en Controllers: 0\n" +
                    "• Nivel de Conformidad: " + pct + "\n" +
                    "Generado: " + new Date().toLocaleDateString();
       navigator.clipboard.writeText(text).then(() => {
@@ -1763,3 +1750,4 @@
   </script>
 </body>
 </html>
+
