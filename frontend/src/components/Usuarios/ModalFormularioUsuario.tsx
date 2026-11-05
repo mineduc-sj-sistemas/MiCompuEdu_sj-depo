@@ -50,7 +50,7 @@ const ROLES_CONFIG: Array<{
   {
     value: 'Operador',
     label: 'Operador',
-    desc: 'Ingresos, entregas y planillas',
+    desc: 'Ingresos y entregas diarias',
     icon: ClipboardList,
     activeRing: 'border-[#FF8200] bg-orange-50/70 ring-2 ring-[#FF8200]/15',
     iconColor: 'text-orange-600 bg-orange-100',

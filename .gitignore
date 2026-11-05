@@ -84,6 +84,11 @@ backend/MiCompuEdu.WebApi/App_Data/comprobantes/*.pdf
 backend/MiCompuEdu.WebApi/wwwroot/comprobantes/*.pdf
 backend/MiCompuEdu.WebApi/wwwroot/uploads/evidencias/*
 !backend/MiCompuEdu.WebApi/wwwroot/uploads/evidencias/.gitkeep
+backend/MiCompuEdu.WebApi/wwwroot/uploads/documentos/*
+!backend/MiCompuEdu.WebApi/wwwroot/uploads/documentos/.gitkeep
+backend/MiCompuEdu.WebApi/wwwroot/uploads/planillas/*
+!backend/MiCompuEdu.WebApi/wwwroot/uploads/planillas/.gitkeep
+!backend/MiCompuEdu.WebApi/wwwroot/uploads/evidencias/.gitkeep
 
 ## ====================================================================
 ## QA Interno / Herramientas Privadas del Auditor

@@ -16,6 +16,8 @@ import { HealthCheckBanner } from './components/Shared/HealthCheckBanner'
 import { installSessionExpiredInterceptor } from './config'
 import { Download, Upload, Wrench, BarChart3, Users, LogOut, User as UserIcon, Database, History, FileCheck2 } from 'lucide-react'
 
+const HABILITAR_PLANILLAS_RETIRO = false;
+
 function App() {
 
   const isConsulta = window.location.pathname === '/consulta';
@@ -142,8 +144,8 @@ function App() {
                 </button>
               )}
 
-              {/* 5. Planillas de Retiro */}
-              {(user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
+              {/* 5. Planillas de Retiro (Desactivado/Oculto) */}
+              {HABILITAR_PLANILLAS_RETIRO && (user.rol === 'Operador' || user.rol === 'Supervisor' || user.rol === 'Administrador') && (
                 <button
                   onClick={() => setCurrentPage('planillas')}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2.5 ${
@@ -228,7 +230,7 @@ function App() {
           {currentPage === 'ingreso' && <RegistrarIngreso token={user.token} nombreOperador={user.nombreCompleto} />}
           {currentPage === 'entrega' && <EntregaNotebook token={user.token} nombreOperador={user.nombreCompleto} />}
           {currentPage === 'historial' && <HistorialEntregas token={user.token} nombreUsuario={user.nombreCompleto} userRol={user.rol} />}
-          {currentPage === 'planillas' && <PlanillasRetiro token={user.token} nombreUsuario={user.nombreCompleto} userRol={user.rol} />}
+          {HABILITAR_PLANILLAS_RETIRO && currentPage === 'planillas' && <PlanillasRetiro token={user.token} nombreUsuario={user.nombreCompleto} userRol={user.rol} />}
           {currentPage === 'diagnostico' && <PanelTecnico token={user.token} nombreTecnico={user.nombreCompleto} />}
           {currentPage === 'dashboard' && <Dashboard token={user.token} />}
           {currentPage === 'importar' && <ImportarPadron token={user.token} />}
