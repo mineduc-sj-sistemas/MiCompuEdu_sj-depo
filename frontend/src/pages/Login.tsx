@@ -38,12 +38,12 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         const errText = await response.text();
         setError(errText || 'Usuario o contraseña incorrectos.');
       }
-    } catch (err) {
+    } catch {
       console.warn('API no disponible. Usando fallback de simulación local.');
       if (password === 'Admin123!') {
         let role: UserType['rol'] = 'Administrador';
         let nombre = 'Administrador Demo';
-        
+
         if (username === 'admin') {
           role = 'Administrador';
           nombre = 'Administrador del Sistema';
@@ -67,10 +67,10 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           nombreCompleto: nombre,
           nombreUsuario: username,
           rol: role,
-          email: `${username}@sanjuan.edu.ar`
+          email: `${username}@sanjuan.edu.ar`,
         });
       } else {
-        setError('Error de conexión. Intente con contraseña "Admin123!".');
+        setError('Error de conexión con el servidor de autenticación.');
       }
     } finally {
       setLoading(false);
@@ -80,7 +80,6 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-
         {/* Logo dentro de la tarjeta, centrado */}
         <div className="flex justify-center mb-8">
           <LogoSanJuan height={160} heightMobile={100} />
@@ -130,7 +129,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               </div>
               <input
                 id="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 required
                 className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-10 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF8200] transition-colors text-sm"
                 placeholder="••••••••"
@@ -152,20 +151,13 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             disabled={loading}
             className="w-full bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold py-2.5 rounded-lg shadow-sm transition-all flex justify-center items-center text-sm"
           >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              'Iniciar Sesión'
-            )}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Iniciar Sesión'}
           </button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-slate-100 text-center">
           <p className="text-[10px] text-slate-400">
             © {new Date().getFullYear()} Ministerio de Educación. Gobierno de San Juan.
-          </p>
-          <p className="text-[9px] text-[#FF8200] font-semibold mt-1 uppercase tracking-wider">
-            Demo pass: Admin123!
           </p>
         </div>
       </div>

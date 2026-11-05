@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Printer, ExternalLink, X } from 'lucide-react';
 import type { ArchivoPlanilla } from '../../pages/Operator/PlanillasRetiro';
 
@@ -31,32 +32,52 @@ export const ModalVisorPlanilla: React.FC<ModalVisorPlanillaProps> = ({
   formatearTamano,
   esPdf,
   getArchivoFullUrl,
-  handleImprimirHoja
+  handleImprimirHoja,
 }) => {
+  useEffect(() => {
+    if (!archivoEnVisor) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [archivoEnVisor, onClose]);
+
   if (!archivoEnVisor) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] bg-slate-900/35 backdrop-blur-xs flex items-center justify-center p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 animate-fade-in">
         {/* Barra superior del visor */}
-        <div className="px-6 py-4 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-3">
+        <div className="px-6 py-4 bg-gradient-to-r from-orange-50/90 via-white to-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <span className="px-2.5 py-1 rounded-lg bg-[#FF8200] text-white text-xs font-extrabold">
               {formatearFechaCorta(archivoEnVisor.fechaPlanilla)}
             </span>
             <div className="min-w-0">
-              <h3 className="text-sm font-bold truncate">
-                Hoja #{archivoEnVisor.indice + 1} de {archivoEnVisor.listaArchivos.length} — {archivoEnVisor.archivo.nombreArchivo}
+              <h3 className="text-sm font-bold text-slate-900 truncate">
+                Hoja #{archivoEnVisor.indice + 1} de {archivoEnVisor.listaArchivos.length} —{' '}
+                {archivoEnVisor.archivo.nombreArchivo}
               </h3>
-              <p className="text-[11px] text-slate-400">
-                {formatearTamano(archivoEnVisor.archivo.tamanoBytes)}
-              </p>
+              <p className="text-[11px] text-slate-500">{formatearTamano(archivoEnVisor.archivo.tamanoBytes)}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             {archivoEnVisor.listaArchivos.length > 1 && (
-              <div className="flex items-center gap-1 mr-2 bg-white/10 rounded-xl p-1">
+              <div className="flex items-center gap-1 mr-2 bg-slate-100 rounded-xl p-1">
                 <button
                   type="button"
                   disabled={archivoEnVisor.indice === 0}
@@ -65,10 +86,10 @@ export const ModalVisorPlanilla: React.FC<ModalVisorPlanillaProps> = ({
                     onChangeVisor({
                       ...archivoEnVisor,
                       indice: nuevoIdx,
-                      archivo: archivoEnVisor.listaArchivos[nuevoIdx]
+                      archivo: archivoEnVisor.listaArchivos[nuevoIdx],
                     });
                   }}
-                  className="px-2.5 py-1 rounded-lg text-xs font-bold disabled:opacity-40 hover:bg-white/10 transition-colors"
+                  className="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 disabled:opacity-40 hover:bg-white transition-colors cursor-pointer"
                 >
                   ← Anterior
                 </button>
@@ -80,10 +101,10 @@ export const ModalVisorPlanilla: React.FC<ModalVisorPlanillaProps> = ({
                     onChangeVisor({
                       ...archivoEnVisor,
                       indice: nuevoIdx,
-                      archivo: archivoEnVisor.listaArchivos[nuevoIdx]
+                      archivo: archivoEnVisor.listaArchivos[nuevoIdx],
                     });
                   }}
-                  className="px-2.5 py-1 rounded-lg text-xs font-bold disabled:opacity-40 hover:bg-white/10 transition-colors"
+                  className="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 disabled:opacity-40 hover:bg-white transition-colors cursor-pointer"
                 >
                   Siguiente →
                 </button>
@@ -93,7 +114,7 @@ export const ModalVisorPlanilla: React.FC<ModalVisorPlanillaProps> = ({
             <button
               type="button"
               onClick={() => handleImprimirHoja(archivoEnVisor.archivo, archivoEnVisor.fechaPlanilla)}
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-[#FF8200] border border-slate-200 hover:border-orange-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               Imprimir
@@ -103,7 +124,7 @@ export const ModalVisorPlanilla: React.FC<ModalVisorPlanillaProps> = ({
               href={getArchivoFullUrl(archivoEnVisor.archivo.id)}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-[#FF8200] border border-slate-200 hover:border-orange-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
               Abrir en pestaña
@@ -112,7 +133,7 @@ export const ModalVisorPlanilla: React.FC<ModalVisorPlanillaProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-xl bg-white/10 hover:bg-red-500 text-white transition-colors ml-1"
+              className="p-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors ml-1 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -136,6 +157,7 @@ export const ModalVisorPlanilla: React.FC<ModalVisorPlanillaProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

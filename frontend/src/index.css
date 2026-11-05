@@ -22,18 +22,19 @@
   --sj-gris: #1D252D;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #F8FAFC;
-  color: #1D252D;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+@layer base {
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #F8FAFC;
+    color: #1D252D;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', 'Ubuntu', sans-serif;
-  color: #1D252D;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Ubuntu', sans-serif;
+  }
 }
 
 /* Minimalist Inputs */
@@ -71,7 +72,7 @@ input:focus, select:focus, textarea:focus {
 /* Sutil animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: none; }
 }
 
 .animate-fade-in {

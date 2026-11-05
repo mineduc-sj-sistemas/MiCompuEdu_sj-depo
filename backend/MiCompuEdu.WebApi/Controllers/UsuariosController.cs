@@ -68,6 +68,14 @@ namespace MiCompuEdu.WebApi.Controllers
             var resultado = await _mediator.Send(command, cancellationToken);
             return Ok(resultado);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> Eliminar(Guid id, CancellationToken cancellationToken = default)
+        {
+            var command = new DeleteUsuarioCommand(id);
+            var resultado = await _mediator.Send(command, cancellationToken);
+            return Ok(resultado);
+        }
     }
 
     public record CreateUsuarioRequest(

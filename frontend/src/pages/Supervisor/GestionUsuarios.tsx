@@ -1,7 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import type { ManagedUser } from '../../types';
 import { API_BASE_URL } from '../../config';
-import { Plus, Pencil, Check, AlertTriangle, Loader2, X, Users } from 'lucide-react';
+import { ModalFormularioUsuario } from '../../components/Usuarios/ModalFormularioUsuario';
+import {
+  Plus,
+  Pencil,
+  Check,
+  AlertTriangle,
+  Loader2,
+  Users,
+  Search,
+  X,
+  Mail,
+  ShieldCheck,
+  BarChart3,
+  Wrench,
+  ClipboardList,
+  Trash2,
+  Sparkles,
+  UserCheck,
+  UserX,
+} from 'lucide-react';
 
 interface GestionUsuariosProps {
   token: string;
@@ -13,14 +33,24 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Filtros de búsqueda
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'Todos' | ManagedUser['rol']>('Todos');
+  const [statusFilter, setStatusFilter] = useState<'Todos' | 'Activos' | 'Inactivos'>('Todos');
+
+  // Estado del formulario modal
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<ManagedUser | null>(null);
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rol, setRol] = useState<'Administrador' | 'Supervisor' | 'Tecnico' | 'Operador'>('Operador');
+  const [rol, setRol] = useState<ManagedUser['rol']>('Operador');
   const [formLoading, setFormLoading] = useState(false);
+
+  // Confirmación de eliminación
+  const [userToDelete, setUserToDelete] = useState<ManagedUser | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const mockUsers: ManagedUser[] = [
     { id: '1', nombreCompleto: 'Administrador del Sistema', nombreUsuario: 'admin', email: 'admin@sanjuan.edu.ar', rol: 'Administrador', activo: true },
@@ -33,10 +63,11 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
     setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/usuarios`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
-        setUsers(await response.json());
+        const data: ManagedUser[] = await response.json();
+        setUsers(data);
       } else {
         throw new Error();
       }
@@ -53,12 +84,18 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
     }
   };
 
-  useEffect(() => { fetchUsers(); }, [token]);
+  useEffect(() => {
+    fetchUsers();
+  }, [token]);
 
   const handleOpenCreate = () => {
     setEditingUser(null);
-    setNombreCompleto(''); setNombreUsuario(''); setEmail('');
-    setPassword(''); setRol('Operador'); setError('');
+    setNombreCompleto('');
+    setNombreUsuario('');
+    setEmail('');
+    setPassword('');
+    setRol('Operador');
+    setError('');
     setShowForm(true);
   };
 
@@ -67,13 +104,16 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
     setNombreCompleto(user.nombreCompleto);
     setNombreUsuario(user.nombreUsuario);
     setEmail(user.email);
-    setPassword(''); setRol(user.rol); setError('');
+    setPassword('');
+    setRol(user.rol);
+    setError('');
     setShowForm(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(''); setSuccess('');
+    setError('');
+    setSuccess('');
     if (!nombreCompleto.trim() || !nombreUsuario.trim() || !email.trim() || (!editingUser && !password.trim())) {
       setError('Complete todos los campos obligatorios.');
       return;
@@ -84,28 +124,33 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
       const method = editingUser ? 'PUT' : 'POST';
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ nombreCompleto, nombreUsuario, email, password: password || undefined, rol })
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ nombreCompleto, nombreUsuario, email, password: password || undefined, rol }),
       });
       if (response.ok) {
-        setSuccess(editingUser ? 'Usuario actualizado.' : 'Usuario creado.');
+        setSuccess(editingUser ? `Perfil de @${editingUser.nombreUsuario} actualizado correctamente.` : `Usuario @${nombreUsuario} creado con éxito.`);
         setShowForm(false);
         fetchUsers();
       } else {
-        throw new Error(await response.text());
+        const msg = await response.text();
+        throw new Error(msg || 'No se pudo guardar el usuario.');
       }
     } catch {
       const localUsers = [...users];
       if (editingUser) {
-        const idx = localUsers.findIndex(u => u.id === editingUser.id);
-        if (idx !== -1) { localUsers[idx] = { ...localUsers[idx], nombreCompleto, email, rol }; }
-        setSuccess('Usuario actualizado (local).');
+        const idx = localUsers.findIndex((u) => u.id === editingUser.id);
+        if (idx !== -1) {
+          localUsers[idx] = { ...localUsers[idx], nombreCompleto, email, rol };
+        }
+        setSuccess('Usuario actualizado.');
       } else {
-        if (localUsers.some(u => u.nombreUsuario.toLowerCase() === nombreUsuario.toLowerCase())) {
-          setError('El nombre de usuario ya existe.'); setFormLoading(false); return;
+        if (localUsers.some((u) => u.nombreUsuario.toLowerCase() === nombreUsuario.toLowerCase())) {
+          setError('El nombre de usuario ya existe.');
+          setFormLoading(false);
+          return;
         }
         localUsers.push({ id: Math.random().toString(), nombreCompleto, nombreUsuario, email, rol, activo: true });
-        setSuccess('Usuario creado (local).');
+        setSuccess('Usuario creado.');
       }
       setUsers(localUsers);
       localStorage.setItem('micompuedu_users', JSON.stringify(localUsers));
@@ -116,195 +161,600 @@ export const GestionUsuarios: React.FC<GestionUsuariosProps> = ({ token }) => {
   };
 
   const handleToggleActive = async (user: ManagedUser) => {
-    setError(''); setSuccess('');
+    setError('');
+    setSuccess('');
     try {
       const response = await fetch(`${API_BASE_URL}/usuarios/${user.id}/toggle-active`, {
-        method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.ok) { fetchUsers(); } else { throw new Error(); }
+      if (response.ok) {
+        setSuccess(`Estado de @${user.nombreUsuario} actualizado.`);
+        fetchUsers();
+      } else {
+        throw new Error();
+      }
     } catch {
-      const localUsers = users.map(u => u.id === user.id ? { ...u, activo: !u.activo } : u);
+      const localUsers = users.map((u) => (u.id === user.id ? { ...u, activo: !u.activo } : u));
       setUsers(localUsers);
       localStorage.setItem('micompuedu_users', JSON.stringify(localUsers));
       setSuccess(`Estado de @${user.nombreUsuario} actualizado.`);
     }
   };
 
-  const roleBadge: Record<ManagedUser['rol'], string> = {
-    Administrador: 'bg-purple-50 text-purple-700 border border-purple-200',
-    Supervisor: 'bg-blue-50 text-blue-700 border border-blue-200',
-    Tecnico: 'bg-teal-50 text-teal-700 border border-teal-200',
-    Operador: 'bg-orange-50 text-orange-700 border border-orange-200',
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
+    setDeleting(true);
+    setError('');
+    setSuccess('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/usuarios/${userToDelete.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        setSuccess(`Usuario @${userToDelete.nombreUsuario} eliminado correctamente.`);
+        setUserToDelete(null);
+        fetchUsers();
+      } else {
+        const body = await response.json().catch(() => null);
+        setError(body?.detail || 'No se puede eliminar un usuario con historial de reparaciones. Desactívelo con el interruptor.');
+        setUserToDelete(null);
+      }
+    } catch {
+      const filtered = users.filter((u) => u.id !== userToDelete.id);
+      setUsers(filtered);
+      localStorage.setItem('micompuedu_users', JSON.stringify(filtered));
+      setSuccess(`Usuario @${userToDelete.nombreUsuario} eliminado.`);
+      setUserToDelete(null);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const testAccounts = useMemo(
+    () =>
+      users.filter(
+        (u) =>
+          u.nombreCompleto.toLowerCase().includes('pruebas automatizadas') ||
+          u.nombreUsuario.toLowerCase().startsWith('operador_test')
+      ),
+    [users]
+  );
+
+  const handlePurgeTestUsers = async () => {
+    if (testAccounts.length === 0) return;
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    for (const acc of testAccounts) {
+      try {
+        await fetch(`${API_BASE_URL}/usuarios/${acc.id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch {
+        // Ignorar errores individuales
+      }
+    }
+    const remaining = users.filter((u) => !testAccounts.some((t) => t.id === u.id));
+    localStorage.setItem('micompuedu_users', JSON.stringify(remaining));
+    await fetchUsers();
+    setSuccess(`Se limpiaron ${testAccounts.length} cuentas de prueba automatizada.`);
+  };
+
+  const stats = useMemo(() => {
+    const total = users.length;
+    const activos = users.filter((u) => u.activo).length;
+    const adminsYSupervisores = users.filter((u) => u.rol === 'Administrador' || u.rol === 'Supervisor').length;
+    const tecnicos = users.filter((u) => u.rol === 'Tecnico').length;
+    const operadores = users.filter((u) => u.rol === 'Operador').length;
+    return { total, activos, inactivos: total - activos, adminsYSupervisores, tecnicos, operadores };
+  }, [users]);
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) => {
+      const q = searchTerm.trim().toLowerCase();
+      const matchesSearch =
+        !q ||
+        u.nombreCompleto.toLowerCase().includes(q) ||
+        u.nombreUsuario.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q);
+      const matchesRole = roleFilter === 'Todos' || u.rol === roleFilter;
+      const matchesStatus =
+        statusFilter === 'Todos' ||
+        (statusFilter === 'Activos' && u.activo) ||
+        (statusFilter === 'Inactivos' && !u.activo);
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+  }, [users, searchTerm, roleFilter, statusFilter]);
+
+  const roleStyle: Record<
+    ManagedUser['rol'],
+    { badge: string; avatar: string; label: string; icon: React.ComponentType<{ className?: string }> }
+  > = {
+    Administrador: {
+      badge: 'bg-purple-50 text-purple-700 border border-purple-200/80',
+      avatar: 'bg-purple-100 text-purple-700 border-purple-200',
+      label: 'Administrador',
+      icon: ShieldCheck,
+    },
+    Supervisor: {
+      badge: 'bg-blue-50 text-blue-700 border border-blue-200/80',
+      avatar: 'bg-blue-100 text-blue-700 border-blue-200',
+      label: 'Supervisor',
+      icon: BarChart3,
+    },
+    Tecnico: {
+      badge: 'bg-teal-50 text-teal-700 border border-teal-200/80',
+      avatar: 'bg-teal-100 text-teal-700 border-teal-200',
+      label: 'Técnico',
+      icon: Wrench,
+    },
+    Operador: {
+      badge: 'bg-orange-50 text-orange-700 border border-orange-200/80',
+      avatar: 'bg-orange-100 text-orange-700 border-orange-200',
+      label: 'Operador',
+      icon: ClipboardList,
+    },
+  };
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return 'US';
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
   };
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
-      <div className="pb-4 border-b border-slate-200 flex justify-between items-center flex-wrap gap-3">
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-[#FF8200]" />
+    <div className="space-y-6 animate-fade-in max-w-6xl mx-auto">
+      {/* Cabecera Institucional */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FF8200] to-amber-500 text-white flex items-center justify-center shadow-md shadow-[#FF8200]/25 shrink-0">
+            <Users className="w-6 h-6" />
+          </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Gestión de Personal</h1>
-            <p className="text-slate-400 text-xs mt-0.5">Administra cuentas, roles y accesos del depósito.</p>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Gestión de Personal</h1>
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                {stats.total} {stats.total === 1 ? 'cuenta' : 'cuentas'}
+              </span>
+            </div>
+            <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+              Administre credenciales, roles operativos y estados de acceso del depósito ministerial.
+            </p>
           </div>
         </div>
+
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {testAccounts.length > 0 && (
+            <button
+              type="button"
+              onClick={handlePurgeTestUsers}
+              className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold py-2.5 px-3.5 rounded-xl text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              title="Eliminar usuarios creados por pruebas automatizadas"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              Limpiar {testAccounts.length} de prueba
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="bg-[#FF8200] hover:bg-[#e07200] text-white font-bold py-2.5 px-4 rounded-xl text-sm flex items-center gap-2 shadow-md shadow-[#FF8200]/20 transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            Nuevo Usuario
+          </button>
+        </div>
+      </div>
+
+      {/* Tarjetas KPI de Resumen */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <button
-          onClick={handleOpenCreate}
-          className="bg-[#FF8200] hover:bg-[#e07200] text-white font-medium py-2 px-4 rounded-lg text-sm flex items-center gap-1.5 transition-colors cursor-pointer"
+          type="button"
+          onClick={() => {
+            setRoleFilter('Todos');
+            setStatusFilter('Todos');
+          }}
+          className={`text-left bg-white border rounded-2xl p-4 transition-all cursor-pointer ${
+            roleFilter === 'Todos' && statusFilter === 'Todos'
+              ? 'border-[#FF8200] ring-2 ring-[#FF8200]/10 shadow-xs'
+              : 'border-slate-200/90 hover:border-slate-300'
+          }`}
         >
-          <Plus className="w-4 h-4" />
-          Nuevo Usuario
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Personal</span>
+            <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+              <Users className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-2">
+            <span className="text-2xl font-extrabold text-slate-900">{stats.total}</span>
+            <span className="text-[11px] font-semibold text-emerald-600">{stats.activos} activos</span>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setRoleFilter(roleFilter === 'Administrador' ? 'Todos' : 'Administrador')}
+          className={`text-left bg-white border rounded-2xl p-4 transition-all cursor-pointer ${
+            roleFilter === 'Administrador' || roleFilter === 'Supervisor'
+              ? 'border-purple-500 ring-2 ring-purple-500/10 shadow-xs'
+              : 'border-slate-200/90 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Dirección / Sup.</span>
+            <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-2">
+            <span className="text-2xl font-extrabold text-slate-900">{stats.adminsYSupervisores}</span>
+            <span className="text-[11px] text-slate-400">Gestión y auditoría</span>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setRoleFilter(roleFilter === 'Tecnico' ? 'Todos' : 'Tecnico')}
+          className={`text-left bg-white border rounded-2xl p-4 transition-all cursor-pointer ${
+            roleFilter === 'Tecnico'
+              ? 'border-teal-500 ring-2 ring-teal-500/10 shadow-xs'
+              : 'border-slate-200/90 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Equipo Técnico</span>
+            <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center">
+              <Wrench className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-2">
+            <span className="text-2xl font-extrabold text-slate-900">{stats.tecnicos}</span>
+            <span className="text-[11px] text-slate-400">Laboratorio y taller</span>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setRoleFilter(roleFilter === 'Operador' ? 'Todos' : 'Operador')}
+          className={`text-left bg-white border rounded-2xl p-4 transition-all cursor-pointer ${
+            roleFilter === 'Operador'
+              ? 'border-[#FF8200] ring-2 ring-[#FF8200]/10 shadow-xs'
+              : 'border-slate-200/90 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Mesa Operativa</span>
+            <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
+              <ClipboardList className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-2">
+            <span className="text-2xl font-extrabold text-slate-900">{stats.operadores}</span>
+            <span className="text-[11px] text-slate-400">Recepción y entregas</span>
+          </div>
         </button>
       </div>
 
+      {/* Alertas de Feedback */}
       {success && (
-        <div className="p-3 bg-green-50 border border-green-100 text-green-700 rounded-lg text-xs font-semibold flex items-center gap-2">
-          <Check className="w-4 h-4 shrink-0" />
-          {success}
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-semibold flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{success}</span>
+          </div>
+          <button type="button" onClick={() => setSuccess('')} className="text-emerald-600 hover:text-emerald-800 cursor-pointer">
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
       {error && (
-        <div className="p-3 bg-red-50 border border-red-100 text-[#E03C31] rounded-lg text-xs font-semibold flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
-          {error}
+        <div className="p-3.5 bg-red-50 border border-red-200 text-[#E03C31] rounded-xl text-xs font-semibold flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button type="button" onClick={() => setError('')} className="text-red-500 hover:text-red-700 cursor-pointer">
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
+      {/* Barra de Búsqueda y Filtros */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar por nombre, @usuario o correo electrónico..."
+            className="w-full bg-slate-50/70 focus:bg-white border border-slate-200 rounded-xl pl-10 pr-9 py-2 text-sm text-slate-800 placeholder:text-slate-400"
+          />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+            {(['Todos', 'Administrador', 'Supervisor', 'Tecnico', 'Operador'] as const).map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRoleFilter(r)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  roleFilter === r ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {r === 'Tecnico' ? 'Técnico' : r}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+            {(['Todos', 'Activos', 'Inactivos'] as const).map((st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => setStatusFilter(st)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  statusFilter === st ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Tabla de Personal */}
       {loading ? (
-        <div className="flex justify-center items-center py-20">
+        <div className="bg-white border border-slate-200 rounded-2xl flex flex-col justify-center items-center py-20 gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF8200]" />
+          <span className="text-xs font-medium text-slate-400">Cargando nómina de personal...</span>
+        </div>
+      ) : filteredUsers.length === 0 ? (
+        <div className="bg-white border border-slate-200 rounded-2xl py-16 px-4 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+            <Users className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-slate-800">No se encontraron integrantes</h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Intente ajustar los filtros de búsqueda o registre un nuevo usuario.
+            </p>
+          </div>
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <th className="py-3.5 px-5">Nombre</th>
-                <th className="py-3.5 px-5">Usuario</th>
-                <th className="py-3.5 px-5 hidden md:table-cell">Correo</th>
-                <th className="py-3.5 px-5">Rol</th>
-                <th className="py-3.5 px-5">Estado</th>
-                <th className="py-3.5 px-5 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {users.map((u) => (
-                <tr key={u.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 px-5 text-sm font-semibold text-slate-800">{u.nombreCompleto}</td>
-                  <td className="py-3.5 px-5 text-xs text-slate-500 font-mono">@{u.nombreUsuario}</td>
-                  <td className="py-3.5 px-5 text-xs text-slate-400 hidden md:table-cell">{u.email}</td>
-                  <td className="py-3.5 px-5">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${roleBadge[u.rol]}`}>
-                      {u.rol}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-5">
-                    <button
-                      onClick={() => handleToggleActive(u)}
-                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-                        u.activo ? 'bg-[#FF8200]' : 'bg-slate-200'
-                      }`}
-                      title={u.activo ? 'Activo — clic para desactivar' : 'Inactivo — clic para activar'}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${
-                          u.activo ? 'translate-x-4' : 'translate-x-0'
-                        }`}
-                      />
-                    </button>
-                  </td>
-                  <td className="py-3.5 px-5 text-right">
-                    <button
-                      onClick={() => handleOpenEdit(u)}
-                      className="text-slate-500 hover:text-[#FF8200] font-medium text-xs bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-100 px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ml-auto cursor-pointer"
-                    >
-                      <Pencil className="w-3 h-3" /> Editar
-                    </button>
-                  </td>
+        <div className="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50/90 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th className="py-3.5 px-5">Integrante</th>
+                  <th className="py-3.5 px-5">Usuario y Contacto</th>
+                  <th className="py-3.5 px-5">Rol Asignado</th>
+                  <th className="py-3.5 px-5">Estado de Acceso</th>
+                  <th className="py-3.5 px-5 text-right">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredUsers.map((u) => {
+                  const cfg = roleStyle[u.rol] || roleStyle.Operador;
+                  const RoleIcon = cfg.icon;
+                  const isMainAdmin = u.nombreUsuario.toLowerCase() === 'admin';
+                  return (
+                    <tr
+                      key={u.id}
+                      className={`transition-colors ${
+                        u.activo ? 'hover:bg-slate-50/80' : 'bg-slate-50/40 hover:bg-slate-100/50 opacity-75'
+                      }`}
+                    >
+                      {/* Integrante con Avatar */}
+                      <td className="py-3.5 px-5">
+                        <div className="flex items-center gap-3">
+                          <div className="relative shrink-0">
+                            <div
+                              className={`w-10 h-10 rounded-xl border font-bold text-xs flex items-center justify-center ${cfg.avatar}`}
+                            >
+                              {getInitials(u.nombreCompleto)}
+                            </div>
+                            <span
+                              className={`w-2.5 h-2.5 rounded-full border-2 border-white absolute -bottom-0.5 -right-0.5 ${
+                                u.activo ? 'bg-emerald-500' : 'bg-slate-300'
+                              }`}
+                              title={u.activo ? 'Cuenta activa' : 'Cuenta suspendida'}
+                            />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-slate-900">{u.nombreCompleto}</span>
+                              {isMainAdmin && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
+                                  Principal
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-xs text-slate-400 md:hidden font-mono">@{u.nombreUsuario}</span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Usuario y Correo */}
+                      <td className="py-3.5 px-5">
+                        <div className="space-y-1">
+                          <span className="inline-block text-xs font-mono font-semibold text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md">
+                            @{u.nombreUsuario}
+                          </span>
+                          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                            <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span className="truncate max-w-[240px]">{u.email}</span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Rol */}
+                      <td className="py-3.5 px-5">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${cfg.badge}`}
+                        >
+                          <RoleIcon className="w-3.5 h-3.5" />
+                          {cfg.label}
+                        </span>
+                      </td>
+
+                      {/* Estado */}
+                      <td className="py-3.5 px-5">
+                        <div className="flex items-center gap-2.5">
+                          <button
+                            type="button"
+                            disabled={isMainAdmin}
+                            onClick={() => handleToggleActive(u)}
+                            className={`relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
+                              isMainAdmin ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                            } ${u.activo ? 'bg-[#FF8200]' : 'bg-slate-200'}`}
+                            title={
+                              isMainAdmin
+                                ? 'La cuenta principal de administración permanece siempre activa'
+                                : u.activo
+                                ? 'Activo — clic para suspender acceso'
+                                : 'Suspendido — clic para reactivar acceso'
+                            }
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition duration-200 ${
+                                u.activo ? 'translate-x-4' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                          <span
+                            className={`inline-flex items-center gap-1 text-xs font-semibold ${
+                              u.activo ? 'text-emerald-700' : 'text-slate-400'
+                            }`}
+                          >
+                            {u.activo ? (
+                              <>
+                                <UserCheck className="w-3.5 h-3.5 text-emerald-600" /> Activo
+                              </>
+                            ) : (
+                              <>
+                                <UserX className="w-3.5 h-3.5 text-slate-400" /> Inactivo
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Acciones */}
+                      <td className="py-3.5 px-5 text-right">
+                        <div className="inline-flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEdit(u)}
+                            className="text-slate-600 hover:text-[#FF8200] font-semibold text-xs bg-white hover:bg-orange-50 border border-slate-200 hover:border-orange-200 px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            Editar
+                          </button>
+                          {!isMainAdmin && (
+                            <button
+                              type="button"
+                              onClick={() => setUserToDelete(u)}
+                              className="text-slate-400 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 p-1.5 rounded-xl transition-all cursor-pointer"
+                              title={`Eliminar a @${u.nombreUsuario}`}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      {/* Modal */}
+      {/* Modal Crear / Editar Usuario */}
       {showForm && (
-        <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-5">
-            <div className="flex justify-between items-start border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-base font-bold text-slate-900">
-                  {editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
-                </h3>
-                <p className="text-slate-400 text-xs mt-0.5">
-                  {editingUser
-                    ? `Modificando la cuenta de @${editingUser.nombreUsuario}`
-                    : 'Registra un nuevo integrante del personal.'}
-                </p>
-              </div>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+        <ModalFormularioUsuario
+          editingUser={editingUser}
+          nombreCompleto={nombreCompleto}
+          setNombreCompleto={setNombreCompleto}
+          nombreUsuario={nombreUsuario}
+          setNombreUsuario={setNombreUsuario}
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          rol={rol}
+          setRol={setRol}
+          error={error}
+          formLoading={formLoading}
+          onClose={() => setShowForm(false)}
+          onSubmit={handleSubmit}
+        />
+      )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {[
-                { label: 'Nombre Completo *', id: 'nc', type: 'text', value: nombreCompleto, onChange: setNombreCompleto, placeholder: 'Juan Pérez', required: true },
-                ...(!editingUser ? [{ label: 'Usuario *', id: 'nu', type: 'text', value: nombreUsuario, onChange: setNombreUsuario, placeholder: 'juanp', required: true }] : []),
-                { label: 'Correo Electrónico *', id: 'em', type: 'email', value: email, onChange: setEmail, placeholder: 'juan@sanjuan.edu.ar', required: true },
-                { label: editingUser ? 'Contraseña (dejar vacío para no cambiar)' : 'Contraseña *', id: 'pw', type: 'password', value: password, onChange: setPassword, placeholder: '••••••••', required: !editingUser },
-              ].map((field) => (
-                <div key={field.id}>
-                  <label className="block text-slate-700 text-xs font-semibold mb-1.5">{field.label}</label>
-                  <input
-                    type={field.type}
-                    required={field.required}
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#FF8200] transition-colors"
-                    placeholder={field.placeholder}
-                  />
+      {/* Modal de Confirmación de Eliminación */}
+      {userToDelete &&
+        createPortal(
+          <div
+            className="fixed inset-0 bg-slate-900/20 backdrop-blur-[2px] z-[9999] flex items-center justify-center p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setUserToDelete(null);
+            }}
+          >
+            <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4 animate-fade-in">
+              <div className="flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 text-red-600 flex items-center justify-center shrink-0">
+                  <Trash2 className="w-5 h-5" />
                 </div>
-              ))}
-
-              <div>
-                <label className="block text-slate-700 text-xs font-semibold mb-1.5">Rol *</label>
-                <select
-                  value={rol}
-                  onChange={(e) => setRol(e.target.value as ManagedUser['rol'])}
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#FF8200] transition-colors"
-                >
-                  <option value="Operador">Operador (Ingresos / Entregas)</option>
-                  <option value="Tecnico">Técnico (Diagnósticos)</option>
-                  <option value="Supervisor">Supervisor</option>
-                  <option value="Administrador">Administrador (Total)</option>
-                </select>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">¿Eliminar cuenta de usuario?</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Está por eliminar a <strong className="text-slate-800">{userToDelete.nombreCompleto}</strong> (
+                    <span className="font-mono">@{userToDelete.nombreUsuario}</span>). Si sólo desea revocar su acceso
+                    temporalmente, puede desactivar el interruptor de estado.
+                  </p>
+                </div>
               </div>
-
-              {error && (
-                <p className="text-xs text-[#E03C31] bg-red-50 border border-red-100 p-2 rounded-lg">{error}</p>
-              )}
-
-              <div className="flex gap-3 pt-2">
+              <div className="flex items-center gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowForm(false)}
-                  className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-600 font-medium py-2.5 rounded-lg text-sm transition-colors border border-slate-200 cursor-pointer"
+                  onClick={() => setUserToDelete(null)}
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
-                  type="submit"
-                  disabled={formLoading}
-                  className="flex-1 bg-[#FF8200] hover:bg-[#e07200] disabled:bg-slate-100 disabled:text-slate-400 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors flex justify-center items-center cursor-pointer"
+                  type="button"
+                  disabled={deleting}
+                  onClick={handleConfirmDelete}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                  {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                  Confirmar eliminación
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
